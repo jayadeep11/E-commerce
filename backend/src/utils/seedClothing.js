@@ -227,7 +227,7 @@ const seedClothing = async () => {
     if (!admin) {
       admin = await User.create({
         name: 'KORE Admin',
-        email: 'admin@lookbetter.com',
+        email: 'admin@kore.com',
         password: 'password123',
         phone: '1234567890',
         isAdmin: true,

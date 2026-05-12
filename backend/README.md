@@ -1,4 +1,4 @@
-# LookBetter Backend
+# KORE Backend
 
 ## Prerequisites
 - Node.js

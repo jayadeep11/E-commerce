@@ -69,7 +69,7 @@ router.post('/', async (req, res) => {
       try {
         await sendEmail({
           email,
-          subject: 'LookBetter - Verification Code',
+          subject: 'KORE - Verification Code',
           message: `Code: ${otp}`,
           html: `<div style="font-family:sans-serif;padding:20px;border:1px solid #eee;border-radius:10px;"><h2>Welcome!</h2><p>Your code is: <b>${otp}</b></p></div>`
         });
