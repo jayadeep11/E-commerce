@@ -16,6 +16,18 @@
     0% { transform: translateY(20px); opacity: 0; }
     100% { transform: translateY(0); opacity: 1; }
   }
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  @keyframes marquee-reverse {
+    0% { transform: translateX(-50%); }
+    100% { transform: translateX(0); }
+  }
+
+  --animate-marquee-slow: marquee 60s linear infinite;
+  --animate-marquee-reverse-slow: marquee-reverse 70s linear infinite;
+  --animate-infinite-scroll: marquee 40s linear infinite;
 }
 
 :root {
@@ -47,4 +59,12 @@ body {
 
 @utility gradient-text {
   @apply bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600;
+}
+
+@utility hide-scrollbar {
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

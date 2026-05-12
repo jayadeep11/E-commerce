@@ -1,10 +1,62 @@
+import { useState } from 'react';
 import { useCart } from '../../context/CartContext';
-import { Link } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import { Link, useNavigate } from 'react-router-dom';
 import { Trash2, Minus, Plus, ShoppingBag, ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
+import api from '../../utils/api';
 
 const Cart = () => {
-  const { cartItems, removeFromCart, addToCart, cartTotal } = useCart();
+  const { cartItems, removeFromCart, addToCart, cartTotal, clearCart } = useCart();
+  const { userInfo } = useAuth();
+  const navigate = useNavigate();
+
+  // Address Selection State
+  const [selectedAddress, setSelectedAddress] = useState(
+    userInfo?.addresses?.find(a => a.isDefault) || userInfo?.addresses?.[0] || null
+  );
+
+  const checkoutHandler = async () => {
+    if (!userInfo) {
+      navigate('/login?redirect=shipping');
+      return;
+    }
+
+    if (!selectedAddress) {
+      alert('Please add a shipping address in your profile first');
+      navigate('/profile');
+      return;
+    }
+
+    try {
+      const orderData = {
+        orderItems: cartItems.map(item => ({
+          name: item.name,
+          qty: item.qty,
+          image: item.image,
+          price: Number(item.price),
+          product: item._id
+        })),
+        shippingAddress: {
+          address: selectedAddress.address,
+          city: selectedAddress.city,
+          postalCode: selectedAddress.postalCode,
+          country: selectedAddress.country,
+        },
+        paymentMethod: 'PayPal',
+        itemsPrice: Number(cartTotal),
+        shippingPrice: 0,
+        taxPrice: 0,
+        totalPrice: Number(cartTotal),
+      };
+
+      await api.post('/api/orders', orderData);
+      if (clearCart) clearCart(); 
+      navigate('/order-success');
+    } catch (error) {
+      alert(error.response?.data?.message || 'Error placing order');
+    }
+  };
 
   if (cartItems.length === 0) {
     return (
@@ -41,7 +93,14 @@ const Cart = () => {
                 <Link to={`/product/${item._id}`} className="text-lg font-bold text-slate-900 hover:text-blue-600 transition-colors">
                   {item.name}
                 </Link>
-                <p className="text-sm text-slate-500 mt-1">{item.category}</p>
+                <div className="flex flex-col sm:flex-row sm:items-center gap-2 mt-1">
+                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">{item.category}</p>
+                  {item.countInStock === 0 ? (
+                    <span className="px-2 py-0.5 bg-red-50 text-red-600 text-[10px] font-black rounded-md w-fit">SOLD OUT</span>
+                  ) : item.qty > item.countInStock ? (
+                    <span className="px-2 py-0.5 bg-amber-50 text-amber-600 text-[10px] font-black rounded-md w-fit italic">Only {item.countInStock} available</span>
+                  ) : null}
+                </div>
               </div>
 
               <div className="flex items-center bg-slate-100 rounded-lg overflow-hidden">
@@ -53,7 +112,9 @@ const Cart = () => {
                 <span className="px-4 font-bold text-sm">{item.qty}</span>
                 <button 
                   onClick={() => addToCart(item, 1)}
-                  className="px-3 py-1 hover:bg-slate-200 transition-colors"
+                  disabled={item.qty >= item.countInStock}
+                  title={item.qty >= item.countInStock ? "Maximum stock reached" : "Increase quantity"}
+                  className="px-3 py-1 hover:bg-slate-200 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                 ><Plus size={14} /></button>
               </div>
 
@@ -75,6 +136,47 @@ const Cart = () => {
           <div className="glass-card p-8 sticky top-28">
             <h2 className="text-xl font-bold text-slate-900 mb-6">Order Summary</h2>
             
+            {/* Shipping Destination Selector */}
+            {userInfo && (
+              <div className="mb-8 space-y-4">
+                <div className="flex items-center justify-between">
+                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Shipping Destination</p>
+                  <Link to="/profile" className="text-[10px] font-black text-blue-600 hover:underline">Manage</Link>
+                </div>
+                
+                {!userInfo.addresses || userInfo.addresses.length === 0 ? (
+                  <button 
+                    onClick={() => navigate('/profile')}
+                    className="w-full p-4 border-2 border-dashed border-slate-200 rounded-2xl text-slate-400 font-bold text-xs hover:border-blue-200 hover:text-blue-600 transition-all"
+                  >
+                    + Add Shipping Address
+                  </button>
+                ) : (
+                  <div className="flex flex-wrap gap-2">
+                    {userInfo.addresses.map(addr => (
+                      <button
+                        key={addr._id}
+                        onClick={() => setSelectedAddress(addr)}
+                        className={`px-4 py-2 rounded-xl font-bold text-xs transition-all border-2 ${
+                          selectedAddress?._id === addr._id 
+                            ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-500/20' 
+                            : 'bg-white border-slate-100 text-slate-600 hover:border-blue-200'
+                        }`}
+                      >
+                        {addr.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+                {selectedAddress && (
+                  <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                    <p className="text-[10px] font-bold text-slate-400 leading-relaxed uppercase mb-1">Delivering To:</p>
+                    <p className="text-xs font-bold text-slate-700 leading-relaxed">{selectedAddress.address}, {selectedAddress.city}</p>
+                  </motion.div>
+                )}
+              </div>
+            )}
+
             <div className="space-y-4 mb-8">
               <div className="flex justify-between text-slate-500">
                 <span>Subtotal</span>
@@ -90,8 +192,12 @@ const Cart = () => {
               </div>
             </div>
 
-            <button className="btn-primary w-full py-4 flex items-center justify-center gap-2">
-              Proceed to Checkout <ArrowRight size={20} />
+            <button 
+              onClick={checkoutHandler}
+              disabled={cartItems.some(item => item.countInStock === 0 || item.qty > item.countInStock)}
+              className="btn-primary w-full py-4 flex items-center justify-center gap-2 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed disabled:shadow-none"
+            >
+              {cartItems.some(item => item.countInStock === 0 || item.qty > item.countInStock) ? 'Items Unavailable' : 'Proceed to Checkout'} <ArrowRight size={20} />
             </button>
             
             <p className="text-center text-xs text-slate-400 mt-6 flex items-center justify-center gap-2">

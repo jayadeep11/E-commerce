@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, User, ArrowRight, Loader2, CheckCircle2, ShieldCheck, Zap, Key } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -10,13 +10,29 @@ const Register = () => {
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [isAdmin, setIsAdmin] = useState(false);
   const [otp, setOtp] = useState('');
   const [showOtp, setShowOtp] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [timer, setTimer] = useState(60);
+  const [canResend, setCanResend] = useState(false);
 
   const navigate = useNavigate();
   const { register, verifyOTP } = useAuth();
+
+  useEffect(() => {
+    let interval;
+    if (showOtp && timer > 0) {
+      interval = setInterval(() => {
+        setTimer((prev) => prev - 1);
+      }, 1000);
+    } else if (timer === 0) {
+      setCanResend(true);
+      clearInterval(interval);
+    }
+    return () => clearInterval(interval);
+  }, [showOtp, timer]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -29,15 +45,31 @@ const Register = () => {
 
     try {
       setLoading(true);
-      const data = await register(name, email, password, phone);
+      const data = await register(name, email, password, phone, isAdmin);
       
       if (data && data.requiresVerification) {
         setShowOtp(true);
+        setTimer(60);
+        setCanResend(false);
       } else {
         navigate('/');
       }
     } catch (err) {
       setError(err.response?.data?.message || 'Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResendOtp = async () => {
+    if (!canResend) return;
+    try {
+      setLoading(true);
+      await register(name, email, password, phone, isAdmin);
+      setTimer(60);
+      setCanResend(false);
+    } catch (err) {
+      setError('Failed to resend code.');
     } finally {
       setLoading(false);
     }
@@ -220,6 +252,19 @@ const Register = () => {
                     </div>
                   </div>
 
+                  <div 
+                    onClick={() => setIsAdmin(!isAdmin)}
+                    className={`flex items-center gap-3 p-4 rounded-2xl border transition-all cursor-pointer ${isAdmin ? 'bg-blue-50 border-blue-200' : 'bg-slate-50 border-slate-100 hover:border-slate-200'}`}
+                  >
+                    <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center transition-all ${isAdmin ? 'bg-blue-600 border-blue-600' : 'border-slate-300 bg-white'}`}>
+                      {isAdmin && <ShieldCheck size={12} className="text-white" />}
+                    </div>
+                    <div className="flex-1">
+                      <p className="text-sm font-bold text-slate-900 leading-none">Register as Administrator</p>
+                      <p className="text-[10px] font-medium text-slate-500 mt-1.5 uppercase tracking-wider">Unlocks Dashboard & Shop Management</p>
+                    </div>
+                  </div>
+
                   <button 
                     type="submit" 
                     disabled={loading}
@@ -294,13 +339,29 @@ const Register = () => {
                     )}
                   </button>
 
-                  <button 
-                    type="button"
-                    onClick={() => setShowOtp(false)}
-                    className="w-full text-sm text-slate-500 hover:text-blue-600 transition-colors"
-                  >
-                    Back to registration
-                  </button>
+                  <div className="text-center space-y-4">
+                    {canResend ? (
+                      <button 
+                        type="button"
+                        onClick={handleResendOtp}
+                        className="text-sm font-black text-blue-600 hover:text-blue-700 transition-colors uppercase tracking-widest"
+                      >
+                        Resend Code
+                      </button>
+                    ) : (
+                      <p className="text-sm font-bold text-slate-400">
+                        Resend code in <span className="text-slate-900 font-black">{timer}s</span>
+                      </p>
+                    )}
+
+                    <button 
+                      type="button"
+                      onClick={() => setShowOtp(false)}
+                      className="block w-full text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors uppercase tracking-widest"
+                    >
+                      Back to registration
+                    </button>
+                  </div>
                 </form>
               </motion.div>
             )}

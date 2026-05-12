@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ShoppingBag, User, Search, Menu } from 'lucide-react';
+import { ShoppingBag, User, Search, Menu, ShieldCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
@@ -11,12 +11,17 @@ const Navbar = () => {
   return (
     <nav className="glass-nav px-6 py-4 flex items-center justify-between">
       <div className="flex items-center gap-8">
-        <Link to="/" className="text-2xl font-bold gradient-text">
-          LookBetter
+        <Link to="/" className="text-2xl font-black gradient-text tracking-tighter">
+          KORE
         </Link>
         <div className="hidden md:flex gap-6 text-sm font-medium text-slate-600">
           <Link to="/" className="hover:text-blue-600 transition-colors">Home</Link>
           <Link to="/shop" className="hover:text-blue-600 transition-colors">Shop</Link>
+          {userInfo && userInfo.isAdmin && (
+            <Link to="/admin" className="text-blue-600 font-bold flex items-center gap-1.5 hover:text-blue-700 transition-colors">
+              <ShieldCheck size={14} /> Admin
+            </Link>
+          )}
           <Link to="/categories" className="hover:text-blue-600 transition-colors">Categories</Link>
         </div>
       </div>

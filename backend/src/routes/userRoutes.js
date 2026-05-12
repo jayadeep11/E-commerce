@@ -2,108 +2,18 @@ const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-const { protect } = require('../middleware/authMiddleware');
+const { protect, admin } = require('../middleware/authMiddleware');
 const sendEmail = require('../utils/sendEmail');
+
+// Temporary in-memory storage for pending registrations
+// NO data is stored in DB until OTP is verified
+const pendingUsers = new Map();
 
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
     expiresIn: '30d',
   });
 };
-
-// @desc    Get user profile
-// @route   GET /api/users/profile
-// @access  Private
-router.get('/profile', protect, async (req, res) => {
-  const user = await User.findById(req.user._id);
-
-  if (user) {
-    res.json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      phone: user.phone,
-      isAdmin: user.isAdmin,
-    });
-  } else {
-    res.status(404).json({ message: 'User not found' });
-  }
-});
-
-// @desc    Update user profile
-// @route   PUT /api/users/profile
-// @access  Private
-router.put('/profile', protect, async (req, res) => {
-  try {
-    const user = await User.findById(req.user._id);
-
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    const { name, email, phone, password } = req.body;
-    
-    // DEBUG LOG
-    console.log(`[PROFILE UPDATE] Request for ${user.email}: Name=${name}, NewEmail=${email}`);
-
-    const emailChanged = email && email !== user.email;
-
-    if (emailChanged) {
-      const emailExists = await User.findOne({ email });
-      if (emailExists) {
-        return res.status(400).json({ message: 'This email is already in use by another account' });
-      }
-
-      const otp = Math.floor(100000 + Math.random() * 900000).toString();
-      const otpExpire = new Date(Date.now() + 10 * 60 * 1000);
-
-      await sendEmail({
-        email: email,
-        subject: 'LookBetter - Verify Your New Email',
-        message: `Your verification code for changing email is: ${otp}`,
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px;">
-            <h2 style="color: #1e293b; text-align: center;">Verify New Email</h2>
-            <p style="color: #64748b; font-size: 16px; line-height: 1.6;">You requested to change your email to <b>${email}</b>. Use the code below to verify:</p>
-            <div style="background: #f8fafc; padding: 20px; text-align: center; font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #2563eb; margin: 30px 0; border-radius: 8px;">
-              ${otp}
-            </div>
-          </div>
-        `
-      });
-
-      user.otp = otp;
-      user.otpExpire = otpExpire;
-      await user.save();
-
-      return res.json({
-        requiresVerification: true,
-        message: 'OTP sent to new email. Please verify to complete the change.',
-        pendingEmail: email
-      });
-    }
-
-    // Update fields
-    user.name = name !== undefined ? name : user.name;
-    user.phone = phone !== undefined ? phone : user.phone;
-    if (password) user.password = password;
-
-    const updatedUser = await user.save();
-    console.log(`[PROFILE SUCCESS] Updated user: ${updatedUser.name}`);
-
-    res.json({
-      _id: updatedUser._id,
-      name: updatedUser.name,
-      email: updatedUser.email,
-      phone: updatedUser.phone,
-      isAdmin: updatedUser.isAdmin,
-      token: generateToken(updatedUser._id),
-    });
-  } catch (error) {
-    console.error('Profile Update Error:', error.message);
-    res.status(500).json({ message: error.message });
-  }
-});
 
 // @desc    Auth user & get token
 // @route   POST /api/users/login
@@ -112,11 +22,20 @@ router.post('/login', async (req, res) => {
   const user = await User.findOne({ email });
 
   if (user && (await user.matchPassword(password))) {
+    if (!user.isVerified) {
+      return res.status(401).json({ 
+        message: 'Account not verified. Please check your email for the verification code.',
+        requiresVerification: true,
+        email: user.email
+      });
+    }
+
     res.json({
       _id: user._id,
       name: user.name,
       email: user.email,
       phone: user.phone,
+      addresses: user.addresses || [],
       isAdmin: user.isAdmin,
       token: generateToken(user._id),
     });
@@ -125,76 +44,202 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// @desc    Register a new user
+// @desc    Register a new user (Stage 1: Memory Only)
 // @route   POST /api/users
 router.post('/', async (req, res) => {
   try {
-    const { name, email, password, phone } = req.body;
+    const { name, email, password, phone, isAdmin } = req.body;
     const userExists = await User.findOne({ email });
-
+    
     if (userExists) {
-      res.status(400).json({ message: 'User already exists' });
-      return;
+      return res.status(400).json({ message: 'User already exists' });
     }
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const otpExpire = new Date(Date.now() + 10 * 60 * 1000);
+    const otpExpire = Date.now() + 10 * 60 * 1000;
+
+    pendingUsers.set(email, { name, email, password, phone, isAdmin: isAdmin === true, otp, otpExpire });
+
+    console.log('\n---------------------------------------');
+    console.log('🚀 [SIGNUP OTP - MEMORY ONLY] 🚀');
+    console.log(`Email: ${email} | Code: ${otp}`);
+    console.log('---------------------------------------\n');
 
     if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
       try {
         await sendEmail({
-          email: email,
-          subject: 'LookBetter - Your Verification Code',
-          message: `Your verification code is: ${otp}`,
-          html: `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e2e8f0; border-radius: 12px;">
-              <h2 style="color: #1e293b; text-align: center;">Welcome to LookBetter</h2>
-              <p style="color: #64748b; font-size: 16px; line-height: 1.6;">Thank you for joining our premium circle. Please use the verification code below to complete your registration:</p>
-              <div style="background: #f8fafc; padding: 20px; text-align: center; font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #2563eb; margin: 30px 0; border-radius: 8px;">
-                ${otp}
-              </div>
-            </div>
-          `
+          email,
+          subject: 'LookBetter - Verification Code',
+          message: `Code: ${otp}`,
+          html: `<div style="font-family:sans-serif;padding:20px;border:1px solid #eee;border-radius:10px;"><h2>Welcome!</h2><p>Your code is: <b>${otp}</b></p></div>`
         });
-      } catch (err) {
-        console.log(`[SIMULATED FALLBACK] OTP for ${email}: ${otp}`);
-      }
+      } catch (err) { console.error('Email failed'); }
     }
 
-    const user = await User.create({ name, email, password, phone, otp, otpExpire, isVerified: false });
-    res.status(201).json({ requiresVerification: true, email: user.email });
+    res.status(200).json({ requiresVerification: true, email });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
 
-// @desc    Verify OTP
+// @desc    Verify OTP & Create DB Record
 // @route   POST /api/users/verify-otp
 router.post('/verify-otp', async (req, res) => {
   try {
-    const { email, otp, newEmail } = req.body;
-    const user = await User.findOne({ email });
+    const { email, otp } = req.body;
+    const pendingData = pendingUsers.get(email);
 
-    if (!user || user.otp !== otp) {
-      return res.status(400).json({ message: 'Invalid or missing user/code' });
+    if (!pendingData || pendingData.otp !== otp) {
+      return res.status(400).json({ message: 'Invalid or expired code' });
     }
 
-    const updateData = { isVerified: true, $unset: { otp: 1, otpExpire: 1 } };
-    if (newEmail) updateData.email = newEmail;
+    const user = await User.create({
+      name: pendingData.name,
+      email: pendingData.email,
+      password: pendingData.password,
+      phone: pendingData.phone,
+      isAdmin: pendingData.isAdmin,
+      isVerified: true
+    });
 
-    const updatedUser = await User.findOneAndUpdate({ email }, updateData, { new: true });
+    pendingUsers.delete(email);
 
+    res.status(201).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      addresses: [],
+      isAdmin: user.isAdmin,
+      token: generateToken(user._id),
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// @desc    Get user profile
+// @route   GET /api/users/profile
+router.get('/profile', protect, async (req, res) => {
+  const user = await User.findById(req.user._id);
+  if (user) {
+    res.json({ _id: user._id, name: user.name, email: user.email, phone: user.phone, addresses: user.addresses || [], isAdmin: user.isAdmin });
+  } else {
+    res.status(404).json({ message: 'User not found' });
+  }
+});
+
+// @desc    Update user profile
+// @route   PUT /api/users/profile
+router.put('/profile', protect, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    const { name, phone, password } = req.body;
+    user.name = name || user.name;
+    user.phone = phone || user.phone;
+    if (password) user.password = password;
+
+    const updatedUser = await user.save();
     res.json({
       _id: updatedUser._id,
       name: updatedUser.name,
       email: updatedUser.email,
       phone: updatedUser.phone,
+      addresses: updatedUser.addresses || [],
       isAdmin: updatedUser.isAdmin,
       token: generateToken(updatedUser._id),
     });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
+});
+
+// --- ADDRESS MANAGEMENT ROUTES ---
+
+// @desc    Add new address
+// @route   POST /api/users/addresses
+router.post('/addresses', protect, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    const { label, address, city, postalCode, country, isDefault } = req.body;
+
+    if (isDefault) {
+      user.addresses.forEach(a => a.isDefault = false);
+    }
+
+    user.addresses.push({ label, address, city, postalCode, country, isDefault });
+    await user.save();
+    res.status(201).json(user.addresses);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// @desc    Update address
+// @route   PUT /api/users/addresses/:id
+router.put('/addresses/:id', protect, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    const address = user.addresses.id(req.params.id);
+
+    if (address) {
+      const { label, address: addr, city, postalCode, country, isDefault } = req.body;
+      
+      if (isDefault) {
+        user.addresses.forEach(a => a.isDefault = false);
+      }
+
+      address.label = label || address.label;
+      address.address = addr || address.address;
+      address.city = city || address.city;
+      address.postalCode = postalCode || address.postalCode;
+      address.country = country || address.country;
+      address.isDefault = isDefault !== undefined ? isDefault : address.isDefault;
+
+      await user.save();
+      res.json(user.addresses);
+    } else {
+      res.status(404).json({ message: 'Address not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// @desc    Delete address
+// @route   DELETE /api/users/addresses/:id
+router.delete('/addresses/:id', protect, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    user.addresses = user.addresses.filter(a => a._id.toString() !== req.params.id);
+    await user.save();
+    res.json(user.addresses);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// @desc    Set default address
+// @route   PUT /api/users/addresses/:id/default
+router.put('/addresses/:id/default', protect, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    user.addresses.forEach(a => {
+      a.isDefault = (a._id.toString() === req.params.id);
+    });
+    await user.save();
+    res.json(user.addresses);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// @desc    Get all users (Admin only)
+router.get('/', protect, admin, async (req, res) => {
+  const users = await User.find({}).select('-password');
+  res.json(users);
 });
 
 module.exports = router;

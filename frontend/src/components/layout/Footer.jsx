@@ -6,11 +6,11 @@ const Footer = () => {
     <footer className="bg-slate-900 text-slate-400 py-12 px-6 mt-20">
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-10">
         <div className="col-span-1 md:col-span-1">
-          <Link to="/" className="text-2xl font-bold text-white mb-6 block">
-            LookBetter
+          <Link to="/" className="text-2xl font-black text-white mb-6 block tracking-tighter">
+            KORE
           </Link>
           <p className="text-sm leading-relaxed mb-6">
-            Elevating your lifestyle with premium products and seamless shopping experiences.
+            The essential standard in high-fidelity luxury accessories.
           </p>
           <div className="flex gap-4">
             <MessageCircle size={18} className="hover:text-white cursor-pointer transition-colors" />
@@ -57,7 +57,7 @@ const Footer = () => {
       </div>
       
       <div className="max-w-7xl mx-auto border-t border-slate-800 mt-12 pt-8 text-center text-xs">
-        <p>&copy; {new Date().getFullYear()} LookBetter. All rights reserved.</p>
+        <p>&copy; {new Date().getFullYear()} KORE. All rights reserved.</p>
       </div>
     </footer>
   );

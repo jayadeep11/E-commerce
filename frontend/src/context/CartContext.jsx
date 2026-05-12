@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect, useRef } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 import { useAuth } from './AuthContext';
 
 const CartContext = createContext();
@@ -16,12 +16,7 @@ export const CartProvider = ({ children }) => {
     const fetchCart = async () => {
       if (userInfo) {
         try {
-          const config = {
-            headers: {
-              Authorization: `Bearer ${userInfo.token}`,
-            },
-          };
-          const { data } = await axios.get('http://localhost:5000/api/cart', config);
+          const { data } = await api.get('/api/cart');
           
           // Map DB structure to frontend structure
           if (data.cartItems) {
@@ -35,7 +30,6 @@ export const CartProvider = ({ children }) => {
           console.error('Error fetching cart:', error);
         }
       } else {
-        // If logged out, you could optionally load from localStorage
         setCartItems([]);
       }
     };
@@ -46,7 +40,7 @@ export const CartProvider = ({ children }) => {
   // 2. Sync cart to DB on changes
   useEffect(() => {
     const syncCart = async () => {
-      // Don't sync on the very first mount (it would overwrite DB with empty array)
+      // Don't sync on the very first mount
       if (isInitialMount.current) {
         isInitialMount.current = false;
         return;
@@ -54,20 +48,13 @@ export const CartProvider = ({ children }) => {
 
       if (userInfo) {
         try {
-          const config = {
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Bearer ${userInfo.token}`,
-            },
-          };
-          
           // Map frontend structure to DB structure { product: id, qty: num }
           const dbItems = cartItems.map(item => ({
             product: item._id,
             qty: item.qty
           }));
 
-          await axios.post('http://localhost:5000/api/cart', { cartItems: dbItems }, config);
+          await api.post('/api/cart', { cartItems: dbItems });
         } catch (error) {
           console.error('Error syncing cart:', error);
         }
@@ -83,9 +70,17 @@ export const CartProvider = ({ children }) => {
     const existItem = cartItems.find((x) => x._id === product._id);
 
     if (existItem) {
+      const newQty = existItem.qty + qty;
+      // Cap at stock limit
+      if (newQty > product.countInStock) {
+        alert(`Sorry, only ${product.countInStock} units available in stock.`);
+        return;
+      }
+      if (newQty < 1) return;
+
       setCartItems(
         cartItems.map((x) =>
-          x._id === existItem._id ? { ...existItem, qty: existItem.qty + qty } : x
+          x._id === existItem._id ? { ...existItem, qty: newQty } : x
         )
       );
     } else {

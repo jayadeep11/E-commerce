@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 
 const AuthContext = createContext();
 
@@ -11,40 +11,32 @@ export const AuthProvider = ({ children }) => {
   );
 
   const login = async (email, password) => {
-    const { data } = await axios.post('http://localhost:5000/api/users/login', { email, password });
+    const { data } = await api.post('/api/users/login', { email, password });
     setUserInfo(data);
     localStorage.setItem('userInfo', JSON.stringify(data));
   };
 
-  const register = async (name, email, password, phone) => {
-    const { data } = await axios.post('http://localhost:5000/api/users', { name, email, password, phone });
+  const register = async (name, email, password, phone, isAdmin = false) => {
+    const { data } = await api.post('/api/users', { name, email, password, phone, isAdmin });
     
-    // If phone was provided, backend returns requiresVerification
     if (data.requiresVerification) {
-      return data; // Return to component to show OTP field
+      return data;
     }
 
-    // Otherwise, it's a direct login (no phone)
     setUserInfo(data);
     localStorage.setItem('userInfo', JSON.stringify(data));
     return data;
   };
 
   const verifyOTP = async (email, otp, newEmail = null) => {
-    const { data } = await axios.post('http://localhost:5000/api/users/verify-otp', { email, otp, newEmail });
+    const { data } = await api.post('/api/users/verify-otp', { email, otp, newEmail });
     setUserInfo(data);
     localStorage.setItem('userInfo', JSON.stringify(data));
     return data;
   };
 
   const updateProfile = async (userData) => {
-    const config = {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${userInfo.token}`,
-      },
-    };
-    const { data } = await axios.put('http://localhost:5000/api/users/profile', userData, config);
+    const { data } = await api.put('/api/users/profile', userData);
     
     if (!data.requiresVerification) {
       setUserInfo(data);
@@ -56,12 +48,7 @@ export const AuthProvider = ({ children }) => {
   const refreshProfile = async () => {
     if (!userInfo) return;
     try {
-      const config = {
-        headers: {
-          Authorization: `Bearer ${userInfo.token}`,
-        },
-      };
-      const { data } = await axios.get('http://localhost:5000/api/users/profile', config);
+      const { data } = await api.get('/api/users/profile');
       const updatedInfo = { ...userInfo, ...data };
       setUserInfo(updatedInfo);
       localStorage.setItem('userInfo', JSON.stringify(updatedInfo));
@@ -70,13 +57,49 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // --- ADDRESS MANAGEMENT ---
+  const addAddress = async (addressData) => {
+    const { data } = await api.post('/api/users/addresses', addressData);
+    const updatedInfo = { ...userInfo, addresses: data };
+    setUserInfo(updatedInfo);
+    localStorage.setItem('userInfo', JSON.stringify(updatedInfo));
+    return data;
+  };
+
+  const updateAddress = async (id, addressData) => {
+    const { data } = await api.put(`/api/users/addresses/${id}`, addressData);
+    const updatedInfo = { ...userInfo, addresses: data };
+    setUserInfo(updatedInfo);
+    localStorage.setItem('userInfo', JSON.stringify(updatedInfo));
+    return data;
+  };
+
+  const deleteAddress = async (id) => {
+    const { data } = await api.delete(`/api/users/addresses/${id}`);
+    const updatedInfo = { ...userInfo, addresses: data };
+    setUserInfo(updatedInfo);
+    localStorage.setItem('userInfo', JSON.stringify(updatedInfo));
+    return data;
+  };
+
+  const setDefaultAddress = async (id) => {
+    const { data } = await api.put(`/api/users/addresses/${id}/default`);
+    const updatedInfo = { ...userInfo, addresses: data };
+    setUserInfo(updatedInfo);
+    localStorage.setItem('userInfo', JSON.stringify(updatedInfo));
+    return data;
+  };
+
   const logout = () => {
     setUserInfo(null);
     localStorage.removeItem('userInfo');
   };
 
   return (
-    <AuthContext.Provider value={{ userInfo, login, register, logout, refreshProfile, verifyOTP, updateProfile }}>
+    <AuthContext.Provider value={{ 
+      userInfo, login, register, logout, refreshProfile, verifyOTP, updateProfile,
+      addAddress, updateAddress, deleteAddress, setDefaultAddress 
+    }}>
       {children}
     </AuthContext.Provider>
   );
