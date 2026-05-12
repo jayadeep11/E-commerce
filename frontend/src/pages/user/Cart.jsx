@@ -95,7 +95,7 @@ const Cart = () => {
             </button>
             
             <p className="text-center text-xs text-slate-400 mt-6 flex items-center justify-center gap-2">
-              Secure checkout powered by Lumina
+              Secure checkout powered by LookBetter
             </p>
           </div>
         </div>

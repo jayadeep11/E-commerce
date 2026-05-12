@@ -2,15 +2,17 @@ import { Link } from 'react-router-dom';
 import { ShoppingBag, User, Search, Menu } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useCart } from '../../context/CartContext';
+import { useAuth } from '../../context/AuthContext';
 
 const Navbar = () => {
   const { cartCount } = useCart();
+  const { userInfo } = useAuth();
 
   return (
     <nav className="glass-nav px-6 py-4 flex items-center justify-between">
       <div className="flex items-center gap-8">
         <Link to="/" className="text-2xl font-bold gradient-text">
-          LUMINA
+          LookBetter
         </Link>
         <div className="hidden md:flex gap-6 text-sm font-medium text-slate-600">
           <Link to="/" className="hover:text-blue-600 transition-colors">Home</Link>
@@ -31,8 +33,12 @@ const Navbar = () => {
             </span>
           )}
         </Link>
-        <Link to="/login" className="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-600">
+        <Link 
+          to={userInfo ? "/profile" : "/login"} 
+          className="p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-600 flex items-center gap-2"
+        >
           <User size={20} />
+          {userInfo && <span className="text-sm font-semibold hidden lg:block">{userInfo.name.split(' ')[0]}</span>}
         </Link>
         <button className="md:hidden p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-600">
           <Menu size={20} />

@@ -7,7 +7,7 @@ const Footer = () => {
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-10">
         <div className="col-span-1 md:col-span-1">
           <Link to="/" className="text-2xl font-bold text-white mb-6 block">
-            LUMINA
+            LookBetter
           </Link>
           <p className="text-sm leading-relaxed mb-6">
             Elevating your lifestyle with premium products and seamless shopping experiences.
@@ -57,7 +57,7 @@ const Footer = () => {
       </div>
       
       <div className="max-w-7xl mx-auto border-t border-slate-800 mt-12 pt-8 text-center text-xs">
-        <p>&copy; {new Date().getFullYear()} Lumina E-Commerce. All rights reserved.</p>
+        <p>&copy; {new Date().getFullYear()} LookBetter. All rights reserved.</p>
       </div>
     </footer>
   );

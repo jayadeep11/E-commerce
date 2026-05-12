@@ -1,4 +1,4 @@
-# Lumina Backend
+# LookBetter Backend
 
 ## Prerequisites
 - Node.js

@@ -7,6 +7,7 @@ import ProductDetails from './pages/user/ProductDetails';
 import Cart from './pages/user/Cart';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
+import Profile from './pages/user/Profile';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
             <Route path="/cart" element={<Cart />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/profile" element={<Profile />} />
             {/* Add more routes here */}
           </Routes>
         </main>
