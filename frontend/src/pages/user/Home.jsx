@@ -5,12 +5,12 @@ import { Link } from 'react-router-dom';
 const Home = () => {
   return (
     <div className="pb-0 overflow-x-hidden">
-      {/* 1. VIEWPORT-LOCKED VANGUARD HERO */}
+      {}
       <section className="h-[calc(100vh-73px)] flex flex-col overflow-hidden">
         
-        {/* TOP COMPONENT: IMMERSIVE CONTENT (88%) */}
+        {}
         <div className="flex-grow h-[88%] relative flex items-center justify-center overflow-hidden bg-slate-900">
-          {/* Cinematic Background */}
+          {}
           <div className="absolute inset-0 z-0">
             <img 
               src="/assets/ui/hero-bg.jpg" 
@@ -43,7 +43,7 @@ const Home = () => {
           </motion.div>
         </div>
 
-        {/* BOTTOM COMPONENT: RHYTHMIC INFINITE TICKER (12%) */}
+        {}
         <div className="h-[12%] bg-white relative flex items-center overflow-hidden select-none border-t border-slate-100">
           <div className="flex whitespace-nowrap animate-marquee-slow items-center">
             {[ 1, 2, 3, 4, 5, 6, 7, 8 ].map((_, i) => (
@@ -63,7 +63,7 @@ const Home = () => {
 
       </section>
 
-      {/* 2. DEPARTMENT SHOWCASE */}
+      {}
       <section className="max-w-7xl mx-auto px-6 py-32">
         <div className="flex flex-col md:flex-row justify-between items-end gap-10 mb-16">
           <div className="space-y-4">
@@ -103,14 +103,14 @@ const Home = () => {
         </div>
       </section>
 
-      {/* 3. THE VANGUARD PHILOSOPHY */}
+      {}
       <section className="bg-slate-900 py-32 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-24 items-center">
+        <div className="max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-24 items-stretch">
           <motion.div 
             initial={{ opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="space-y-12"
+            className="space-y-12 flex flex-col justify-center"
           >
             <div className="space-y-6">
               <span className="text-[10px] font-black text-blue-400 uppercase tracking-[0.4em]">High-Fidelity Craftsmanship</span>
@@ -146,9 +146,9 @@ const Home = () => {
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            className="relative"
+            className="relative h-full"
           >
-            <div className="aspect-[4/5] rounded-[4rem] overflow-hidden">
+            <div className="h-full min-h-[400px] rounded-[4rem] overflow-hidden">
               <img src="/assets/ui/philosophy.jpg" className="w-full h-full object-cover grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-1000" alt="Process" />
             </div>
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-blue-600 rounded-full blur-[100px] opacity-20"></div>
@@ -156,32 +156,47 @@ const Home = () => {
         </div>
       </section>
 
-      {/* 4. THE INNER CIRCLE (Premium CTA) */}
-      <section className="px-6 pb-24 mt-24">
-        <div className="max-w-7xl mx-auto bg-slate-950 rounded-[5rem] p-12 lg:p-32 text-center relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-blue-600/10 rounded-full blur-[120px]"></div>
-          <div className="absolute bottom-0 left-0 w-96 h-96 bg-purple-600/10 rounded-full blur-[120px]"></div>
-          
-          <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            className="relative z-10 space-y-10"
-          >
-            <h2 className="text-5xl md:text-8xl font-black text-white tracking-tighter leading-none">Access the <br /> Unseen.</h2>
-            <p className="text-slate-400 max-w-xl mx-auto text-lg font-medium">Join the KORE Inner Circle for first access to limited seasonal drops and exclusive signature collections.</p>
-            
-            <div className="max-w-md mx-auto flex flex-col md:flex-row gap-4">
-              <input 
-                type="email" 
-                placeholder="Vanguard Email" 
-                className="flex-1 px-8 py-6 bg-white/5 border border-white/10 rounded-2xl text-white font-bold outline-none focus:border-blue-500 transition-all placeholder:text-slate-600"
-              />
-              <button className="px-12 py-6 bg-blue-600 text-white rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-blue-700 transition-all shadow-2xl shadow-blue-600/20 active:scale-95">
-                Join Now
-              </button>
+      {}
+      <section className="pb-12 mt-12 overflow-hidden select-none">
+        <div className="max-w-7xl mx-auto px-6 mb-8">
+          <span className="text-[10px] font-black text-blue-600 uppercase tracking-[0.4em]">The Collective</span>
+          <h2 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tighter mt-2">Voices from the Circle</h2>
+        </div>
+
+        <div className="flex gap-4 whitespace-nowrap animate-marquee-reverse-slow hover:[animation-play-state:paused]">
+          {[...Array(10)].map((_, i) => (
+            <div key={i} className="flex gap-4">
+              {[
+                { name: 'Marcus T.', comment: 'The signature bifold is a masterpiece of minimalist engineering.' },
+                { name: 'Elena R.', comment: 'High-fidelity fashion at its peak. The quality is unmatched.' },
+                { name: 'Julian K.', comment: 'KORE redefined my wardrobe with pieces that actually endure.' },
+                { name: 'Sarah L.', comment: 'The attention to detail in the formal collection is stunning.' },
+                { name: 'David W.', comment: 'Finally a brand that prioritizes substance over fast trends.' },
+              ].map((review, idx) => (
+                <div 
+                  key={idx} 
+                  className="bg-slate-900 border border-slate-800 p-7 rounded-[2rem] flex flex-col gap-5 min-w-[310px] shadow-xl shadow-slate-900/10"
+                >
+                  <p className="text-slate-300 font-medium italic whitespace-normal leading-relaxed text-[15px]">
+                    "{review.comment}"
+                  </p>
+                  <div className="flex items-center gap-3 mt-auto">
+                    <div className="w-9 h-9 bg-blue-600 text-white rounded-full flex items-center justify-center font-black text-xs">
+                      {review.name.charAt(0)}
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-black text-white uppercase tracking-widest leading-none mb-1">{review.name}</p>
+                      <div className="flex items-center gap-0.5">
+                        {[...Array(5)].map((_, i) => (
+                          <Star key={i} size={8} className="text-amber-400 fill-amber-400" />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
-          </motion.div>
+          ))}
         </div>
       </section>
     </div>

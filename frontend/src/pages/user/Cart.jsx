@@ -11,7 +11,7 @@ const Cart = () => {
   const { userInfo } = useAuth();
   const navigate = useNavigate();
 
-  // Address Selection State
+  
   const [selectedAddress, setSelectedAddress] = useState(
     userInfo?.addresses?.find(a => a.isDefault) || userInfo?.addresses?.[0] || null
   );
@@ -136,7 +136,7 @@ const Cart = () => {
           <div className="glass-card p-8 sticky top-28">
             <h2 className="text-xl font-bold text-slate-900 mb-6">Order Summary</h2>
             
-            {/* Shipping Destination Selector */}
+            {}
             {userInfo && (
               <div className="mb-8 space-y-4">
                 <div className="flex items-center justify-between">

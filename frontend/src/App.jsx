@@ -9,6 +9,7 @@ import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import Profile from './pages/user/Profile';
 import Orders from './pages/user/Orders';
+import PublicRoute from './components/auth/PublicRoute';
 import AdminRoute from './components/auth/AdminRoute';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import UserList from './pages/admin/UserList';
@@ -17,9 +18,10 @@ import OrderList from './pages/admin/OrderList';
 import OrderSuccess from './pages/OrderSuccess';
 import OrderDetails from './pages/user/OrderDetails';
 import Categories from './pages/user/Categories';
+import NotFound from './pages/NotFound';
 
 
-// Component to handle conditional footer rendering
+
 const LayoutWrapper = ({ children }) => {
   const location = useLocation();
   const hideFooterOn = ['/shop'];
@@ -46,20 +48,26 @@ function App() {
           <Route path="/categories" element={<Categories />} />
           <Route path="/product/:id" element={<ProductDetails />} />
           <Route path="/cart" element={<Cart />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+          {}
+          <Route element={<PublicRoute />}>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+          </Route>
           <Route path="/profile" element={<Profile />} />
           <Route path="/orders" element={<Orders />} />
           <Route path="/order/:id" element={<OrderDetails />} />
           <Route path="/order-success" element={<OrderSuccess />} />
 
-          {/* Admin Routes */}
+          {}
           <Route path="/admin" element={<AdminRoute />}>
             <Route index element={<AdminDashboard />} />
             <Route path="users" element={<UserList />} />
             <Route path="products" element={<ProductList />} />
             <Route path="orders" element={<OrderList />} />
           </Route>
+
+          {}
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </LayoutWrapper>
     </Router>

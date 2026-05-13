@@ -12,7 +12,7 @@ const OrderDetails = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Review Modal State
+  
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [rating, setRating] = useState(5);
@@ -66,7 +66,7 @@ const OrderDetails = () => {
   const deliverHandler = async () => {
     try {
       await api.put(`/api/orders/${order._id}/deliver`, {});
-      // Refresh order data
+      
       const { data } = await api.get(`/api/orders/${order._id}`);
       setOrder(data);
     } catch (error) {
@@ -98,7 +98,7 @@ const OrderDetails = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-12 min-h-screen">
-      {/* Header */}
+      {}
       <div className="mb-12">
         <Link to="/orders" className="flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors mb-8 group font-bold text-sm">
           <ChevronLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
@@ -120,9 +120,9 @@ const OrderDetails = () => {
       </div>
 
       <div className="grid lg:grid-cols-3 gap-8">
-        {/* Left Column: Items & Fulfillment */}
+        {}
         <div className="lg:col-span-2 space-y-8">
-          {/* Status Tracker */}
+          {}
           <div className="bg-white border border-slate-100 rounded-[2.5rem] p-8 shadow-sm">
             <h2 className="text-xl font-black text-slate-900 mb-8 flex items-center gap-3">
               <Package size={22} className="text-blue-600" /> Fulfillment Status
@@ -157,7 +157,7 @@ const OrderDetails = () => {
             )}
           </div>
 
-          {/* Items List */}
+          {}
           <div className="bg-white border border-slate-100 rounded-[2.5rem] p-8 shadow-sm overflow-hidden">
             <h2 className="text-xl font-black text-slate-900 mb-8 flex items-center gap-3">
               <ShoppingCart size={22} className="text-blue-600" /> Order Items
@@ -190,9 +190,9 @@ const OrderDetails = () => {
           </div>
         </div>
 
-        {/* Right Column: Address & Summary */}
+        {}
         <div className="space-y-8">
-          {/* Shipping Address */}
+          {}
           <div className="bg-slate-900 text-white rounded-[2.5rem] p-8 shadow-xl shadow-slate-900/10">
             <h2 className="text-xl font-black mb-6 flex items-center gap-3">
               <Truck size={22} className="text-blue-400" /> Shipping
@@ -205,7 +205,7 @@ const OrderDetails = () => {
             </div>
           </div>
 
-          {/* Payment Method */}
+          {}
           <div className="bg-white border border-slate-100 rounded-[2.5rem] p-8 shadow-sm">
             <h2 className="text-xl font-black text-slate-900 mb-6 flex items-center gap-3">
               <CreditCard size={22} className="text-blue-600" /> Payment
@@ -221,7 +221,7 @@ const OrderDetails = () => {
             </div>
           </div>
 
-          {/* Total Summary */}
+          {}
           <div className="bg-white border border-slate-100 rounded-[2.5rem] p-8 shadow-sm">
             <h2 className="text-xl font-black text-slate-900 mb-8">Summary</h2>
             <div className="space-y-4">
@@ -247,7 +247,7 @@ const OrderDetails = () => {
         </div>
       </div>
 
-      {/* REVIEW MODAL */}
+      {}
       <AnimatePresence>
         {isReviewModalOpen && selectedProduct && (
           <div className="fixed inset-0 z-[300] flex items-center justify-center p-6">

@@ -10,7 +10,7 @@ const OrderSuccess = () => {
   const { userInfo } = useAuth();
 
   useEffect(() => {
-    // Trigger the "tiny papers" confetti
+    
     const duration = 3 * 1000;
     const animationEnd = Date.now() + duration;
     const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
@@ -25,7 +25,7 @@ const OrderSuccess = () => {
       }
 
       const particleCount = 50 * (timeLeft / duration);
-      // since particles fall down, start a bit higher than random
+      
       confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } });
       confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } });
     }, 250);
@@ -35,7 +35,7 @@ const OrderSuccess = () => {
 
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center overflow-hidden bg-white">
-      {/* The Growing Green Background from center */}
+      {}
       <motion.div 
         initial={{ scale: 0, borderRadius: '100%' }}
         animate={{ scale: 3, borderRadius: '0%' }}

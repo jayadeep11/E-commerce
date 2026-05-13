@@ -11,7 +11,7 @@ const ProductList = () => {
   const [editMode, setEditMode] = useState(false);
   const [editProductId, setEditProductId] = useState(null);
 
-  // Form State
+  
   const [formData, setFormData] = useState({
     name: '',
     brand: '',
@@ -167,7 +167,7 @@ const ProductList = () => {
         ))}
       </div>
 
-      {/* FULL SCREEN CREATE PRODUCT MODAL - REFINED PREVIEW */}
+      {}
       <AnimatePresence>
         {isModalOpen && (
           <motion.div 
@@ -176,7 +176,7 @@ const ProductList = () => {
             exit={{ opacity: 0, y: 20 }}
             className="fixed inset-0 bg-white z-[150] overflow-hidden flex flex-col"
           >
-            {/* Header */}
+            {}
             <div className="px-8 lg:px-12 py-6 border-b border-slate-100 flex items-center justify-between bg-white z-20">
               <div className="flex items-center gap-6">
                 <button 
@@ -208,10 +208,10 @@ const ProductList = () => {
               </div>
             </div>
 
-            {/* Main Content: 70/30 Split */}
+            {}
             <div className="flex-1 overflow-hidden flex flex-col lg:flex-row">
               
-              {/* Left Side: Fields (70%) */}
+              {}
               <div className="flex-1 overflow-y-auto p-8 lg:p-16 scrollbar-hide">
                 <div className="max-w-2xl mx-auto space-y-12">
                   <section className="space-y-6">
@@ -348,7 +348,7 @@ const ProductList = () => {
                 </div>
               </div>
 
-              {/* Right Side: Small Floating Preview (30%) */}
+              {}
               <div className="w-full lg:w-[380px] bg-slate-50 border-l border-slate-100 p-8 flex flex-col items-center justify-center relative">
                 <div className="absolute top-8 left-8">
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Live Preview</p>

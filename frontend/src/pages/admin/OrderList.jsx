@@ -26,7 +26,7 @@ const OrderList = () => {
   const deliverHandler = async (id) => {
     try {
       await api.put(`/api/orders/${id}/deliver`, {});
-      // Refresh list
+      
       const { data } = await api.get('/api/orders');
       setOrders(Array.isArray(data) ? data : []);
     } catch (error) {

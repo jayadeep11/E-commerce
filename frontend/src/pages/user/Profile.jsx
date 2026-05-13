@@ -12,7 +12,7 @@ const Profile = () => {
   } = useAuth();
   const navigate = useNavigate();
 
-  // Sidebar/Drawer State
+  
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isAddressDrawerOpen, setIsAddressDrawerOpen] = useState(false);
   const [editingAddress, setEditingAddress] = useState(null);
@@ -32,16 +32,16 @@ const Profile = () => {
     country: ''
   });
 
-  // Section Toggle States
+  
   const [showPhoneEdit, setShowPhoneEdit] = useState(false);
   const [showPassEdit, setShowPassEdit] = useState(false);
 
-  // Verification State
+  
   const [showOtpScreen, setShowOtpScreen] = useState(false);
   const [pendingEmail, setPendingEmail] = useState('');
   const [otp, setOtp] = useState('');
 
-  // UI Status
+  
   const [loading, setLoading] = useState(false);
   const [toast, setToast] = useState(null);
   const [orderCount, setOrderCount] = useState(0);
@@ -157,7 +157,7 @@ const Profile = () => {
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-12 relative min-h-screen">
-      {/* Premium Toast Notification */}
+      {}
       <AnimatePresence>
         {toast && (
           <motion.div 
@@ -177,7 +177,7 @@ const Profile = () => {
       </AnimatePresence>
 
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-10">
-        {/* Profile Header */}
+        {}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
           <div className="flex items-center gap-8">
             <div className="w-24 h-24 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-3xl flex items-center justify-center text-white text-4xl font-bold shadow-2xl shadow-blue-500/20">
@@ -212,7 +212,7 @@ const Profile = () => {
 
         <div className="grid lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-8">
-            {/* Account Credentials */}
+            {}
             <div className="glass-card p-10 space-y-10 relative overflow-hidden">
               <div className="absolute -top-10 -right-10 opacity-[0.05] rotate-12">
                 <ShieldCheck size={200} />
@@ -238,7 +238,7 @@ const Profile = () => {
               </div>
             </div>
 
-            {/* Saved Addresses Section */}
+            {}
             <div className="glass-card p-10 space-y-8">
               <div className="flex items-center justify-between">
                 <h2 className="text-2xl font-black text-slate-900">Saved Addresses</h2>
@@ -290,7 +290,7 @@ const Profile = () => {
             </div>
           </div>
 
-          {/* Right Column Stats */}
+          {}
           <div className="space-y-6">
             <div 
               onClick={() => navigate('/orders')}
@@ -335,7 +335,7 @@ const Profile = () => {
         </div>
       </motion.div>
 
-      {/* SETTINGS DRAWER (PROFILE) */}
+      {}
       <AnimatePresence>
         {isDrawerOpen && (
           <>
@@ -368,7 +368,7 @@ const Profile = () => {
         )}
       </AnimatePresence>
 
-      {/* ADDRESS DRAWER */}
+      {}
       <AnimatePresence>
         {isAddressDrawerOpen && (
           <>
@@ -415,7 +415,7 @@ const Profile = () => {
         )}
       </AnimatePresence>
 
-      {/* OTP MODAL */}
+      {}
       <AnimatePresence>
         {showOtpScreen && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[150] flex items-center justify-center p-6 bg-slate-900/70">

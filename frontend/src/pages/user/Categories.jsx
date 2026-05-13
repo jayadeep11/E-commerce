@@ -61,17 +61,17 @@ const Categories = () => {
             transition={{ delay: index * 0.1 }}
             className="group relative h-[350px] lg:h-[450px] rounded-[2.5rem] overflow-hidden border border-slate-100 shadow-2xl shadow-slate-200/40"
           >
-            {/* Background Image */}
+            {}
             <img 
               src={category.image} 
               alt={category.name} 
               className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
             />
             
-            {/* Overlay */}
+            {}
             <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/20 to-transparent group-hover:via-slate-900/40 transition-all duration-500"></div>
 
-            {/* Content */}
+            {}
             <div className="absolute inset-0 p-8 flex flex-col justify-end">
               <div className="flex items-center gap-3 mb-3 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
                 <span className="w-8 h-px bg-blue-500"></span>
@@ -97,7 +97,7 @@ const Categories = () => {
               </Link>
             </div>
 
-            {/* Accent Decor */}
+            {}
             <div className="absolute top-8 right-8 w-12 h-12 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center border border-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
               <Sparkles size={20} className="text-white" />
             </div>
@@ -105,7 +105,7 @@ const Categories = () => {
         ))}
       </div>
 
-      {/* Boutique Stats / Trust Badges */}
+      {}
       <motion.div 
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}

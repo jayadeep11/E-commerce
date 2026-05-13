@@ -94,7 +94,7 @@ const Register = () => {
     <div className="min-h-[90vh] flex items-center justify-center py-12 px-6">
       <div className="max-w-5xl w-full grid md:grid-cols-2 gap-0 bg-white rounded-[2rem] overflow-hidden shadow-2xl shadow-slate-200/50 border border-slate-100">
         
-        {/* Left Side: Branding & Info */}
+        {}
         <div className="hidden md:flex flex-col justify-between p-12 bg-gradient-to-br from-blue-600 to-indigo-700 text-white relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-3xl -mr-32 -mt-32" />
           <div className="absolute bottom-0 left-0 w-64 h-64 bg-indigo-400/20 rounded-full blur-3xl -ml-32 -mb-32" />
@@ -147,7 +147,7 @@ const Register = () => {
           </div>
         </div>
 
-        {/* Right Side: Form */}
+        {}
         <div className="p-8 md:p-12 flex flex-col justify-center">
           <AnimatePresence mode="wait">
             {!showOtp ? (

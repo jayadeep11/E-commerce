@@ -16,13 +16,13 @@ const Shop = () => {
     if (!hasSeenNotice) {
       setShowNotice(true);
       sessionStorage.setItem('hasSeenRenderNotice', 'true'); 
-      // Notice stays for 7 seconds to give user time to read
+      
       const timer = setTimeout(() => setShowNotice(false), 7000);
       return () => clearTimeout(timer);
     }
   }, []);
 
-  // Filter States
+  
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedGender, setSelectedGender] = useState('All');
@@ -50,7 +50,7 @@ const Shop = () => {
     fetchProducts();
   }, []);
 
-  // Filtering & Sorting Logic
+  
   useEffect(() => {
     let result = [...products];
 
@@ -90,14 +90,14 @@ const Shop = () => {
 
   return (
     <div className="h-[calc(100vh-80px)] bg-white flex overflow-hidden">
-      {/* MAIN CONTENT AREA - INDEPENDENT SCROLL - HIDDEN SCROLLBAR */}
+      {}
       <motion.div 
         layout
         className="flex-1 h-full overflow-y-auto hide-scrollbar"
         transition={{ type: 'spring', damping: 25, stiffness: 200 }}
       >
         <div className="max-w-7xl mx-auto px-6 py-12">
-          {/* Page Header - Compact & Refined */}
+          {}
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10">
             <div>
               <h1 className="text-3xl font-black text-slate-900 tracking-tight mb-1">SHOP</h1>
@@ -139,7 +139,7 @@ const Shop = () => {
             </div>
           </div>
 
-          {/* Product Grid - Compact high-density layout */}
+          {}
           <div className={`grid gap-6 pb-20 transition-all duration-300 ${
             isFilterOpen 
               ? 'grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' 
@@ -164,7 +164,7 @@ const Shop = () => {
             )}
           </div>
 
-          {/* End of Collection Marker */}
+          {}
           {!loading && Array.isArray(filteredProducts) && filteredProducts.length > 0 && (
             <div className="py-20 flex items-center gap-6">
               <div className="flex-1 h-[1px] bg-slate-100" />
@@ -175,7 +175,7 @@ const Shop = () => {
         </div>
       </motion.div>
 
-      {/* FIXED SIDE-BY-SIDE FILTER PANEL - HIDDEN SCROLLBAR */}
+      {}
       <AnimatePresence>
         {isFilterOpen && (
           <motion.div 
@@ -196,9 +196,9 @@ const Shop = () => {
                 </button>
               </div>
 
-              <div className="flex-1 overflow-y-auto hide-scrollbar px-10 space-y-10 pb-10">
-                {/* SIDEBAR SEARCH - SYNCED */}
-                <div className="space-y-6">
+              <div className="flex-1 overflow-y-auto hide-scrollbar px-10 space-y-8 pb-10">
+                {}
+                <div className="space-y-4">
                   <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Search Pieces</h3>
                   <div className="relative group">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors" size={16} />
@@ -212,15 +212,15 @@ const Shop = () => {
                   </div>
                 </div>
 
-                {/* Department (Gender) */}
-                <div className="space-y-6">
+                {}
+                <div className="space-y-4">
                   <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Department</h3>
                   <div className="flex flex-wrap gap-2">
                     {genderOptions.map(gender => (
                       <button
                         key={gender}
                         onClick={() => setSelectedGender(gender)}
-                        className={`px-6 py-2.5 rounded-full font-bold text-xs transition-all ${
+                        className={`px-4 py-2 rounded-full font-bold text-[10px] transition-all ${
                           selectedGender === gender 
                             ? 'bg-blue-600 text-white shadow-lg' 
                             : 'bg-white text-slate-600 border border-slate-100 hover:border-slate-300'
@@ -232,15 +232,15 @@ const Shop = () => {
                   </div>
                 </div>
 
-                {/* Category */}
-                <div className="space-y-6">
+                {}
+                <div className="space-y-4">
                   <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Category</h3>
                   <div className="flex flex-wrap gap-2">
                     {categories.map(cat => (
                       <button
                         key={cat}
                         onClick={() => setSelectedCategory(cat)}
-                        className={`px-6 py-2.5 rounded-full font-bold text-xs transition-all ${
+                        className={`px-4 py-2 rounded-full font-bold text-[10px] transition-all ${
                           selectedCategory === cat 
                             ? 'bg-blue-600 text-white shadow-lg' 
                             : 'bg-white text-slate-600 border border-slate-100 hover:border-slate-300'
@@ -252,10 +252,10 @@ const Shop = () => {
                   </div>
                 </div>
 
-                {/* Sorting */}
-                <div className="space-y-6">
+                {}
+                <div className="space-y-4">
                   <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Sort Options</h3>
-                  <div className="space-y-2">
+                  <div className="space-y-1.5">
                     {[
                       { id: 'newest', label: 'New Arrivals' },
                       { id: 'price-low', label: 'Price: Low to High' },
@@ -264,14 +264,14 @@ const Shop = () => {
                       <button
                         key={option.id}
                         onClick={() => setSortBy(option.id)}
-                        className={`w-full flex items-center justify-between p-4 rounded-full transition-all ${
+                        className={`w-full flex items-center justify-between px-5 py-3 rounded-full transition-all ${
                           sortBy === option.id 
                             ? 'bg-slate-900 text-white' 
                             : 'bg-white border border-slate-100 text-slate-600 hover:border-slate-300'
                         }`}
                       >
-                        <span className="font-bold text-xs tracking-wide">{option.label}</span>
-                        {sortBy === option.id && <CheckIcon size={14} />}
+                        <span className="font-bold text-[10px] tracking-wide">{option.label}</span>
+                        {sortBy === option.id && <CheckIcon size={12} />}
                       </button>
                     ))}
                   </div>
@@ -282,7 +282,7 @@ const Shop = () => {
         )}
       </AnimatePresence>
 
-      {/* Render Free Tier Notice Toast */}
+      {}
       <AnimatePresence>
         {showNotice && (
           <motion.div

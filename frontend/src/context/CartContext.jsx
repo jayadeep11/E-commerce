@@ -11,14 +11,14 @@ export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
   const isInitialMount = useRef(true);
 
-  // 1. Fetch cart from DB on login
+  
   useEffect(() => {
     const fetchCart = async () => {
       if (userInfo) {
         try {
           const { data } = await api.get('/api/cart');
           
-          // Map DB structure to frontend structure
+          
           if (data.cartItems) {
             const formattedItems = data.cartItems.map(item => ({
               ...item.product,
@@ -37,10 +37,10 @@ export const CartProvider = ({ children }) => {
     fetchCart();
   }, [userInfo]);
 
-  // 2. Sync cart to DB on changes
+  
   useEffect(() => {
     const syncCart = async () => {
-      // Don't sync on the very first mount
+      
       if (isInitialMount.current) {
         isInitialMount.current = false;
         return;
@@ -48,7 +48,7 @@ export const CartProvider = ({ children }) => {
 
       if (userInfo) {
         try {
-          // Map frontend structure to DB structure { product: id, qty: num }
+          
           const dbItems = cartItems.map(item => ({
             product: item._id,
             qty: item.qty
@@ -61,7 +61,7 @@ export const CartProvider = ({ children }) => {
       }
     };
 
-    // Small delay to debounce rapid clicks
+    
     const timeoutId = setTimeout(syncCart, 500);
     return () => clearTimeout(timeoutId);
   }, [cartItems, userInfo]);
@@ -71,7 +71,7 @@ export const CartProvider = ({ children }) => {
 
     if (existItem) {
       const newQty = existItem.qty + qty;
-      // Cap at stock limit
+      
       if (newQty > product.countInStock) {
         alert(`Sorry, only ${product.countInStock} units available in stock.`);
         return;

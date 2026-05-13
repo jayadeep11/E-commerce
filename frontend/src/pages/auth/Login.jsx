@@ -32,7 +32,7 @@ const Login = () => {
     <div className="min-h-[90vh] flex items-center justify-center py-12 px-6">
       <div className="max-w-5xl w-full grid md:grid-cols-2 gap-0 bg-white rounded-[2rem] overflow-hidden shadow-2xl shadow-slate-200/50 border border-slate-100">
         
-        {/* Left Side: Branding & Image */}
+        {}
         <div className="hidden md:flex flex-col justify-between p-12 bg-slate-900 text-white relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/20 rounded-full blur-3xl -mr-32 -mt-32" />
           
@@ -74,7 +74,7 @@ const Login = () => {
           </div>
         </div>
 
-        {/* Right Side: Form */}
+        {}
         <div className="p-8 md:p-12 flex flex-col justify-center">
           <div className="mb-10 text-center md:text-left">
             <h1 className="text-3xl font-bold text-slate-900 mb-2">Sign In</h1>

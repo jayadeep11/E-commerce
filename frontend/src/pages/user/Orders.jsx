@@ -10,7 +10,7 @@ const Orders = () => {
   const [loading, setLoading] = useState(true);
   const { userInfo } = useAuth();
 
-  // Review Modal State
+  
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [rating, setRating] = useState(5);
@@ -94,7 +94,7 @@ const Orders = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-6 py-12 min-h-screen">
-      {/* Financial Overview Header */}
+      {}
       <div className="grid sm:grid-cols-3 gap-6 mb-16">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
@@ -183,7 +183,7 @@ const Orders = () => {
                   {getStatusBadge(order.isPaid, order.isDelivered)}
                 </div>
 
-                {/* Items Preview: Compact Stack */}
+                {}
                 <div className="flex -space-x-3 overflow-hidden">
                   {order.orderItems.slice(0, 3).map((item, index) => (
                     <img 
@@ -200,7 +200,7 @@ const Orders = () => {
                   )}
                 </div>
 
-                {/* Flexible Spacer to push button to far right */}
+                {}
                 <div className="flex-grow hidden lg:block"></div>
 
                 <div className="text-right space-y-1 pr-8 border-r border-slate-50 mr-8">
@@ -208,7 +208,7 @@ const Orders = () => {
                   <p className="text-xl font-black text-slate-900">${order.totalPrice.toFixed(2)}</p>
                 </div>
 
-                {/* Actions: Fixed at the very end */}
+                {}
                 <div className="flex items-center justify-end">
                   {order.isDelivered && (
                     <button 
@@ -225,7 +225,7 @@ const Orders = () => {
         </div>
       )}
 
-      {/* REVIEW MODAL */}
+      {}
       <AnimatePresence>
         {isReviewModalOpen && selectedProduct && (
           <div className="fixed inset-0 z-[300] flex items-center justify-center p-6">
@@ -256,7 +256,7 @@ const Orders = () => {
                   <div className="flex-grow space-y-4">
                     <p className="font-black text-slate-900 text-lg leading-tight truncate max-w-[200px]">{selectedProduct.name}</p>
                     
-                    {/* Star Rating Selector */}
+                    {}
                     <div className="flex gap-1.5">
                       {[1, 2, 3, 4, 5].map((num) => (
                         <button 

@@ -57,7 +57,7 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // --- ADDRESS MANAGEMENT ---
+  
   const addAddress = async (addressData) => {
     const { data } = await api.post('/api/users/addresses', addressData);
     const updatedInfo = { ...userInfo, addresses: data };
