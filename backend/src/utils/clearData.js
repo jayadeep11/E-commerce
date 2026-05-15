@@ -14,19 +14,19 @@ const clearData = async () => {
 
     console.log('\n--- 🔥 TOTAL DATABASE PURGE 🔥 ---');
     
-    // Clear Orders
+    
     await Order.deleteMany({});
     console.log('✔ All Orders cleared.');
 
-    // Clear Carts
+    
     await Cart.deleteMany({});
     console.log('✔ All Shopping Carts cleared.');
 
-    // Clear Products
+    
     await Product.deleteMany({});
     console.log('✔ All Products cleared.');
 
-    // Clear Users
+    
     await User.deleteMany({});
     console.log('✔ All Users cleared.');
 

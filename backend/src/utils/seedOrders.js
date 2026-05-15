@@ -30,7 +30,7 @@ const seedOrders = async () => {
     const orders = [];
 
     for (let i = 0; i < 100; i++) {
-      // Randomly pick 1-3 products for this order
+      
       const numItems = Math.floor(Math.random() * 3) + 1;
       const orderItems = [];
       let itemsPrice = 0;
@@ -54,8 +54,8 @@ const seedOrders = async () => {
       const taxPrice = Number((0.15 * itemsPrice).toFixed(2));
       const totalPrice = itemsPrice + shippingPrice + taxPrice;
 
-      const isPaid = Math.random() > 0.2; // 80% chance it's paid
-      const isDelivered = isPaid && Math.random() > 0.3; // 70% chance of being delivered if paid
+      const isPaid = Math.random() > 0.2; 
+      const isDelivered = isPaid && Math.random() > 0.3; 
 
       orders.push({
         user: user._id,
@@ -75,7 +75,7 @@ const seedOrders = async () => {
         paidAt: isPaid ? new Date(Date.now() - Math.floor(Math.random() * 1000000000)) : null,
         isDelivered,
         deliveredAt: isDelivered ? new Date() : null,
-        createdAt: new Date(Date.now() - Math.floor(Math.random() * 10000000000)), // Up to 4 months ago
+        createdAt: new Date(Date.now() - Math.floor(Math.random() * 10000000000)), 
       });
     }
 

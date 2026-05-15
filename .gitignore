@@ -73,6 +73,9 @@ Thumbs.db
 # Frontend
 frontend/dist/
 frontend/build/
+frontend/android/
+frontend/capacitor.config.json
+scratch/
 
 # Backend
 backend/uploads/

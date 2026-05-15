@@ -4,9 +4,9 @@ const Order = require('../models/Order');
 const Product = require('../models/Product');
 const { protect, admin } = require('../middleware/authMiddleware');
 
-// @desc    Create new order
-// @route   POST /api/orders
-// @access  Private
+
+
+
 router.post('/', protect, async (req, res) => {
   try {
     const { orderItems, shippingAddress, paymentMethod, itemsPrice, taxPrice, shippingPrice, totalPrice } = req.body;
@@ -24,18 +24,20 @@ router.post('/', protect, async (req, res) => {
       taxPrice,
       shippingPrice,
       totalPrice,
-      isPaid: true, // Auto-pay for demo/simulated flow
-      paidAt: Date.now(),
+      isPaid: req.body.isPaid || false, 
+      paidAt: req.body.isPaid ? Date.now() : null,
     });
 
     const createdOrder = await order.save();
 
-    // REDUCE STOCK LOGIC
-    for (const item of orderItems) {
-      const product = await Product.findById(item.product || item._id);
-      if (product) {
-        product.countInStock = Math.max(0, product.countInStock - item.qty);
-        await product.save();
+    
+    if (createdOrder.isPaid) {
+      for (const item of createdOrder.orderItems) {
+        const product = await Product.findById(item.product);
+        if (product) {
+          product.countInStock = Math.max(0, product.countInStock - item.qty);
+          await product.save();
+        }
       }
     }
 
@@ -46,9 +48,9 @@ router.post('/', protect, async (req, res) => {
   }
 });
 
-// @desc    Get logged in user orders
-// @route   GET /api/orders/myorders
-// @access  Private
+
+
+
 router.get('/myorders', protect, async (req, res) => {
   try {
     const orders = await Order.find({ user: req.user._id }).sort({ createdAt: -1 });
@@ -58,9 +60,9 @@ router.get('/myorders', protect, async (req, res) => {
   }
 });
 
-// @desc    Get order by ID
-// @route   GET /api/orders/:id
-// @access  Private
+
+
+
 router.get('/:id', protect, async (req, res) => {
   try {
     const order = await Order.findById(req.params.id).populate('user', 'name email');
@@ -75,9 +77,9 @@ router.get('/:id', protect, async (req, res) => {
   }
 });
 
-// @desc    Get all orders
-// @route   GET /api/orders
-// @access  Private/Admin
+
+
+
 router.get('/', protect, admin, async (req, res) => {
   try {
     const orders = await Order.find({}).populate('user', 'id name').sort({ createdAt: -1 });
@@ -87,9 +89,9 @@ router.get('/', protect, admin, async (req, res) => {
   }
 });
 
-// @desc    Update order to delivered
-// @route   PUT /api/orders/:id/deliver
-// @access  Private/Admin
+
+
+
 router.put('/:id/deliver', protect, admin, async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);

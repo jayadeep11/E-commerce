@@ -17,7 +17,7 @@ const promoteUser = async (email) => {
     }
 
     user.isAdmin = true;
-    user.isVerified = true; // Auto-verify if they are becoming admin
+    user.isVerified = true; 
     await user.save();
 
     console.log('--- PROMOTION SUCCESSFUL ---');
@@ -31,7 +31,7 @@ const promoteUser = async (email) => {
   }
 };
 
-// Get email from command line argument
+
 const emailArg = process.argv[2];
 
 if (!emailArg) {

@@ -43,18 +43,16 @@ const Cart = () => {
           postalCode: selectedAddress.postalCode,
           country: selectedAddress.country,
         },
-        paymentMethod: 'PayPal',
+        paymentMethod: 'Stripe',
         itemsPrice: Number(cartTotal),
         shippingPrice: 0,
         taxPrice: 0,
         totalPrice: Number(cartTotal),
       };
 
-      await api.post('/api/orders', orderData);
-      if (clearCart) clearCart(); 
-      navigate('/order-success');
+      navigate('/checkout', { state: { orderData } });
     } catch (error) {
-      alert(error.response?.data?.message || 'Error placing order');
+      alert('Error preparing checkout');
     }
   };
 

@@ -30,10 +30,10 @@ const productSchema = new mongoose.Schema({
     enum: ['Men', 'Women', 'Kids', 'Unisex'],
     default: 'Unisex'
   },
-  price: { type: Number, required: true, default: 0 }, // Sale Price
-  mrp: { type: Number, required: true, default: 0 },   // Original Price
-  image: { type: String, required: true },            // Thumbnail
-  images: [{ type: String }],                         // Gallery
+  price: { type: Number, required: true, default: 0 }, 
+  mrp: { type: Number, required: true, default: 0 },   
+  image: { type: String, required: true },            
+  images: [{ type: String }],                         
   reviews: [reviewSchema],
   countInStock: { type: Number, required: true, default: 0 },
   rating: { type: Number, default: 0 },

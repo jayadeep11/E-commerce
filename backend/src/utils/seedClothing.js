@@ -5,7 +5,7 @@ const User = require('../models/User');
 
 dotenv.config();
 
-// Pool of 50+ Unique Accessory Images from Unsplash
+
 const accessoryImages = [
   'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80',
   'https://images.unsplash.com/photo-1524592094714-0f0654e20314?auto=format&fit=crop&w=800&q=80',
@@ -59,7 +59,7 @@ const accessoryImages = [
 ];
 
 const clothingProducts = [
-  // ACCESSORIES - MEN
+  
   {
     name: 'Precision Leather Belt',
     brand: 'Formal Edge',
@@ -98,7 +98,7 @@ const clothingProducts = [
     mrp: 120.00
   },
 
-  // ACCESSORIES - WOMEN
+  
   {
     name: '18K Gold Plated Necklace',
     brand: 'Luna Muse',
@@ -137,7 +137,7 @@ const clothingProducts = [
     mrp: 210.00
   },
 
-  // ACCESSORIES - KIDS
+  
   {
     name: 'Adventure School Backpack',
     brand: 'Tiny Trendsetters',
@@ -175,7 +175,7 @@ const clothingProducts = [
     mrp: 18.00
   },
 
-  // ACCESSORIES - UNISEX
+  
   {
     name: 'Urban Canvas Tote Bag',
     brand: 'Urban Aura',
@@ -245,13 +245,13 @@ const seedClothing = async () => {
       const suffix = suffixes[Math.floor(i / clothingProducts.length) % suffixes.length];
       const name = suffix ? `${template.name} - ${suffix} ${Math.floor(i/10) || ''}`.trim() : `${template.name} ${i}`;
       
-      const priceVariation = 0.95 + Math.random() * 0.1; // 95% to 105%
+      const priceVariation = 0.95 + Math.random() * 0.1; 
       const price = parseFloat((template.price * priceVariation).toFixed(2));
       const mrp = parseFloat((template.mrp * priceVariation).toFixed(2));
       
       const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
       
-      // Assign UNIQUE Image from the pool
+      
       const imageUrl = accessoryImages[i % accessoryImages.length];
 
       massiveProducts.push({
@@ -259,7 +259,7 @@ const seedClothing = async () => {
         name,
         slug,
         image: imageUrl,
-        images: [imageUrl], // Single gallery image for now
+        images: [imageUrl], 
         price,
         mrp,
         countInStock: Math.floor(Math.random() * 100) + 1,

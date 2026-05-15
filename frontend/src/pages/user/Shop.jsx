@@ -9,7 +9,7 @@ const Shop = () => {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [showNotice, setShowNotice] = useState(false);
+  const [showNotice, setShowNotice] = useState(true); // I want hide this notice permanently so I set it true
 
   useEffect(() => {
     const hasSeenNotice = sessionStorage.getItem('hasSeenRenderNotice');
@@ -282,7 +282,7 @@ const Shop = () => {
         )}
       </AnimatePresence>
 
-      {}
+      
       <AnimatePresence>
         {showNotice && (
           <motion.div

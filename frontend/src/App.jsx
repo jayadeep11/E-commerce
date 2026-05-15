@@ -18,6 +18,7 @@ import OrderList from './pages/admin/OrderList';
 import OrderSuccess from './pages/OrderSuccess';
 import OrderDetails from './pages/user/OrderDetails';
 import Categories from './pages/user/Categories';
+import Checkout from './pages/user/Checkout';
 import NotFound from './pages/NotFound';
 
 
@@ -48,6 +49,7 @@ function App() {
           <Route path="/categories" element={<Categories />} />
           <Route path="/product/:id" element={<ProductDetails />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/checkout" element={<Checkout />} />
           {}
           <Route element={<PublicRoute />}>
             <Route path="/login" element={<Login />} />

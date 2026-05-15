@@ -5,8 +5,8 @@ const User = require('../models/User');
 const { protect, admin } = require('../middleware/authMiddleware');
 const sendEmail = require('../utils/sendEmail');
 
-// Temporary in-memory storage for pending registrations
-// NO data is stored in DB until OTP is verified
+
+
 const pendingUsers = new Map();
 
 const generateToken = (id) => {
@@ -15,8 +15,8 @@ const generateToken = (id) => {
   });
 };
 
-// @desc    Auth user & get token
-// @route   POST /api/users/login
+
+
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
@@ -44,8 +44,8 @@ router.post('/login', async (req, res) => {
   }
 });
 
-// @desc    Register a new user (Stage 1: Memory Only)
-// @route   POST /api/users
+
+
 router.post('/', async (req, res) => {
   try {
     const { name, email, password, phone, isAdmin } = req.body;
@@ -82,8 +82,8 @@ router.post('/', async (req, res) => {
   }
 });
 
-// @desc    Verify OTP & Create DB Record
-// @route   POST /api/users/verify-otp
+
+
 router.post('/verify-otp', async (req, res) => {
   try {
     const { email, otp } = req.body;
@@ -118,8 +118,8 @@ router.post('/verify-otp', async (req, res) => {
   }
 });
 
-// @desc    Get user profile
-// @route   GET /api/users/profile
+
+
 router.get('/profile', protect, async (req, res) => {
   const user = await User.findById(req.user._id);
   if (user) {
@@ -129,8 +129,8 @@ router.get('/profile', protect, async (req, res) => {
   }
 });
 
-// @desc    Update user profile
-// @route   PUT /api/users/profile
+
+
 router.put('/profile', protect, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
@@ -156,10 +156,10 @@ router.put('/profile', protect, async (req, res) => {
   }
 });
 
-// --- ADDRESS MANAGEMENT ROUTES ---
 
-// @desc    Add new address
-// @route   POST /api/users/addresses
+
+
+
 router.post('/addresses', protect, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
@@ -177,8 +177,8 @@ router.post('/addresses', protect, async (req, res) => {
   }
 });
 
-// @desc    Update address
-// @route   PUT /api/users/addresses/:id
+
+
 router.put('/addresses/:id', protect, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
@@ -208,8 +208,8 @@ router.put('/addresses/:id', protect, async (req, res) => {
   }
 });
 
-// @desc    Delete address
-// @route   DELETE /api/users/addresses/:id
+
+
 router.delete('/addresses/:id', protect, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
@@ -221,8 +221,8 @@ router.delete('/addresses/:id', protect, async (req, res) => {
   }
 });
 
-// @desc    Set default address
-// @route   PUT /api/users/addresses/:id/default
+
+
 router.put('/addresses/:id/default', protect, async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
@@ -236,7 +236,7 @@ router.put('/addresses/:id/default', protect, async (req, res) => {
   }
 });
 
-// @desc    Get all users (Admin only)
+
 router.get('/', protect, admin, async (req, res) => {
   const users = await User.find({}).select('-password');
   res.json(users);
