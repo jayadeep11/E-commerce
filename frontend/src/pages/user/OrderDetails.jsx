@@ -172,8 +172,8 @@ const OrderDetails = () => {
                   </div>
                   <div className="flex flex-col items-end gap-3 min-w-[120px]">
                     <div className="text-right">
-                      <p className="font-black text-slate-900 text-lg">${(item?.qty * item?.price).toFixed(2)}</p>
-                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">${item?.price} each</p>
+                      <p className="font-black text-slate-900 text-lg">₹{(item?.qty * item?.price).toFixed(2)}</p>
+                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">₹{item?.price} each</p>
                     </div>
                     {order?.isDelivered && (
                       <button 
@@ -227,20 +227,20 @@ const OrderDetails = () => {
             <div className="space-y-4">
               <div className="flex justify-between text-sm font-bold text-slate-500">
                 <span>Subtotal</span>
-                <span>${order?.itemsPrice?.toFixed(2)}</span>
+                <span>₹{order?.itemsPrice?.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-sm font-bold text-slate-500">
                 <span>Shipping</span>
-                <span>${order?.shippingPrice?.toFixed(2)}</span>
+                <span>₹{order?.shippingPrice?.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-sm font-bold text-slate-500">
                 <span>Tax</span>
-                <span>${order?.taxPrice?.toFixed(2)}</span>
+                <span>₹{order?.taxPrice?.toFixed(2)}</span>
               </div>
               <div className="h-px bg-slate-100 my-4"></div>
               <div className="flex justify-between items-center">
                 <span className="text-lg font-black text-slate-900">Total</span>
-                <span className="text-3xl font-black text-blue-600">${order?.totalPrice?.toFixed(2)}</span>
+                <span className="text-3xl font-black text-blue-600">₹{order?.totalPrice?.toFixed(2)}</span>
               </div>
             </div>
           </div>

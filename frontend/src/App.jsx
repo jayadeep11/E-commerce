@@ -29,7 +29,7 @@ const LayoutWrapper = ({ children }) => {
   const shouldHideFooter = hideFooterOn.includes(location.pathname);
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col w-full overflow-x-hidden">
       <Navbar />
       <main className="flex-grow">
         {children}

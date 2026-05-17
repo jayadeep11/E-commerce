@@ -65,7 +65,7 @@ const OrderList = () => {
 
               <div className="lg:w-40">
                 <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Amount</p>
-                <p className="text-sm text-slate-900 font-black">${order.totalPrice.toFixed(2)}</p>
+                <p className="text-sm text-slate-900 font-black">₹{order.totalPrice.toFixed(2)}</p>
               </div>
 
               <div className="flex-grow flex gap-3">

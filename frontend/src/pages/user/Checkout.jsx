@@ -1,19 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { loadStripe } from '@stripe/stripe-js';
-import { Elements } from '@stripe/react-stripe-js';
 import { useLocation, useNavigate, Link } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
-import CheckoutForm from '../../components/checkout/CheckoutForm';
+import RazorpayCheckout from '../../components/checkout/RazorpayCheckout';
 import api from '../../utils/api';
 import { motion } from 'framer-motion';
 import { ChevronLeft, ShoppingBag, Truck, Lock, AlertCircle } from 'lucide-react';
 
-// Use environment variable for publishable key
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || 'pk_test_placeholder');
-
 const Checkout = () => {
-  const [clientSecret, setClientSecret] = useState("");
   const [error, setError] = useState(null);
   const location = useLocation();
   const navigate = useNavigate();
@@ -28,55 +22,12 @@ const Checkout = () => {
       navigate('/cart');
       return;
     }
-
-    // Create Order and then PaymentIntent
-    const initializeCheckout = async () => {
-      try {
-        // 1. Create the order in "Pending" status
-        const { data: createdOrder } = await api.post('/api/orders', {
-          ...orderData,
-          isPaid: false, // Explicitly set to false
-        });
-
-        // 2. Create PaymentIntent with the new orderId
-        const { data: paymentData } = await api.post('/api/payments/create-payment-intent', {
-          amount: orderData.totalPrice,
-          orderId: createdOrder._id,
-        });
-
-        setClientSecret(paymentData.clientSecret);
-      } catch (err) {
-        console.error('Checkout initialization failed:', err);
-        const errorMsg = err.response?.data?.message || "Could not initialize checkout. Please check your Stripe keys.";
-        setError(errorMsg);
-      }
-    };
-
-    initializeCheckout();
   }, [orderData, userInfo, navigate]);
-
-  const appearance = {
-    theme: 'stripe',
-    variables: {
-      colorPrimary: '#2563eb',
-      colorBackground: '#ffffff',
-      colorText: '#1e293b',
-      colorDanger: '#df1b41',
-      fontFamily: 'Inter, system-ui, sans-serif',
-      spacingUnit: '4px',
-      borderRadius: '12px',
-    },
-  };
-
-  const options = {
-    clientSecret,
-    appearance,
-  };
 
   if (!orderData) return null;
 
   return (
-    <div className="min-h-screen bg-slate-50 py-6 sm:py-12 px-4 sm:px-6">
+    <div className="min-h-screen bg-slate-50 py-4 sm:py-12 px-1 xs:px-4 sm:px-6 overflow-x-hidden">
       <div className="max-w-5xl mx-auto">
         <Link to="/cart" className="flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors mb-6 sm:mb-8 group w-fit">
           <ChevronLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
@@ -91,11 +42,11 @@ const Checkout = () => {
             className="space-y-6 sm:space-y-8"
           >
             <div>
-              <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 mb-2">Secure Checkout</h1>
-              <p className="text-sm sm:text-base text-slate-500">Complete your purchase by providing your payment details.</p>
+              <h1 className="text-xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-1 sm:mb-2">Secure Checkout</h1>
+              <p className="text-[10px] sm:text-base text-slate-500">Complete purchase with Razorpay.</p>
             </div>
 
-            <div className="glass-card p-5 sm:p-8 bg-white shadow-xl shadow-slate-200/50">
+            <div className="glass-card p-2 xs:p-5 sm:p-8 bg-white shadow-xl shadow-slate-200/50 w-full max-w-full">
               {error ? (
                 <div className="p-6 bg-red-50 border border-red-100 text-red-600 rounded-2xl text-center">
                   <div className="w-12 h-12 bg-red-100 text-red-600 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -107,15 +58,8 @@ const Checkout = () => {
                     Try Again
                   </button>
                 </div>
-              ) : clientSecret ? (
-                <Elements options={options} stripe={stripePromise}>
-                  <CheckoutForm clientSecret={clientSecret} orderData={orderData} />
-                </Elements>
               ) : (
-                <div className="flex flex-col items-center justify-center py-12 gap-4">
-                  <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
-                  <p className="text-slate-400 font-bold text-[10px] sm:text-xs uppercase tracking-widest text-center">Initializing Secure Gateways...</p>
-                </div>
+                <RazorpayCheckout orderData={orderData} />
               )}
             </div>
 
@@ -123,7 +67,7 @@ const Checkout = () => {
               <img src="https://upload.wikimedia.org/wikipedia/commons/5/5e/Visa_Inc._logo.svg" alt="Visa" className="h-3 sm:h-4" />
               <img src="https://upload.wikimedia.org/wikipedia/commons/2/2a/Mastercard-logo.svg" alt="Mastercard" className="h-4 sm:h-6" />
               <img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" className="h-4 sm:h-5" />
-              <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/Stripe_Logo%2C_revised_2016.svg" alt="Stripe" className="h-4 sm:h-6" />
+              <span className="font-black text-slate-900 italic tracking-tighter text-lg">Razorpay</span>
             </div>
           </motion.div>
 
@@ -133,26 +77,26 @@ const Checkout = () => {
             animate={{ opacity: 1, x: 0 }}
             className="space-y-6"
           >
-            <div className="glass-card p-5 sm:p-8 bg-slate-900 text-white overflow-hidden relative">
+            <div className="glass-card p-2 xs:p-5 sm:p-8 bg-slate-900 text-white overflow-hidden relative border-l-4 border-l-blue-600 w-full max-w-full">
               {/* Decorative background element */}
               <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-blue-600/20 blur-3xl rounded-full"></div>
               
-              <h2 className="text-lg sm:text-xl font-bold mb-6 flex items-center gap-2 relative z-10">
-                <ShoppingBag size={20} className="text-blue-400" />
+              <h2 className="text-base sm:text-xl font-bold mb-4 sm:mb-6 flex items-center gap-2 relative z-10">
+                <ShoppingBag size={18} className="text-blue-400" />
                 Order Review
               </h2>
 
               <div className="space-y-4 mb-8 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar relative z-10">
                 {orderData.orderItems.map((item, idx) => (
-                  <div key={idx} className="flex gap-4 items-center">
-                    <div className="w-16 h-16 rounded-lg overflow-hidden bg-slate-800 flex-shrink-0 border border-slate-700">
+                  <div key={idx} className="flex gap-2 sm:gap-4 items-center">
+                    <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg overflow-hidden bg-slate-800 flex-shrink-0 border border-slate-700">
                       <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                     </div>
                     <div className="flex-grow min-w-0">
-                      <p className="font-bold text-sm truncate">{item.name}</p>
-                      <p className="text-slate-400 text-xs">Qty: {item.qty} × ${item.price}</p>
+                      <p className="font-bold text-[11px] sm:text-sm truncate">{item.name}</p>
+                      <p className="text-slate-400 text-[9px] sm:text-xs">Qty: {item.qty} × ₹{item.price}</p>
                     </div>
-                    <p className="font-bold text-sm whitespace-nowrap">${(item.price * item.qty).toFixed(2)}</p>
+                    <p className="font-bold text-xs sm:text-sm whitespace-nowrap ml-auto">₹{(item.price * item.qty).toFixed(2)}</p>
                   </div>
                 ))}
               </div>
@@ -160,27 +104,27 @@ const Checkout = () => {
               <div className="border-t border-slate-800 pt-6 space-y-3">
                 <div className="flex justify-between text-sm text-slate-400">
                   <span>Subtotal</span>
-                  <span className="text-white">${orderData.itemsPrice.toFixed(2)}</span>
+                  <span className="text-white">₹{orderData.itemsPrice.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm text-slate-400">
                   <span>Shipping</span>
                   <span className="text-green-400 font-bold uppercase text-[10px] tracking-widest">Calculated Free</span>
                 </div>
-                <div className="flex justify-between text-xl font-bold pt-4 border-t border-slate-800 mt-4">
+                <div className="flex justify-between text-sm sm:text-xl font-bold pt-4 border-t border-slate-800 mt-4">
                   <span>Total Due</span>
-                  <span className="text-blue-400">${orderData.totalPrice.toFixed(2)}</span>
+                  <span className="text-blue-400 text-base sm:text-2xl">₹{orderData.totalPrice.toFixed(2)}</span>
                 </div>
               </div>
             </div>
 
-            <div className="glass-card p-4 sm:p-6 border-l-4 border-l-blue-600 bg-white relative z-10">
+            <div className="glass-card p-2 xs:p-5 sm:p-8 border-l-4 border-l-blue-600 bg-white relative z-10 w-full max-w-full">
               <div className="flex gap-4">
                 <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 flex-shrink-0">
                   <Truck size={20} />
                 </div>
                 <div>
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Shipping To</p>
-                  <p className="text-sm font-bold text-slate-900 leading-tight">{orderData.shippingAddress.address}</p>
+                  <p className="text-[8px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Shipping To</p>
+                  <p className="text-[11px] sm:text-sm font-bold text-slate-900 leading-tight">{orderData.shippingAddress.address}</p>
                   <p className="text-xs text-slate-500 mt-1">{orderData.shippingAddress.city}, {orderData.shippingAddress.postalCode}</p>
                 </div>
               </div>

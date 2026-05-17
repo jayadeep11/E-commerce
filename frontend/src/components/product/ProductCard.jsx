@@ -44,7 +44,7 @@ const ProductCard = ({ product }) => {
         </p>
 
         <div className="flex items-center justify-between mt-auto pt-4 border-t border-slate-100">
-          <span className="text-xl font-bold text-slate-900">${product.price}</span>
+          <span className="text-xl font-bold text-slate-900">₹{product.price}</span>
           <button 
             onClick={() => addToCart(product, 1)}
             disabled={product.countInStock === 0}

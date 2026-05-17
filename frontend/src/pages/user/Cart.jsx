@@ -43,7 +43,7 @@ const Cart = () => {
           postalCode: selectedAddress.postalCode,
           country: selectedAddress.country,
         },
-        paymentMethod: 'Stripe',
+        paymentMethod: 'Razorpay',
         itemsPrice: Number(cartTotal),
         shippingPrice: 0,
         taxPrice: 0,
@@ -117,7 +117,7 @@ const Cart = () => {
               </div>
 
               <div className="text-lg font-bold text-slate-900 w-24 text-center sm:text-right">
-                ${(item.price * item.qty).toFixed(2)}
+                ₹{(item.price * item.qty).toFixed(2)}
               </div>
 
               <button 
@@ -178,7 +178,7 @@ const Cart = () => {
             <div className="space-y-4 mb-8">
               <div className="flex justify-between text-slate-500">
                 <span>Subtotal</span>
-                <span>${cartTotal}</span>
+                <span>₹{cartTotal}</span>
               </div>
               <div className="flex justify-between text-slate-500">
                 <span>Shipping</span>
@@ -186,7 +186,7 @@ const Cart = () => {
               </div>
               <div className="border-t border-slate-100 pt-4 flex justify-between text-xl font-bold text-slate-900">
                 <span>Total</span>
-                <span>${cartTotal}</span>
+                <span>₹{cartTotal}</span>
               </div>
             </div>
 

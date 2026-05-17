@@ -313,7 +313,7 @@ const Profile = () => {
                 <Settings size={24} />
               </div>
               <div>
-                <p className="text-2xl font-black text-slate-900">${totalSpent.toFixed(2)}</p>
+                <p className="text-2xl font-black text-slate-900">₹{totalSpent.toFixed(2)}</p>
                 <p className="text-xs font-bold text-slate-400">Lifestyle Investment</p>
               </div>
             </div>

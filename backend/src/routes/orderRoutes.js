@@ -8,6 +8,7 @@ const { protect, admin } = require('../middleware/authMiddleware');
 
 
 router.post('/', protect, async (req, res) => {
+  console.log('Order Creation Request Body:', JSON.stringify(req.body, null, 2));
   try {
     const { orderItems, shippingAddress, paymentMethod, itemsPrice, taxPrice, shippingPrice, totalPrice } = req.body;
 

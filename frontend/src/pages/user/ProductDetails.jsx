@@ -110,10 +110,10 @@ const ProductDetails = () => {
           </div>
 
           <div className="flex items-baseline gap-3 mb-6">
-            <div className="text-2xl font-black text-slate-900">${product.price}</div>
+            <div className="text-2xl font-black text-slate-900">₹{product.price}</div>
             {product.mrp > product.price && (
               <>
-                <div className="text-lg font-bold text-slate-300 line-through">${product.mrp}</div>
+                <div className="text-lg font-bold text-slate-300 line-through">₹{product.mrp}</div>
                 <div className="bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest">
                   Save {discountPercent}%
                 </div>

@@ -9,9 +9,9 @@ const Navbar = () => {
   const { userInfo } = useAuth();
 
   return (
-    <nav className="glass-nav px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
-      <div className="flex items-center gap-4 sm:gap-8">
-        <Link to="/" className="text-xl sm:text-2xl font-black gradient-text tracking-tighter">
+    <nav className="glass-nav px-2 xs:px-4 sm:px-6 py-2 sm:py-4 flex items-center justify-between">
+      <div className="flex items-center gap-2 sm:gap-8">
+        <Link to="/" className="text-lg xs:text-xl sm:text-2xl font-black gradient-text tracking-tighter flex-shrink-0">
           KORE
         </Link>
         <div className="hidden md:flex gap-6 text-sm font-medium text-slate-600">
@@ -26,7 +26,7 @@ const Navbar = () => {
         </div>
       </div>
 
-      <div className="flex items-center gap-2 sm:gap-5">
+      <div className="flex items-center gap-1.5 xs:gap-2 sm:gap-5">
         <button className="p-1.5 sm:p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-600">
           <Search size={18} className="sm:w-5 sm:h-5" />
         </button>

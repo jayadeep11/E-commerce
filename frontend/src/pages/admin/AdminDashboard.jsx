@@ -46,7 +46,7 @@ const AdminDashboard = () => {
   }, []);
 
   const statCards = [
-    { title: 'Total Revenue', value: `$${stats.revenue.toLocaleString()}`, icon: <TrendingUp size={24} />, color: 'bg-emerald-50 text-emerald-600', border: 'border-emerald-100' },
+    { title: 'Total Revenue', value: `₹${stats.revenue.toLocaleString()}`, icon: <TrendingUp size={24} />, color: 'bg-emerald-50 text-emerald-600', border: 'border-emerald-100' },
     { title: 'Total Orders', value: stats.orders, icon: <ShoppingBag size={24} />, color: 'bg-blue-50 text-blue-600', border: 'border-blue-100' },
     { title: 'Total Users', value: stats.users, icon: <Users size={24} />, color: 'bg-indigo-50 text-indigo-600', border: 'border-indigo-100' },
     { title: 'Product Inventory', value: stats.products, icon: <Package size={24} />, color: 'bg-amber-50 text-amber-600', border: 'border-amber-100' },

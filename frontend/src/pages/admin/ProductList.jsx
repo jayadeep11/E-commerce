@@ -155,7 +155,7 @@ const ProductList = () => {
                 <span className="flex items-center gap-1.5 px-3 py-1 bg-slate-50 text-slate-500 rounded-full text-[10px] font-black uppercase tracking-wider">
                   <Layers size={12} /> {product.category}
                 </span>
-                <span className="text-xl font-black text-slate-900">${product.price.toFixed(2)}</span>
+                <span className="text-xl font-black text-slate-900">₹{product.price.toFixed(2)}</span>
               </div>
               <h3 className="font-bold text-slate-900 mb-2 truncate">{product.name}</h3>
               <div className="flex items-center gap-2">
@@ -373,9 +373,9 @@ const ProductList = () => {
                         {formData.gender} / {formData.category}
                       </span>
                       <div className="flex flex-col items-end">
-                        <span className="text-lg font-black text-slate-900">${formData.price}</span>
+                        <span className="text-lg font-black text-slate-900">₹{formData.price}</span>
                         {formData.mrp > formData.price && (
-                          <span className="text-[10px] font-bold text-slate-300 line-through">${formData.mrp}</span>
+                          <span className="text-[10px] font-bold text-slate-300 line-through">₹{formData.mrp}</span>
                         )}
                       </div>
                     </div>

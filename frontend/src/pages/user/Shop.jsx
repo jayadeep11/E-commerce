@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import api from '../../utils/api';
 import ProductCard from '../../components/product/ProductCard';
-import { SlidersHorizontal, Search, X as CloseIcon, Check as CheckIcon, RotateCcw as ResetIcon } from 'lucide-react';
+import { SlidersHorizontal, Search, X as CloseIcon, Check as CheckIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Shop = () => {
@@ -9,20 +9,6 @@ const Shop = () => {
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [showNotice, setShowNotice] = useState(true); // I want hide this notice permanently so I set it true
-
-  useEffect(() => {
-    const hasSeenNotice = sessionStorage.getItem('hasSeenRenderNotice');
-    if (!hasSeenNotice) {
-      setShowNotice(true);
-      sessionStorage.setItem('hasSeenRenderNotice', 'true'); 
-      
-      const timer = setTimeout(() => setShowNotice(false), 7000);
-      return () => clearTimeout(timer);
-    }
-  }, []);
-
-  
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [selectedGender, setSelectedGender] = useState('All');
@@ -282,39 +268,6 @@ const Shop = () => {
         )}
       </AnimatePresence>
 
-      
-      <AnimatePresence>
-        {showNotice && (
-          <motion.div
-            initial={{ opacity: 0, y: 50, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.9 }}
-            className="fixed bottom-10 left-1/2 -translate-x-1/2 z-[100] w-[90%] max-w-md"
-          >
-            <div className="bg-slate-900/90 backdrop-blur-2xl border border-white/10 p-5 rounded-[2rem] shadow-2xl flex items-center gap-5">
-              <div className="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center shrink-0 animate-pulse">
-                <ResetIcon size={20} className="text-white" />
-              </div>
-              <div className="flex-1">
-                <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest mb-1">System Notice</p>
-                <p className="text-xs text-slate-200 font-medium leading-relaxed">
-                  Currently using <span className="text-white font-bold">Render Free Version</span>. 
-                  Kindly allow up to <span className="text-white font-bold">50s</span> for products to load as the server wakes up.
-                </p>
-              </div>
-              <button 
-                onClick={() => {
-                  setShowNotice(false);
-                  sessionStorage.setItem('hasSeenRenderNotice', 'true');
-                }}
-                className="p-2 hover:bg-white/10 rounded-full text-slate-400 transition-all"
-              >
-                <CloseIcon size={18} />
-              </button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 };

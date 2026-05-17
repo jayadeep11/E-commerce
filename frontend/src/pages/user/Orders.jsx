@@ -105,7 +105,7 @@ const Orders = () => {
             <p className="text-[10px] font-black uppercase tracking-widest">Lifestyle Investment</p>
             <TrendingUp size={18} />
           </div>
-          <p className="text-3xl font-black text-slate-900">${totalSpent.toFixed(2)}</p>
+          <p className="text-3xl font-black text-slate-900">₹{totalSpent.toFixed(2)}</p>
           <p className="text-xs font-bold text-slate-400">Aggregated spend across all looks</p>
         </motion.div>
 
@@ -133,7 +133,7 @@ const Orders = () => {
             <p className="text-[10px] font-black uppercase tracking-widest">Avg Order Value</p>
             <Package size={18} />
           </div>
-          <p className="text-3xl font-black text-slate-900">${avgOrderValue}</p>
+          <p className="text-3xl font-black text-slate-900">₹{avgOrderValue}</p>
           <p className="text-xs font-bold text-slate-400">Mean expenditure per style set</p>
         </motion.div>
       </div>
@@ -205,7 +205,7 @@ const Orders = () => {
 
                 <div className="text-right space-y-1 pr-8 border-r border-slate-50 mr-8">
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total</p>
-                  <p className="text-xl font-black text-slate-900">${order.totalPrice.toFixed(2)}</p>
+                  <p className="text-xl font-black text-slate-900">₹{order.totalPrice.toFixed(2)}</p>
                 </div>
 
                 {}
