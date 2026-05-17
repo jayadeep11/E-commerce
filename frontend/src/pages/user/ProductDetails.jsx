@@ -8,12 +8,24 @@ import { useCart } from '../../context/CartContext';
 const ProductDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { addToCart } = useCart();
+  const { addToCart, cartItems } = useCart();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [qty, setQty] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
   const [activeTab, setActiveTab] = useState('description');
+
+  // Sync with Cart State
+  const existItem = cartItems.find((x) => x._id === id);
+  useEffect(() => {
+    if (existItem) {
+      setIsAdded(true);
+      setQty(existItem.qty);
+    } else {
+      setIsAdded(false);
+      setQty(product?.countInStock === 0 ? 0 : 1);
+    }
+  }, [existItem, product, id]);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -62,22 +74,32 @@ const ProductDetails = () => {
     : 0;
 
   return (
-    <div className="max-w-5xl mx-auto px-6 py-8">
-      <Link to="/shop" className="flex items-center gap-2 text-slate-400 hover:text-blue-600 transition-all mb-8 group font-bold text-xs uppercase tracking-widest">
+    <div className="max-w-[1400px] mx-auto px-6 lg:px-12 py-12">
+      <Link to="/shop" className="flex items-center gap-2 text-slate-400 hover:text-black transition-all mb-8 group font-bold text-xs uppercase tracking-widest">
         <ChevronLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
         Back to Collection
       </Link>
 
-      <div className="grid md:grid-cols-[400px_1fr] gap-12 lg:gap-16 items-center">
+      <div className="grid md:grid-cols-[480px_1fr] gap-12 lg:gap-16 items-center">
         {}
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="rounded-[2.5rem] overflow-hidden shadow-2xl shadow-slate-200/50 max-h-[450px] flex items-center justify-center bg-slate-50"
+          className="rounded-[2.5rem] overflow-hidden shadow-2xl shadow-slate-200/50 max-h-[520px] flex items-center justify-center bg-slate-50"
         >
           <img 
             src={product.image} 
             alt={product.name} 
+            onError={(e) => {
+              e.target.onerror = null;
+              const fallbacks = {
+                Men: '/assets/ui/dept-men.jpg',
+                Women: '/assets/ui/dept-women.jpg',
+                Kids: '/assets/ui/dept-kids.jpg',
+                Unisex: '/assets/ui/dept-acc.jpg'
+              };
+              e.target.src = fallbacks[product.gender] || fallbacks['Unisex'];
+            }}
             className="w-full h-full object-cover hover:scale-105 transition-transform duration-1000"
           />
         </motion.div>
@@ -89,7 +111,7 @@ const ProductDetails = () => {
           className="flex flex-col py-2"
         >
           <div className="flex items-center gap-3 mb-3">
-            <span className="text-[9px] font-black text-blue-600 uppercase tracking-[0.2em] bg-blue-50 px-2.5 py-1 rounded-full">{product.category}</span>
+            <span className="text-[9px] font-black text-slate-800 uppercase tracking-[0.2em] bg-slate-100 px-2.5 py-1 rounded-full">{product.category}</span>
             <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">{product.brand}</span>
           </div>
           <h1 className="text-xl lg:text-2xl font-black text-slate-900 mb-3 tracking-tight leading-tight">{product.name}</h1>
@@ -125,12 +147,12 @@ const ProductDetails = () => {
             {product.description}
           </p>
 
-          <div className="space-y-6">
+          <div className="space-y-6 max-w-sm">
             {!isAdded ? (
               <button 
                 onClick={handleAddToCart}
                 disabled={product.countInStock === 0}
-                className="w-full py-4 bg-slate-900 text-white rounded-xl font-black text-xs uppercase tracking-widest hover:bg-blue-600 transition-all shadow-lg shadow-slate-900/10 flex items-center justify-center gap-3"
+                className="w-full py-4 bg-slate-900 text-white rounded-xl font-black text-xs uppercase tracking-widest hover:bg-black transition-all shadow-lg shadow-slate-900/10 flex items-center justify-center gap-3"
               >
                 <ShoppingCart size={18} />
                 {product.countInStock > 0 ? 'Add to Collection' : 'Out of Stock'}
@@ -141,30 +163,31 @@ const ProductDetails = () => {
                 animate={{ opacity: 1, y: 0 }}
                 className="flex flex-col gap-4"
               >
-                <div className="flex items-center justify-between bg-blue-50/50 p-4 rounded-2xl border border-blue-100">
+                <div className="flex items-center justify-between bg-slate-50 p-4 rounded-2xl border border-slate-200">
                   <div className="flex items-center gap-4">
-                    <span className="hidden sm:block text-[10px] font-black text-blue-600 uppercase tracking-widest">Quantity</span>
-                    <div className="flex items-center bg-white border border-blue-100 rounded-xl p-0.5 shadow-sm">
+                    <span className="hidden sm:block text-[10px] font-black text-slate-800 uppercase tracking-widest">Quantity</span>
+                    <div className="flex items-center bg-white border border-slate-200 rounded-xl p-0.5 shadow-sm">
                       <button 
                         onClick={() => {
-                          const newQty = Math.max(1, qty - 1);
-                          setQty(newQty);
-                          addToCart(product, newQty);
+                          if (qty <= 1) return;
+                          addToCart(product, -1);
                         }}
-                        className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-50 transition-all text-blue-600 font-bold"
+                        className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 transition-all text-slate-800 font-bold"
                       >-</button>
                       <span className="w-10 text-center font-black text-slate-900 text-xs">{qty}</span>
                       <button 
                         onClick={() => {
-                          const newQty = Math.min(product.countInStock, qty + 1);
-                          setQty(newQty);
-                          addToCart(product, newQty);
+                          if (qty >= product.countInStock) {
+                            alert(`Sorry, only ${product.countInStock} units available in stock.`);
+                            return;
+                          }
+                          addToCart(product, 1);
                         }}
-                        className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-50 transition-all text-blue-600 font-bold"
+                        className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 transition-all text-slate-800 font-bold"
                       >+</button>
                     </div>
                   </div>
-                  <Link to="/cart" className="text-[10px] font-black text-blue-600 uppercase tracking-widest hover:underline decoration-2 underline-offset-4">
+                  <Link to="/cart" className="text-[10px] font-black text-slate-800 uppercase tracking-widest hover:underline decoration-2 underline-offset-4">
                     View in Cart
                   </Link>
                 </div>
@@ -174,15 +197,15 @@ const ProductDetails = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-10">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-50 text-blue-600 rounded-lg"><Truck size={18} /></div>
+              <div className="p-2 bg-slate-100 text-slate-800 rounded-lg"><Truck size={18} /></div>
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Free Shipping</span>
             </div>
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-50 text-blue-600 rounded-lg"><ShieldCheck size={18} /></div>
+              <div className="p-2 bg-slate-100 text-slate-800 rounded-lg"><ShieldCheck size={18} /></div>
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">Secure Payment</span>
             </div>
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-50 text-blue-600 rounded-lg"><RefreshCcw size={18} /></div>
+              <div className="p-2 bg-slate-100 text-slate-800 rounded-lg"><RefreshCcw size={18} /></div>
               <span className="text-[10px] font-bold uppercase tracking-wider text-slate-500">14 Days Return</span>
             </div>
           </div>
@@ -204,7 +227,7 @@ const ProductDetails = () => {
               {activeTab === tab && (
                 <motion.div 
                   layoutId="activeTab"
-                  className="absolute bottom-0 left-0 right-0 h-1 bg-blue-600 rounded-full" 
+                  className="absolute bottom-0 left-0 right-0 h-1 bg-slate-900 rounded-full" 
                 />
               )}
             </button>

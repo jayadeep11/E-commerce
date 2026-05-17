@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from './components/layout/Navbar';
+import SearchModal from './components/layout/SearchModal';
 import Footer from './components/layout/Footer';
 import Home from './pages/user/Home';
 import Shop from './pages/user/Shop';
@@ -25,16 +26,17 @@ import NotFound from './pages/NotFound';
 
 const LayoutWrapper = ({ children }) => {
   const location = useLocation();
-  const hideFooterOn = ['/shop'];
-  const shouldHideFooter = hideFooterOn.includes(location.pathname);
+  const showFooterOn = ['/home', '/categories'];
+  const shouldShowFooter = showFooterOn.includes(location.pathname);
 
   return (
-    <div className="min-h-screen flex flex-col w-full overflow-x-hidden">
+    <div className="min-h-screen flex flex-col w-full">
       <Navbar />
       <main className="flex-grow">
         {children}
       </main>
-      {!shouldHideFooter && <Footer />}
+      <SearchModal />
+      {shouldShowFooter && <Footer />}
     </div>
   );
 };
@@ -44,7 +46,8 @@ function App() {
     <Router>
       <LayoutWrapper>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Shop />} />
+          <Route path="/home" element={<Home />} />
           <Route path="/shop" element={<Shop />} />
           <Route path="/categories" element={<Categories />} />
           <Route path="/product/:id" element={<ProductDetails />} />

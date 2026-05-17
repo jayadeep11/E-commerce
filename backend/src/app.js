@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const productRoutes = require('./routes/productRoutes');
 const userRoutes = require('./routes/userRoutes');
 const cartRoutes = require('./routes/cartRoutes');
@@ -33,7 +34,7 @@ app.get('/api/test', (req, res) => {
 });
 
 app.get('/', (req, res) => {
-  res.send('API is running...');
+  res.send('KORE API is running...');
 });
 
 

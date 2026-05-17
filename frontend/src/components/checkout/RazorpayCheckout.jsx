@@ -73,8 +73,8 @@ const RazorpayCheckout = ({ orderData }) => {
 
   return (
     <div className="space-y-6">
-      <div className="bg-blue-50 p-6 rounded-2xl border border-blue-100 flex items-start gap-4">
-        <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white shrink-0">
+      <div className="bg-white p-6 rounded-2xl border border-slate-200 flex items-start gap-4">
+        <div className="w-10 h-10 bg-slate-950 rounded-full flex items-center justify-center text-white shrink-0">
           <CreditCard size={20} />
         </div>
         <div>

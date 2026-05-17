@@ -9,24 +9,40 @@ const ProductCard = ({ product }) => {
   return (
     <motion.div 
       whileHover={{ y: -10 }}
-      className="glass-card overflow-hidden group flex flex-col"
+      className="glass-card overflow-hidden group flex flex-col w-full h-[380px] sm:h-[420px]"
     >
-      <div className="relative aspect-[4/5] overflow-hidden">
+      <div className="relative h-[55%] overflow-hidden shrink-0">
         <img 
           src={product.image} 
           alt={product.name} 
+          onError={(e) => {
+            e.target.onerror = null;
+            const fallbackImages = {
+              Men: '/assets/ui/dept-men.jpg',
+              Women: '/assets/ui/dept-women.jpg',
+              Kids: '/assets/ui/dept-kids.jpg',
+              Unisex: '/assets/ui/dept-acc.jpg'
+            };
+            e.target.src = fallbackImages[product.gender] || fallbackImages['Unisex'];
+          }}
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
         />
         <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity" />
         
+        {product.gender && (
+          <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-slate-900 text-[8px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-sm z-10 border border-slate-100/50">
+            {product.gender}
+          </div>
+        )}
+
         {product.countInStock === 0 && (
-          <div className="absolute top-4 right-4 bg-slate-900 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+          <div className="absolute top-3 left-3 bg-slate-900 text-white text-[8px] font-black px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-sm z-10">
             Out of Stock
           </div>
         )}
       </div>
 
-      <div className="p-6 flex flex-col flex-grow">
+      <div className="p-4 sm:p-5 flex flex-col flex-grow">
         <div className="flex justify-between items-start mb-2">
           <span className="text-[10px] font-bold text-blue-600 uppercase tracking-widest">{product.category}</span>
           <div className="flex items-center gap-1">
@@ -35,22 +51,22 @@ const ProductCard = ({ product }) => {
           </div>
         </div>
         
-        <Link to={`/product/${product._id}`} className="text-lg font-bold text-slate-900 mb-2 hover:text-blue-600 transition-colors line-clamp-1">
+        <Link to={`/product/${product._id}`} className="text-sm sm:text-base font-bold text-slate-900 mb-1 sm:mb-2 hover:text-blue-600 transition-colors line-clamp-1">
           {product.name}
         </Link>
         
-        <p className="text-slate-500 text-xs line-clamp-2 mb-4 leading-relaxed flex-grow">
+        <p className="text-slate-500 text-[10px] sm:text-xs line-clamp-2 mb-1 sm:mb-2 leading-relaxed flex-grow">
           {product.description}
         </p>
 
-        <div className="flex items-center justify-between mt-auto pt-4 border-t border-slate-100">
-          <span className="text-xl font-bold text-slate-900">₹{product.price}</span>
+        <div className="flex items-center justify-between mt-auto pt-1">
+          <span className="text-base sm:text-lg font-bold text-slate-900">₹{product.price}</span>
           <button 
             onClick={() => addToCart(product, 1)}
             disabled={product.countInStock === 0}
-            className="p-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all disabled:bg-slate-300 disabled:cursor-not-allowed shadow-lg shadow-blue-500/20 active:scale-90"
+            className="p-2 sm:p-2.5 bg-blue-600 text-white rounded-lg sm:rounded-xl hover:bg-blue-700 transition-all disabled:bg-slate-300 disabled:cursor-not-allowed shadow-lg shadow-blue-500/20 active:scale-90"
           >
-            <ShoppingCart size={18} />
+            <ShoppingCart size={16} className="sm:w-[18px] sm:h-[18px]" />
           </button>
         </div>
       </div>

@@ -1,21 +1,40 @@
 import { useState, useEffect } from 'react';
 import api from '../../utils/api';
 import ProductCard from '../../components/product/ProductCard';
-import { SlidersHorizontal, Search, X as CloseIcon, Check as CheckIcon } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { Search, Filter, X, ArrowUpDown, ChevronDown } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
 
 const Shop = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('All');
-  const [selectedGender, setSelectedGender] = useState('All');
-  const [sortBy, setSortBy] = useState('newest');
+  
+  // Mobile filter toggle
+  const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
 
-  const categories = ['All', 'Streetwear', 'Formal', 'Outerwear', 'Bottoms', 'Knitwear', 'Footwear'];
+  const [searchParams] = useSearchParams();
+  const searchQuery = searchParams.get('search') || '';
+  const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || 'All');
+  const [selectedGender, setSelectedGender] = useState(searchParams.get('gender') || 'All');
+  const [sortBy, setSortBy] = useState('default');
+
+  const categories = ['All', 'Shirts', 'Tshirts', 'Accessories', 'Pants', 'Footwear'];
   const genderOptions = ['All', 'Men', 'Women', 'Kids'];
+
+  useEffect(() => {
+    const categoryParam = searchParams.get('category');
+    const genderParam = searchParams.get('gender');
+    if (categoryParam) {
+      setSelectedCategory(categoryParam);
+    } else {
+      setSelectedCategory('All');
+    }
+    if (genderParam) {
+      setSelectedGender(genderParam);
+    } else {
+      setSelectedGender('All');
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -36,7 +55,6 @@ const Shop = () => {
     fetchProducts();
   }, []);
 
-  
   useEffect(() => {
     let result = [...products];
 
@@ -68,205 +86,162 @@ const Shop = () => {
   }, [searchQuery, selectedCategory, selectedGender, sortBy, products]);
 
   const resetFilters = () => {
-    setSearchQuery('');
     setSelectedCategory('All');
     setSelectedGender('All');
-    setSortBy('newest');
+    setSortBy('default');
   };
 
+  const SidebarContent = () => (
+    <div className="flex flex-col h-full border-r border-gray-100 bg-white">
+      <div className="p-6 pb-4 border-b border-gray-100 flex items-center justify-between lg:hidden">
+         <h2 className="text-xl font-bold">Filters</h2>
+         <button onClick={() => setIsMobileFilterOpen(false)} className="text-gray-500 hover:text-black">
+           <X size={24} />
+         </button>
+      </div>
+
+      <div className="p-6 flex-1 overflow-y-auto">
+
+        {/* Sort By */}
+        <div className="mb-8">
+          <h3 className="font-bold text-gray-900 mb-4 uppercase text-xs tracking-wider">Sort By</h3>
+          <div className="relative w-full">
+            <ArrowUpDown className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
+            <select 
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="w-full appearance-none border border-gray-200 rounded-lg py-2.5 pl-9 pr-10 text-sm focus:outline-none focus:ring-1 focus:ring-black focus:border-black transition-colors bg-white font-medium cursor-pointer"
+            >
+              <option value="default">Default Order</option>
+              <option value="newest">New Arrivals</option>
+              <option value="price-low">Price: Low to High</option>
+              <option value="price-high">Price: High to Low</option>
+            </select>
+            <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" size={16} />
+          </div>
+        </div>
+
+        {/* Department */}
+        <div className="mb-8">
+          <h3 className="font-bold text-gray-900 mb-4 uppercase text-xs tracking-wider">Department</h3>
+          <div className="flex flex-col space-y-3">
+            {genderOptions.map(gender => (
+               <label key={gender} className="flex items-center cursor-pointer group">
+                 <input 
+                   type="radio" 
+                   name="gender" 
+                   className="w-4 h-4 text-black border-gray-300 focus:ring-black transition-all"
+                   checked={selectedGender === gender}
+                   onChange={() => setSelectedGender(gender)}
+                 />
+                 <span className={`ml-3 text-sm transition-colors ${selectedGender === gender ? 'font-bold text-black' : 'text-gray-600 group-hover:text-black'}`}>
+                   {gender}
+                 </span>
+               </label>
+            ))}
+          </div>
+        </div>
+
+        {/* Category */}
+        <div className="mb-8 border-t border-gray-100 pt-8">
+          <h3 className="font-bold text-gray-900 mb-4 uppercase text-xs tracking-wider">Category</h3>
+          <div className="flex flex-col space-y-3">
+            {categories.map(cat => (
+               <label key={cat} className="flex items-center cursor-pointer group">
+                 <input 
+                   type="radio" 
+                   name="category" 
+                   className="w-4 h-4 text-black border-gray-300 focus:ring-black transition-all"
+                   checked={selectedCategory === cat}
+                   onChange={() => setSelectedCategory(cat)}
+                 />
+                 <span className={`ml-3 text-sm transition-colors ${selectedCategory === cat ? 'font-bold text-black' : 'text-gray-600 group-hover:text-black'}`}>
+                   {cat}
+                 </span>
+               </label>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="p-6 border-t border-gray-100">
+        <button 
+          onClick={resetFilters}
+          className="w-full py-3 px-4 bg-gray-900 text-white rounded-lg text-sm font-bold hover:bg-black transition-colors"
+        >
+          Clear Filters
+        </button>
+      </div>
+    </div>
+  );
+
   return (
-    <div className="h-[calc(100vh-80px)] bg-white flex overflow-hidden">
-      {}
-      <motion.div 
-        layout
-        className="flex-1 h-full overflow-y-auto hide-scrollbar"
-        transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-      >
-        <div className="max-w-7xl mx-auto px-6 py-12">
-          {}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-10">
+    <div className="h-[calc(100vh-80px)] bg-white flex overflow-hidden w-full">
+      
+      {/* Desktop Sidebar */}
+      <div className="hidden lg:block w-64 shrink-0 h-full z-10 shadow-[1px_0_10px_rgba(0,0,0,0.02)] relative">
+        <SidebarContent />
+      </div>
+
+      {/* Main Product Area */}
+      <div className="flex-1 h-full overflow-y-auto bg-gray-50">
+        <div className="p-6 lg:p-10 w-full max-w-full mx-auto">
+          
+          {/* Header & Sort */}
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4">
             <div>
-              <h1 className="text-3xl font-black text-slate-900 tracking-tight mb-1">SHOP</h1>
-              <p className="text-sm text-slate-500 font-medium tracking-wide">Elevated essentials for every occasion.</p>
+              <h1 className="text-3xl lg:text-4xl font-black text-gray-900 tracking-tight">SHOP</h1>
+              <p className="text-sm font-medium text-gray-500 mt-2">Showing {filteredProducts.length} results</p>
             </div>
             
-            <div className="flex items-center gap-3 w-full md:w-auto">
-              <AnimatePresence>
-                {!isFilterOpen && (
-                  <motion.div 
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: 20 }}
-                    className="relative flex-grow md:w-72 group"
-                  >
-                    <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors" size={16} />
-                    <input 
-                      type="text" 
-                      placeholder="Find your style..." 
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full pl-10 pr-5 py-2.5 bg-slate-50 border-none rounded-xl focus:ring-2 focus:ring-blue-600/10 outline-none transition-all font-bold text-sm text-slate-900"
-                    />
-                  </motion.div>
-                )}
-              </AnimatePresence>
-              
+            <div className="flex items-center gap-3 w-full sm:w-auto">
               <button 
-                onClick={() => setIsFilterOpen(!isFilterOpen)}
-                className={`p-2.5 rounded-xl transition-all active:scale-95 relative ${
-                  isFilterOpen ? 'bg-blue-600 text-white shadow-blue-500/30' : 'bg-slate-900 text-white shadow-slate-900/20'
-                } shadow-lg`}
+                onClick={() => setIsMobileFilterOpen(true)}
+                className="lg:hidden flex items-center gap-2 p-2.5 px-4 border border-gray-300 rounded-lg bg-white text-gray-900 font-medium shadow-sm hover:bg-gray-50 transition-colors"
               >
-                <SlidersHorizontal size={20} />
-                {(selectedCategory !== 'All' || sortBy !== 'newest') && (
-                  <span className="absolute -top-1.5 -right-1.5 w-4 h-4 bg-blue-500 rounded-full border-2 border-white animate-in zoom-in duration-300"></span>
-                )}
+                <Filter size={18} /> Filters & Sort
               </button>
             </div>
           </div>
 
-          {}
-          <div className={`grid gap-6 pb-20 transition-all duration-300 ${
-            isFilterOpen 
-              ? 'grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4' 
-              : 'grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'
-          }`}>
+          {/* Product Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-x-6 gap-y-10 sm:gap-x-8 sm:gap-y-12">
             {loading ? (
               [...Array(8)].map((_, i) => (
-                <div key={i} className="aspect-[3/4] bg-slate-100 rounded-[2rem] animate-pulse" />
+                <div key={i} className="w-full h-[380px] sm:h-[420px] bg-gray-200 rounded-2xl animate-pulse" />
               ))
-            ) : (Array.isArray(filteredProducts) && filteredProducts.length > 0) ? (
+            ) : filteredProducts.length > 0 ? (
               filteredProducts.map(product => (
                 <ProductCard key={product._id} product={product} />
               ))
             ) : (
-              <div className="col-span-full py-20 text-center space-y-4">
-                <div className="w-20 h-20 bg-slate-50 text-slate-300 rounded-full flex items-center justify-center mx-auto">
-                  <Search size={40} />
+              <div className="col-span-full py-24 text-center bg-white rounded-3xl border border-gray-100 shadow-sm">
+                <div className="mx-auto w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mb-5">
+                  <Search className="text-gray-400" size={32} />
                 </div>
-                <p className="text-xl font-bold text-slate-900">No results found</p>
-                <button onClick={resetFilters} className="text-blue-600 font-bold uppercase text-xs tracking-widest">Clear all</button>
+                <h3 className="text-xl font-bold text-gray-900 mb-2">No products found</h3>
+                <p className="text-gray-500 font-medium">Try adjusting your filters or search query.</p>
               </div>
             )}
           </div>
-
-          {}
-          {!loading && Array.isArray(filteredProducts) && filteredProducts.length > 0 && (
-            <div className="py-20 flex items-center gap-6">
-              <div className="flex-1 h-[1px] bg-slate-100" />
-              <span className="text-[10px] font-black text-slate-300 uppercase tracking-[0.5em]">End of Collection</span>
-              <div className="flex-1 h-[1px] bg-slate-100" />
-            </div>
-          )}
+          
+          {/* Bottom Padding for scroll area */}
+          <div className="h-20"></div>
         </div>
-      </motion.div>
+      </div>
 
-      {}
-      <AnimatePresence>
-        {isFilterOpen && (
-          <motion.div 
-            initial={{ width: 0, opacity: 0 }}
-            animate={{ width: 380, opacity: 1 }}
-            exit={{ width: 0, opacity: 0 }}
-            transition={{ duration: 0.3, ease: "easeOut" }}
-            className="h-full bg-slate-50 border-l border-slate-100 overflow-hidden rounded-l-[3rem]"
-          >
-            <div className="w-[380px] flex flex-col h-full">
-              <div className="p-10 flex items-center justify-between">
-                <h2 className="text-xl font-black text-slate-900 uppercase tracking-tighter">Refine</h2>
-                <button 
-                  onClick={() => setIsFilterOpen(false)}
-                  className="p-2 hover:bg-slate-200 rounded-full text-slate-400 transition-all"
-                >
-                  <CloseIcon size={20} />
-                </button>
-              </div>
-
-              <div className="flex-1 overflow-y-auto hide-scrollbar px-10 space-y-8 pb-10">
-                {}
-                <div className="space-y-4">
-                  <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Search Pieces</h3>
-                  <div className="relative group">
-                    <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-blue-600 transition-colors" size={16} />
-                    <input 
-                      type="text" 
-                      placeholder="Type style or category..." 
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full pl-11 pr-5 py-3.5 bg-white border border-slate-100 rounded-2xl focus:border-blue-600 outline-none transition-all font-bold text-sm text-slate-900 shadow-sm"
-                    />
-                  </div>
-                </div>
-
-                {}
-                <div className="space-y-4">
-                  <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Department</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {genderOptions.map(gender => (
-                      <button
-                        key={gender}
-                        onClick={() => setSelectedGender(gender)}
-                        className={`px-4 py-2 rounded-full font-bold text-[10px] transition-all ${
-                          selectedGender === gender 
-                            ? 'bg-blue-600 text-white shadow-lg' 
-                            : 'bg-white text-slate-600 border border-slate-100 hover:border-slate-300'
-                        }`}
-                      >
-                        {gender}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {}
-                <div className="space-y-4">
-                  <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Category</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {categories.map(cat => (
-                      <button
-                        key={cat}
-                        onClick={() => setSelectedCategory(cat)}
-                        className={`px-4 py-2 rounded-full font-bold text-[10px] transition-all ${
-                          selectedCategory === cat 
-                            ? 'bg-blue-600 text-white shadow-lg' 
-                            : 'bg-white text-slate-600 border border-slate-100 hover:border-slate-300'
-                        }`}
-                      >
-                        {cat}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {}
-                <div className="space-y-4">
-                  <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Sort Options</h3>
-                  <div className="space-y-1.5">
-                    {[
-                      { id: 'newest', label: 'New Arrivals' },
-                      { id: 'price-low', label: 'Price: Low to High' },
-                      { id: 'price-high', label: 'Price: High to Low' }
-                    ].map(option => (
-                      <button
-                        key={option.id}
-                        onClick={() => setSortBy(option.id)}
-                        className={`w-full flex items-center justify-between px-5 py-3 rounded-full transition-all ${
-                          sortBy === option.id 
-                            ? 'bg-slate-900 text-white' 
-                            : 'bg-white border border-slate-100 text-slate-600 hover:border-slate-300'
-                        }`}
-                      >
-                        <span className="font-bold text-[10px] tracking-wide">{option.label}</span>
-                        {sortBy === option.id && <CheckIcon size={12} />}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Mobile Sidebar Overlay */}
+      {isMobileFilterOpen && (
+        <div className="fixed inset-0 z-[100] lg:hidden flex">
+          <div 
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" 
+            onClick={() => setIsMobileFilterOpen(false)}
+          />
+          <div className="relative w-[300px] bg-white h-full max-w-full shadow-2xl animate-in slide-in-from-left duration-300">
+            <SidebarContent />
+          </div>
+        </div>
+      )}
 
     </div>
   );

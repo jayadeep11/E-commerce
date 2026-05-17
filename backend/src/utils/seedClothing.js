@@ -5,61 +5,112 @@ const User = require('../models/User');
 
 dotenv.config();
 
+const shirtImages = [
+  'https://images.unsplash.com/photo-1596755094514-f87e34085b2c?auto=format&fit=crop&w=800&q=80',
+  'https://images.unsplash.com/photo-1598033129183-c4f50c736f10?auto=format&fit=crop&w=800&q=80',
+  'https://images.unsplash.com/photo-1548624149-f9b1859aa7d0?auto=format&fit=crop&w=800&q=80',
+  'https://images.unsplash.com/photo-1503919545889-aef636e10ad4?auto=format&fit=crop&w=800&q=80'
+];
+
+const tshirtImages = [
+  'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=800&q=80',
+  'https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=800&q=80',
+  'https://images.unsplash.com/photo-1519457431-44cac64a579b?auto=format&fit=crop&w=800&q=80',
+  'https://images.unsplash.com/photo-1554568218-0f1715e72254?auto=format&fit=crop&w=800&q=80'
+];
+
+const pantsImages = [
+  'https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?auto=format&fit=crop&w=800&q=80',
+  'https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?auto=format&fit=crop&w=800&q=80',
+  'https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?auto=format&fit=crop&w=800&q=80',
+  'https://images.unsplash.com/photo-1582562124811-c09040d0a901?auto=format&fit=crop&w=800&q=80'
+];
+
+const footwearImages = [
+  'https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=800&q=80',
+  'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?auto=format&fit=crop&w=800&q=80',
+  'https://images.unsplash.com/photo-1514989940723-e8e51635b782?auto=format&fit=crop&w=800&q=80',
+  'https://images.unsplash.com/photo-1463100099907-44d58c4337d2?auto=format&fit=crop&w=800&q=80'
+];
 
 const accessoryImages = [
   'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80',
   'https://images.unsplash.com/photo-1524592094714-0f0654e20314?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1542496658-e33a6d0d50f6?auto=format&fit=crop&w=800&q=80',
   'https://images.unsplash.com/photo-1584917765829-d73b58ff200c?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1627123424574-724758594e93?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1624222247344-550fbad0647a?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1576871333020-2219714a953a?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1512331283953-19967202267a?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1572635196237-14b3f281503f?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1618354691373-d851c5c3a990?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1511499767390-91f19760a0ac?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1509319117193-57bab727e09d?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1523170335258-f5ed11844a49?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1539533113208-f6df8cc8b543?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&w=800&q=80',
   'https://images.unsplash.com/photo-1515562141224-7a52ef2ce588?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1552046122-03184de85e08?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1598533023411-ca4e23aa5042?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1590736704728-f4730bb30770?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1511402339625-56e26829bc50?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1617137968427-83c394297941?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1621607512214-68297480165e?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1594223274512-ad4803739b7c?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1606760227091-3dd870d97f1d?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1508296695146-257a814070b4?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1575410223722-df3848f62c2f?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1559563458-527698bf5295?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1588094749432-bc1951552554?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1508296695146-257a814070b4?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1549439602-43ebca2327af?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1616748494672-69024f9232ed?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1520006403991-3c9793c77216?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1515562141224-7a52ef2ce588?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1551028150-64b9f398f678?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1521120413309-42e7eada0332?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1511402339625-56e26829bc50?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1509112756314-34a0badb29d4?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1524805444758-09914d860542?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1491633582673-491621587b1c?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1516762689617-e1cffcef479d?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=800&q=80'
+  'https://images.unsplash.com/photo-1627123424574-724758594e93?auto=format&fit=crop&w=800&q=80'
 ];
 
 const clothingProducts = [
-  
+  // --- SHIRTS ---
+  {
+    name: 'Crisp Oxford Cotton Shirt',
+    brand: 'Formal Edge',
+    gender: 'Men',
+    description: 'Precision tailored button-down shirt crafted from durable and soft Oxford cotton fabric. Perfect for modern smart-casual wear.',
+    category: 'Shirts',
+    price: 49.99,
+    mrp: 75.00
+  },
+  {
+    name: 'Classic Linen Resort Shirt',
+    brand: 'Urban Aura',
+    gender: 'Men',
+    description: 'Relaxed fit summer shirt made of pure Italian linen. Light, breathable, and pre-washed for ultimate comfort.',
+    category: 'Shirts',
+    price: 39.99,
+    mrp: 59.99
+  },
+  {
+    name: 'Premium Silk Blouse',
+    brand: 'Luna Muse',
+    gender: 'Women',
+    description: 'Luxurious silk blouse with a tailored collar and elegant pleated back. A staple for executive offices and evenings out.',
+    category: 'Shirts',
+    price: 89.99,
+    mrp: 140.00,
+    isFeatured: true
+  },
+  {
+    name: 'Lightweight Patterned Poplin Shirt',
+    brand: 'Tiny Trendsetters',
+    gender: 'Kids',
+    description: 'Joyful patterned poplin shirt for kids, featuring easy clip-buttons and a soft skin feel.',
+    category: 'Shirts',
+    price: 24.99,
+    mrp: 35.00
+  },
+
+  // --- T-SHIRTS ---
+  {
+    name: 'Heavyweight Signature Tee',
+    brand: 'Urban Aura',
+    gender: 'Men',
+    description: 'Extra thick organic cotton tee with a clean boxy drop-shoulder aesthetic. Shrink-resistant and incredibly soft.',
+    category: 'Tshirts',
+    price: 29.99,
+    mrp: 45.00
+  },
+  {
+    name: 'Fine Ribbed Knit Tee',
+    brand: 'Luna Muse',
+    gender: 'Women',
+    description: 'Chic form-fitting ribbed top with a modern square neckline. Highly stretchable and elegant.',
+    category: 'Tshirts',
+    price: 24.99,
+    mrp: 38.00
+  },
+  {
+    name: 'Playful Graphic Tee',
+    brand: 'Tiny Trendsetters',
+    gender: 'Kids',
+    description: 'Breathable combed cotton tee with fun cartoon badges and premium water-based safety ink.',
+    category: 'Tshirts',
+    price: 18.99,
+    mrp: 28.00
+  },
+
+  // --- ACCESSORIES ---
   {
     name: 'Precision Leather Belt',
     brand: 'Formal Edge',
@@ -68,15 +119,6 @@ const clothingProducts = [
     category: 'Accessories',
     price: 45.00,
     mrp: 65.00
-  },
-  {
-    name: 'Minimalist Bifold Wallet',
-    brand: 'Urban Aura',
-    gender: 'Men',
-    description: 'Slim leather wallet with RFID protection. Designed for the modern professional.',
-    category: 'Accessories',
-    price: 35.00,
-    mrp: 55.00
   },
   {
     name: 'Executive Chronograph Watch',
@@ -89,26 +131,6 @@ const clothingProducts = [
     isFeatured: true
   },
   {
-    name: 'Sterling Silver Cufflinks',
-    brand: 'Formal Edge',
-    gender: 'Men',
-    description: 'Hand-finished silver cufflinks for the ultimate formal statement.',
-    category: 'Accessories',
-    price: 85.00,
-    mrp: 120.00
-  },
-
-  
-  {
-    name: '18K Gold Plated Necklace',
-    brand: 'Luna Muse',
-    gender: 'Women',
-    description: 'Elegant layered gold necklace. Adds a touch of luxury to any outfit.',
-    category: 'Accessories',
-    price: 75.00,
-    mrp: 120.00
-  },
-  {
     name: 'Designer Quilted Handbag',
     brand: 'Luna Muse',
     gender: 'Women',
@@ -119,26 +141,6 @@ const clothingProducts = [
     isFeatured: true
   },
   {
-    name: 'Silk Patterned Scarf',
-    brand: 'Luna Muse',
-    gender: 'Women',
-    description: '100% pure silk scarf with hand-drawn floral patterns. Versatile and luxurious.',
-    category: 'Accessories',
-    price: 55.00,
-    mrp: 85.00
-  },
-  {
-    name: 'Velvet Clutch Bag',
-    brand: 'Luna Muse',
-    gender: 'Women',
-    description: 'Sophisticated velvet clutch for gala evenings and formal events.',
-    category: 'Accessories',
-    price: 145.00,
-    mrp: 210.00
-  },
-
-  
-  {
     name: 'Adventure School Backpack',
     brand: 'Tiny Trendsetters',
     gender: 'Kids',
@@ -147,71 +149,82 @@ const clothingProducts = [
     price: 39.00,
     mrp: 55.00
   },
-  {
-    name: 'Superhero LED Digital Watch',
-    brand: 'Tiny Trendsetters',
-    gender: 'Kids',
-    description: 'Fun, waterproof digital watch with colorful LED lights and character graphics.',
-    category: 'Accessories',
-    price: 25.00,
-    mrp: 35.00
-  },
-  {
-    name: 'Playful Pom-Pom Beanie',
-    brand: 'Tiny Trendsetters',
-    gender: 'Kids',
-    description: 'Soft knit beanie with a fluffy pom-pom. Keeps them warm and stylish in winter.',
-    category: 'Accessories',
-    price: 18.00,
-    mrp: 25.00
-  },
-  {
-    name: 'Animal Ears Headband',
-    brand: 'Tiny Trendsetters',
-    gender: 'Kids',
-    description: 'Adorable plush headband for a playful look.',
-    category: 'Accessories',
-    price: 12.00,
-    mrp: 18.00
-  },
 
-  
+  // --- PANTS ---
   {
-    name: 'Urban Canvas Tote Bag',
-    brand: 'Urban Aura',
-    gender: 'Unisex',
-    description: 'Heavyweight canvas tote with reinforced handles. The ultimate eco-friendly carry-all.',
-    category: 'Accessories',
-    price: 25.00,
-    mrp: 40.00
+    name: 'Pleated Tailored Trousers',
+    brand: 'Formal Edge',
+    gender: 'Men',
+    description: 'Sharp slim pleated trousers crafted from ultra-smooth merino wool blend.',
+    category: 'Pants',
+    price: 79.99,
+    mrp: 120.00
   },
   {
-    name: 'Classic Knit Beanie',
+    name: 'Raw Selvedge Denim Jeans',
     brand: 'Urban Aura',
-    gender: 'Unisex',
-    description: 'Standard fit rib-knit beanie. A versatile essential for any cold-weather look.',
-    category: 'Accessories',
-    price: 15.00,
-    mrp: 25.00
-  },
-  {
-    name: 'Leather Laptop Portfolio',
-    brand: 'Volt Armor',
-    gender: 'Unisex',
-    description: 'Sleek leather portfolio designed for 13-inch laptops. Tech protection meet high-end style.',
-    category: 'Accessories',
-    price: 120.00,
+    gender: 'Men',
+    description: 'Japanese raw selvedge jeans designed to mold and fade uniquely with wear.',
+    category: 'Pants',
+    price: 119.99,
     mrp: 180.00,
     isFeatured: true
   },
   {
-    name: 'Anti-Blue Light Glasses',
-    brand: 'Volt Armor',
+    name: 'Linen Wide-Leg Trousers',
+    brand: 'Luna Muse',
+    gender: 'Women',
+    description: 'Floaty, lightweight wide-leg linen pants with an elasticated waistband for daily premium comfort.',
+    category: 'Pants',
+    price: 59.99,
+    mrp: 90.00
+  },
+  {
+    name: 'Comfy Cotton Jogger Pants',
+    brand: 'Tiny Trendsetters',
+    gender: 'Kids',
+    description: 'Durable and cozy French terry joggers. Great for school playground activity and relaxed days.',
+    category: 'Pants',
+    price: 22.99,
+    mrp: 35.00
+  },
+
+  // --- FOOTWEAR ---
+  {
+    name: 'Heritage Leather Chelsea Boots',
+    brand: 'Formal Edge',
+    gender: 'Men',
+    description: 'Water-resistant luxury suede boots with elasticated sides for effortless slip-on styling.',
+    category: 'Footwear',
+    price: 149.99,
+    mrp: 230.00
+  },
+  {
+    name: 'Handcrafted Classic Sneakers',
+    brand: 'Urban Aura',
     gender: 'Unisex',
-    description: 'Stylish frames with blue light filtering lenses for digital comfort.',
-    category: 'Accessories',
-    price: 45.00,
-    mrp: 65.00
+    description: 'Minimalist low-top sneakers in clean grain white leather. Features a cushioned cork footbed.',
+    category: 'Footwear',
+    price: 99.99,
+    mrp: 150.00
+  },
+  {
+    name: 'Elegant Strappy Leather Heels',
+    brand: 'Luna Muse',
+    gender: 'Women',
+    description: 'Fine strappy heels crafted with padded memory foam soles for sophisticated style and wearability.',
+    category: 'Footwear',
+    price: 129.99,
+    mrp: 195.00
+  },
+  {
+    name: 'High-Top Playground Sneakers',
+    brand: 'Tiny Trendsetters',
+    gender: 'Kids',
+    description: 'Durable vulcanized canvas shoes with easy-grip side zippers and safety rubber toes.',
+    category: 'Footwear',
+    price: 34.99,
+    mrp: 50.00
   }
 ];
 
@@ -220,7 +233,7 @@ const seedClothing = async () => {
     const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/ecommerce';
     await mongoose.connect(MONGO_URI);
     
-    console.log('\n--- 👔 SEEDING KORE ACCESSORIES SHOWROOM 👔 ---');
+    console.log('\n--- 👔 SEEDING KORE APPAREL SHOWROOM 👔 ---');
 
     let admin = await User.findOne({ isAdmin: true });
     
@@ -251,8 +264,18 @@ const seedClothing = async () => {
       
       const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
       
-      
-      const imageUrl = accessoryImages[i % accessoryImages.length];
+      let imageUrl = '';
+      if (template.category === 'Shirts') {
+        imageUrl = shirtImages[i % shirtImages.length];
+      } else if (template.category === 'Tshirts') {
+        imageUrl = tshirtImages[i % tshirtImages.length];
+      } else if (template.category === 'Pants') {
+        imageUrl = pantsImages[i % pantsImages.length];
+      } else if (template.category === 'Footwear') {
+        imageUrl = footwearImages[i % footwearImages.length];
+      } else {
+        imageUrl = accessoryImages[i % accessoryImages.length];
+      }
 
       massiveProducts.push({
         ...template,
@@ -272,11 +295,11 @@ const seedClothing = async () => {
     await Product.insertMany(massiveProducts);
     
     console.log('---------------------------------');
-    console.log(`${massiveProducts.length} Unique Accessories with UNIQUE Images successfully added! 💎`);
+    console.log(`${massiveProducts.length} Premium Apparel Products with UNIQUE Images successfully seeded! 💎`);
     console.log('Visual Engine: 100 items are now LIVE. 🚀');
     process.exit();
   } catch (error) {
-    console.error('Error with seeding accessories:', error);
+    console.error('Error with seeding apparel:', error);
     process.exit(1);
   }
 };
