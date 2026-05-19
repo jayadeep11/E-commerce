@@ -191,7 +191,6 @@ const Shop = () => {
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4">
             <div>
               <h1 className="text-3xl lg:text-4xl font-black text-gray-900 tracking-tight">SHOP</h1>
-              <p className="text-sm font-medium text-gray-500 mt-2">Showing {filteredProducts.length} results</p>
             </div>
             
             <div className="flex items-center gap-3 w-full sm:w-auto">
