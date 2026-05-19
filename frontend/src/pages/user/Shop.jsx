@@ -1,13 +1,15 @@
 import { useState, useEffect } from 'react';
 import api from '../../utils/api';
 import ProductCard from '../../components/product/ProductCard';
-import { Search, Filter, X, ArrowUpDown, ChevronDown } from 'lucide-react';
+import { Search, Filter, X, ArrowUpDown, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 
 const Shop = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 8;
   
   // Mobile filter toggle
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
@@ -83,13 +85,22 @@ const Shop = () => {
     }
 
     setFilteredProducts(result);
+    setCurrentPage(1);
   }, [searchQuery, selectedCategory, selectedGender, sortBy, products]);
 
   const resetFilters = () => {
     setSelectedCategory('All');
     setSelectedGender('All');
     setSortBy('default');
+    setCurrentPage(1);
   };
+
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
+  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full border-r border-gray-100 bg-white">
@@ -209,8 +220,8 @@ const Shop = () => {
               [...Array(8)].map((_, i) => (
                 <div key={i} className="w-full h-[380px] sm:h-[420px] bg-gray-200 rounded-2xl animate-pulse" />
               ))
-            ) : filteredProducts.length > 0 ? (
-              filteredProducts.map(product => (
+            ) : currentProducts.length > 0 ? (
+              currentProducts.map(product => (
                 <ProductCard key={product._id} product={product} />
               ))
             ) : (
@@ -223,6 +234,41 @@ const Shop = () => {
               </div>
             )}
           </div>
+          
+          {/* Pagination Controls */}
+          {!loading && filteredProducts.length > productsPerPage && (
+            <div className="flex justify-center items-center mt-12 mb-8 gap-2">
+              <button 
+                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="p-2 rounded-lg border border-gray-200 text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+              >
+                <ChevronLeft size={20} />
+              </button>
+              
+              {[...Array(totalPages)].map((_, index) => (
+                <button
+                  key={index + 1}
+                  onClick={() => paginate(index + 1)}
+                  className={`w-10 h-10 rounded-lg text-sm font-medium transition-colors ${
+                    currentPage === index + 1 
+                      ? 'bg-black text-white border-black' 
+                      : 'border border-gray-200 text-gray-600 hover:bg-gray-50'
+                  }`}
+                >
+                  {index + 1}
+                </button>
+              ))}
+
+              <button 
+                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="p-2 rounded-lg border border-gray-200 text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
+              >
+                <ChevronRight size={20} />
+              </button>
+            </div>
+          )}
           
           {/* Bottom Padding for scroll area */}
           <div className="h-20"></div>
