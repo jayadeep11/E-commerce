@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { LogOut, Settings, ShoppingBag, ShieldCheck, CheckCircle2, AlertCircle, X, Save, Lock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { optimizeImage } from '../../utils/cloudinary';
+import AnimatedNumber from '../../components/ui/AnimatedNumber';
 
 const Profile = () => {
   const { 
@@ -268,11 +269,11 @@ const Profile = () => {
           <div className="bg-white border border-slate-100 rounded-2xl p-6 shadow-sm col-span-1 md:col-span-2 grid grid-cols-2 gap-6">
             <div>
               <p className="text-slate-500 text-xs sm:text-sm font-semibold mb-1">Total Orders</p>
-              <p className="text-2xl sm:text-3xl font-black text-slate-900">{orderCount}</p>
+              <p className="text-2xl sm:text-3xl font-black text-slate-900"><AnimatedNumber value={orderCount} /></p>
             </div>
             <div>
               <p className="text-slate-500 text-xs sm:text-sm font-semibold mb-1">Total Spent</p>
-              <p className="text-2xl sm:text-3xl font-black text-slate-900">₹{totalSpent.toFixed(2)}</p>
+              <p className="text-2xl sm:text-3xl font-black text-slate-900">₹<AnimatedNumber value={totalSpent} decimals={2} /></p>
             </div>
           </div>
           
