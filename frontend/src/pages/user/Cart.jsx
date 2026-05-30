@@ -76,58 +76,68 @@ const Cart = () => {
       <h1 className="text-4xl font-bold text-slate-900 mb-12">Shopping Cart</h1>
 
       <div className="grid lg:grid-cols-3 gap-12">
-        <div className="lg:col-span-2 space-y-6">
-          {cartItems.map((item) => (
-            <motion.div 
-              layout
-              key={item._id} 
-              className="glass-card p-6 flex flex-col sm:flex-row gap-6 items-center"
-            >
-              <div className="w-24 h-24 rounded-xl overflow-hidden flex-shrink-0 bg-slate-100">
+        <div className="lg:col-span-2">
+          <div className="glass-card p-0 overflow-hidden">
+            {cartItems.map((item, index) => (
+              <motion.div 
+                layout
+                key={item._id} 
+                className={`p-4 sm:p-6 flex flex-row gap-3 sm:gap-6 items-start sm:items-center ${
+                  index !== cartItems.length - 1 ? 'border-b border-slate-100' : ''
+                }`}
+              >
+              <div className="w-16 h-16 sm:w-24 sm:h-24 rounded-lg overflow-hidden flex-shrink-0 bg-slate-100 mt-1 sm:mt-0">
                 <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
               </div>
               
-              <div className="flex-grow text-center sm:text-left">
-                <Link to={`/product/${item._id}`} className="text-lg font-bold text-slate-900 hover:text-black transition-colors">
-                  {item.name}
-                </Link>
-                <div className="flex flex-col sm:flex-row sm:items-center gap-2 mt-1">
-                  <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">{item.category}</p>
-                  {item.countInStock === 0 ? (
-                    <span className="px-2 py-0.5 bg-red-50 text-red-600 text-[10px] font-black rounded-md w-fit">SOLD OUT</span>
-                  ) : item.qty > item.countInStock ? (
-                    <span className="px-2 py-0.5 bg-amber-50 text-amber-600 text-[10px] font-black rounded-md w-fit italic">Only {item.countInStock} available</span>
-                  ) : null}
+              {/* Product Info & Mobile Controls */}
+              <div className="flex flex-col flex-grow min-w-0">
+                <div className="flex-grow text-left">
+                  <Link to={`/product/${item._id}`} className="text-[13px] sm:text-lg font-bold text-slate-900 hover:text-black transition-colors line-clamp-2 sm:line-clamp-none leading-tight">
+                    {item.name}
+                  </Link>
+                  <div className="flex items-center gap-2 mt-0.5 sm:mt-1 hidden sm:flex">
+                    <p className="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-widest">{item.category}</p>
+                  </div>
+                  {/* Mobile Price */}
+                  <div className="text-sm font-bold text-slate-900 mt-1 sm:hidden">
+                    ₹{(item.price * item.qty).toFixed(2)}
+                  </div>
+                </div>
+
+                {/* Mobile specific controls wrapper */}
+                <div className="flex items-center justify-between sm:hidden mt-3">
+                  <div className="flex items-center bg-slate-100 rounded-lg overflow-hidden shrink-0">
+                    <button onClick={() => addToCart(item, -1)} disabled={item.qty <= 1} className="px-2 py-1 hover:bg-slate-200 transition-colors disabled:opacity-30"><Minus size={12} /></button>
+                    <span className="px-2 font-bold text-xs">{item.qty}</span>
+                    <button onClick={() => addToCart(item, 1)} disabled={item.qty >= item.countInStock} className="px-2 py-1 hover:bg-slate-200 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"><Plus size={12} /></button>
+                  </div>
+                  
+                  <button onClick={() => removeFromCart(item._id)} className="p-1.5 text-slate-400 hover:text-red-500 transition-colors shrink-0">
+                    <Trash2 size={16} />
+                  </button>
                 </div>
               </div>
 
-              <div className="flex items-center bg-slate-100 rounded-lg overflow-hidden">
-                <button 
-                  onClick={() => addToCart(item, -1)}
-                  disabled={item.qty <= 1}
-                  className="px-3 py-1 hover:bg-slate-200 transition-colors disabled:opacity-30"
-                ><Minus size={14} /></button>
+              {/* Desktop specific controls */}
+              <div className="hidden sm:flex items-center bg-slate-100 rounded-lg overflow-hidden shrink-0 ml-auto">
+                <button onClick={() => addToCart(item, -1)} disabled={item.qty <= 1} className="px-3 py-1.5 hover:bg-slate-200 transition-colors disabled:opacity-30"><Minus size={14} /></button>
                 <span className="px-4 font-bold text-sm">{item.qty}</span>
-                <button 
-                  onClick={() => addToCart(item, 1)}
-                  disabled={item.qty >= item.countInStock}
-                  title={item.qty >= item.countInStock ? "Maximum stock reached" : "Increase quantity"}
-                  className="px-3 py-1 hover:bg-slate-200 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
-                ><Plus size={14} /></button>
+                <button onClick={() => addToCart(item, 1)} disabled={item.qty >= item.countInStock} className="px-3 py-1.5 hover:bg-slate-200 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"><Plus size={14} /></button>
               </div>
 
-              <div className="text-lg font-bold text-slate-900 w-24 text-center sm:text-right">
+              {/* Desktop Price */}
+              <div className="hidden sm:block text-lg font-bold text-slate-900 w-24 text-right shrink-0">
                 ₹{(item.price * item.qty).toFixed(2)}
               </div>
 
-              <button 
-                onClick={() => removeFromCart(item._id)}
-                className="p-2 text-slate-400 hover:text-red-500 transition-colors"
-              >
+              {/* Desktop Trash */}
+              <button onClick={() => removeFromCart(item._id)} className="hidden sm:block p-2 text-slate-400 hover:text-red-500 transition-colors shrink-0">
                 <Trash2 size={20} />
               </button>
-            </motion.div>
-          ))}
+              </motion.div>
+            ))}
+          </div>
         </div>
 
         <div className="lg:col-span-1">

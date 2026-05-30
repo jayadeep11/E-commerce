@@ -4,6 +4,7 @@ import { ShoppingBag, User, Search, Menu, X, ShieldCheck } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useAuth } from '../../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
+import { createPortal } from 'react-dom';
 
 const Navbar = () => {
   const { cartCount } = useCart();
@@ -99,7 +100,8 @@ const Navbar = () => {
       </div>
 
       {/* Mobile responsive drawer panel */}
-      <AnimatePresence>
+      {createPortal(
+        <AnimatePresence>
         {isMobileMenuOpen && (
           <>
             {/* Backdrop */}
@@ -108,7 +110,7 @@ const Navbar = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setIsMobileMenuOpen(false)}
-              className="fixed inset-0 bg-slate-900/40 z-[99] backdrop-blur-sm md:hidden"
+              className="fixed inset-0 bg-black/50 z-[99] backdrop-blur-sm md:hidden"
             />
             {/* Drawer Panel */}
             <motion.div
@@ -116,7 +118,7 @@ const Navbar = () => {
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="fixed top-0 right-0 bottom-0 w-64 bg-white/95 backdrop-blur-md z-[100] shadow-2xl border-l border-slate-100 flex flex-col p-6 md:hidden"
+              className="fixed top-0 right-0 bottom-0 w-64 bg-white backdrop-blur-md z-[100] shadow-2xl border-l border-slate-100 flex flex-col p-6 md:hidden"
             >
               <div className="flex items-center justify-between mb-8 pb-4 border-b border-slate-100">
                 <span className="font-black text-slate-900 tracking-tighter text-xl">KORE</span>
@@ -194,7 +196,9 @@ const Navbar = () => {
             </motion.div>
           </>
         )}
-      </AnimatePresence>
+      </AnimatePresence>,
+      document.body
+      )}
     </nav>
   );
 };

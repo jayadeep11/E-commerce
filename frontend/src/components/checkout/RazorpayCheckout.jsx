@@ -73,13 +73,13 @@ const RazorpayCheckout = ({ orderData }) => {
 
   return (
     <div className="space-y-6">
-      <div className="bg-white p-6 rounded-2xl border border-slate-200 flex items-start gap-4">
-        <div className="w-10 h-10 bg-slate-950 rounded-full flex items-center justify-center text-white shrink-0">
-          <CreditCard size={20} />
+      <div className="bg-white p-4 sm:p-6 rounded-2xl border border-slate-200 flex items-start gap-3 sm:gap-4">
+        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-slate-950 rounded-full flex items-center justify-center text-white shrink-0">
+          <CreditCard size={16} className="sm:w-5 sm:h-5" />
         </div>
         <div>
-          <h3 className="font-bold text-slate-900 mb-1">Pay with Razorpay</h3>
-          <p className="text-xs text-slate-500 leading-relaxed">
+          <h3 className="font-bold text-sm sm:text-base text-slate-900 mb-0.5 sm:mb-1">Pay with Razorpay</h3>
+          <p className="text-[9px] sm:text-xs text-slate-500 leading-relaxed">
             Supports UPI (Google Pay, PhonePe), NetBanking, and all Indian Debit/Credit cards.
           </p>
         </div>
@@ -93,13 +93,13 @@ const RazorpayCheckout = ({ orderData }) => {
         <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
         {isLoading ? (
           <>
-            <Loader2 size={20} className="animate-spin" />
-            <span className="font-bold uppercase tracking-widest text-xs">Initializing...</span>
+            <Loader2 size={16} className="animate-spin sm:w-5 sm:h-5" />
+            <span className="font-bold uppercase tracking-widest text-[10px] sm:text-xs">Initializing...</span>
           </>
         ) : (
           <>
-            <ShieldCheck size={20} />
-            <span className="font-bold uppercase tracking-widest text-xs">Proceed to Payment</span>
+            <ShieldCheck size={16} className="sm:w-5 sm:h-5" />
+            <span className="font-bold uppercase tracking-widest text-[10px] sm:text-xs">Proceed to Payment</span>
           </>
         )}
       </button>

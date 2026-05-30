@@ -200,7 +200,7 @@ const Shop = () => {
 
       {/* Main Product Area */}
       <div className="flex-1 h-full overflow-y-auto bg-gray-50" onScroll={handleScroll}>
-        <div className="p-6 lg:p-10 w-full max-w-full mx-auto">
+        <div className="p-3 xs:p-4 sm:p-6 lg:p-10 w-full max-w-full mx-auto">
           
           {/* Header & Sort */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4">
@@ -219,7 +219,7 @@ const Shop = () => {
           </div>
 
           {/* Product Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-x-6 gap-y-10 sm:gap-x-8 sm:gap-y-12">
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-x-3 gap-y-8 sm:gap-x-6 sm:gap-y-10 lg:gap-x-8 lg:gap-y-12">
             {loading ? (
               [...Array(8)].map((_, i) => (
                 <div key={i} className="w-full h-[380px] sm:h-[420px] bg-gray-200 rounded-2xl animate-pulse" />

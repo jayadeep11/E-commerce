@@ -27,7 +27,7 @@ const Checkout = () => {
   if (!orderData) return null;
 
   return (
-    <div className="min-h-screen bg-slate-50 py-4 sm:py-12 px-1 xs:px-4 sm:px-6 overflow-x-hidden">
+    <div className="min-h-screen bg-slate-50 py-4 sm:py-12 px-3 xs:px-4 sm:px-6 overflow-x-hidden">
       <div className="max-w-5xl mx-auto">
         <Link to="/cart" className="flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors mb-6 sm:mb-8 group w-fit">
           <ChevronLeft size={20} className="group-hover:-translate-x-1 transition-transform" />
@@ -39,7 +39,7 @@ const Checkout = () => {
           <motion.div 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="space-y-6 sm:space-y-8"
+            className="space-y-6 sm:space-y-8 min-w-0"
           >
             <div>
               <h1 className="text-xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-1 sm:mb-2">Secure Checkout</h1>
@@ -75,7 +75,7 @@ const Checkout = () => {
           <motion.div 
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="space-y-6"
+            className="space-y-6 min-w-0"
           >
             <div className="glass-card p-2 xs:p-5 sm:p-8 bg-slate-900 text-white overflow-hidden relative border-l-4 border-l-blue-600 w-full max-w-full">
               {/* Decorative background element */}
@@ -92,11 +92,11 @@ const Checkout = () => {
                     <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg overflow-hidden bg-slate-800 flex-shrink-0 border border-slate-700">
                       <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
                     </div>
-                    <div className="flex-grow min-w-0">
+                    <div className="flex-grow min-w-0 pr-2">
                       <p className="font-bold text-[11px] sm:text-sm truncate">{item.name}</p>
                       <p className="text-slate-400 text-[9px] sm:text-xs">Qty: {item.qty} × ₹{item.price}</p>
                     </div>
-                    <p className="font-bold text-xs sm:text-sm whitespace-nowrap ml-auto">₹{(item.price * item.qty).toFixed(2)}</p>
+                    <p className="font-bold text-xs sm:text-sm whitespace-nowrap ml-auto flex-shrink-0">₹{(item.price * item.qty).toFixed(2)}</p>
                   </div>
                 ))}
               </div>

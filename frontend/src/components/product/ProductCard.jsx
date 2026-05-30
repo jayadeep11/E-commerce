@@ -22,9 +22,9 @@ const ProductCard = ({ product }) => {
     <motion.div 
       onClick={handleCardClick}
       whileHover={{ y: -10 }}
-      className="glass-card overflow-hidden group flex flex-col w-full h-[380px] sm:h-[420px] cursor-pointer"
+      className="glass-card overflow-hidden group flex flex-col w-full h-full cursor-pointer"
     >
-      <div className="relative h-[55%] overflow-hidden shrink-0">
+      <div className="relative aspect-[4/5] sm:aspect-[4/5] overflow-hidden shrink-0">
         <img 
           src={optimizeImage(product.image, 500)} 
           alt={product.name} 
@@ -55,31 +55,32 @@ const ProductCard = ({ product }) => {
         )}
       </div>
 
-      <div className="p-4 sm:p-5 flex flex-col flex-grow">
-        <div className="flex justify-between items-start mb-2">
-          <span className="text-[10px] font-bold text-blue-600 uppercase tracking-widest">{product.category}</span>
-          <div className="flex items-center gap-1">
-            <Star size={10} className="text-yellow-400 fill-yellow-400" />
-            <span className="text-[10px] font-bold text-slate-500">{product.rating}</span>
+      <div className="p-3 sm:p-5 flex flex-col flex-grow">
+        <div className="flex justify-between items-start mb-1 sm:mb-2">
+          <span className="text-[8px] sm:text-[10px] font-bold text-blue-600 uppercase tracking-widest line-clamp-1 truncate mr-1">{product.category}</span>
+          <div className="flex items-center gap-0.5 sm:gap-1 shrink-0">
+            <Star size={10} className="text-yellow-400 fill-yellow-400 w-2 h-2 sm:w-2.5 sm:h-2.5" />
+            <span className="text-[8px] sm:text-[10px] font-bold text-slate-500">{product.rating}</span>
           </div>
         </div>
         
-        <Link to={`/product/${product._id}`} className="text-sm sm:text-base font-bold text-slate-900 mb-1 sm:mb-2 hover:text-blue-600 transition-colors line-clamp-1">
+        <Link to={`/product/${product._id}`} className="text-xs sm:text-base font-bold text-slate-900 mb-0.5 sm:mb-2 hover:text-blue-600 transition-colors line-clamp-1 sm:line-clamp-2">
           {product.name}
         </Link>
         
-        <p className="text-slate-500 text-[10px] sm:text-xs line-clamp-2 mb-1 sm:mb-2 leading-relaxed flex-grow">
+        <p className="text-slate-500 text-[9px] sm:text-xs line-clamp-1 sm:line-clamp-2 mb-1 sm:mb-2 leading-relaxed flex-grow hidden sm:block">
           {product.description}
         </p>
+        <div className="flex-grow sm:hidden"></div>
 
         <div className="flex items-center justify-between mt-auto pt-1">
-          <span className="text-base sm:text-lg font-bold text-slate-900">₹{product.price}</span>
+          <span className="text-xs sm:text-lg font-bold text-slate-900">₹{product.price}</span>
           <button 
             onClick={handleAddToCart}
             disabled={product.countInStock === 0}
-            className="p-2 sm:p-2.5 bg-blue-600 text-white rounded-lg sm:rounded-xl hover:bg-blue-700 transition-all disabled:bg-slate-300 disabled:cursor-not-allowed shadow-lg shadow-blue-500/20 active:scale-90 relative z-20"
+            className="p-1 sm:p-2.5 bg-blue-600 text-white rounded-md sm:rounded-xl hover:bg-blue-700 transition-all disabled:bg-slate-300 disabled:cursor-not-allowed shadow-lg shadow-blue-500/20 active:scale-90 relative z-20"
           >
-            <ShoppingCart size={16} className="sm:w-[18px] sm:h-[18px]" />
+            <ShoppingCart size={12} className="sm:w-[18px] sm:h-[18px]" />
           </button>
         </div>
       </div>
