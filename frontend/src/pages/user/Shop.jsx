@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import api from '../../utils/api';
+import productService from '../../api/productService';
 import ProductCard from '../../components/product/ProductCard';
 import { Search, Filter, X, ArrowUpDown, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
@@ -8,7 +8,8 @@ const Shop = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [visibleCount, setVisibleCount] = useState(30);
+  const [hasMore, setHasMore] = useState(true);
+  const [isFetching, setIsFetching] = useState(false);
 
   // Mobile filter toggle
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
@@ -40,8 +41,12 @@ const Shop = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const { data } = await api.get('/api/products');
+        setLoading(true);
+        const data = await productService.getProducts({ limit: 20, skip: 0 });
         const productList = Array.isArray(data) ? data : [];
+        if (productList.length < 20) {
+          setHasMore(false);
+        }
         setProducts(productList);
         setFilteredProducts(productList);
       } catch (error) {
@@ -84,24 +89,34 @@ const Shop = () => {
     }
 
     setFilteredProducts(result);
-    setVisibleCount(30);
   }, [searchQuery, selectedCategory, selectedGender, sortBy, products]);
 
   const resetFilters = () => {
     setSelectedCategory('All');
     setSelectedGender('All');
     setSortBy('default');
-    setVisibleCount(30);
   };
 
-  const currentProducts = filteredProducts.slice(0, visibleCount);
+  const currentProducts = filteredProducts;
 
-  const handleScroll = (e) => {
+  const handleScroll = async (e) => {
     const { scrollTop, clientHeight, scrollHeight } = e.target;
-    // Add more products when scrolled within 150px of the bottom
+    // Load next 20 products when scrolled within 150px of bottom
     if (scrollHeight - scrollTop <= clientHeight + 150) {
-      if (visibleCount < filteredProducts.length) {
-        setVisibleCount(prev => prev + 30);
+      if (hasMore && !isFetching) {
+        setIsFetching(true);
+        try {
+          const data = await productService.getProducts({ limit: 20, skip: products.length });
+          const productList = Array.isArray(data) ? data : [];
+          if (productList.length < 20) {
+            setHasMore(false);
+          }
+          setProducts(prev => [...prev, ...productList]);
+        } catch (error) {
+          console.error('Error fetching more products:', error);
+        } finally {
+          setIsFetching(false);
+        }
       }
     }
   };
