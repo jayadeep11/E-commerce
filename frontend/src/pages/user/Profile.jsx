@@ -308,7 +308,7 @@ const Profile = () => {
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Phone Number</label>
-                    <input type="text" value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none transition-all font-bold" placeholder="Optional" />
+                    <input type="tel" value={formData.phone} onInput={(e) => { e.target.value = e.target.value.replace(/[^0-9]/g, ''); }} onChange={(e) => setFormData({...formData, phone: e.target.value})} className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-2 focus:ring-blue-500 outline-none transition-all font-bold" placeholder="Optional" />
                   </div>
                   <button disabled={loading} type="submit" className="w-full py-4 bg-blue-600 text-white rounded-2xl font-black text-sm hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/25 flex items-center justify-center gap-2 mt-8">
                     {loading ? 'Saving...' : <><Save size={20} /> Save Changes</>}
@@ -346,16 +346,16 @@ const Profile = () => {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">City</label>
-                      <input required type="text" value={addressData.city} onChange={(e) => setAddressData({...addressData, city: e.target.value})} className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold focus:ring-2 focus:ring-blue-500 transition-all" />
+                      <input required type="text" value={addressData.city} onInput={(e) => { e.target.value = e.target.value.replace(/[^a-zA-Z\s]/g, ''); }} onChange={(e) => setAddressData({...addressData, city: e.target.value})} className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold focus:ring-2 focus:ring-blue-500 transition-all" />
                     </div>
                     <div className="space-y-2">
                       <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Zip Code</label>
-                      <input required type="text" value={addressData.postalCode} onChange={(e) => setAddressData({...addressData, postalCode: e.target.value})} className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold focus:ring-2 focus:ring-blue-500 transition-all" />
+                      <input required type="tel" value={addressData.postalCode} onInput={(e) => { e.target.value = e.target.value.replace(/[^0-9]/g, ''); }} onChange={(e) => setAddressData({...addressData, postalCode: e.target.value})} className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold focus:ring-2 focus:ring-blue-500 transition-all" />
                     </div>
                   </div>
                   <div className="space-y-2">
                     <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Country</label>
-                    <input required type="text" value={addressData.country} onChange={(e) => setAddressData({...addressData, country: e.target.value})} className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold focus:ring-2 focus:ring-blue-500 transition-all" />
+                    <input required type="text" value={addressData.country} onInput={(e) => { e.target.value = e.target.value.replace(/[^a-zA-Z\s]/g, ''); }} onChange={(e) => setAddressData({...addressData, country: e.target.value})} className="w-full px-5 py-4 bg-slate-50 border border-slate-100 rounded-2xl outline-none font-bold focus:ring-2 focus:ring-blue-500 transition-all" />
                   </div>
                   <button disabled={loading} type="submit" className="w-full py-4 bg-slate-900 text-white rounded-2xl font-black text-sm hover:bg-slate-800 transition-all shadow-lg shadow-slate-900/10 flex items-center justify-center gap-2 mt-8">
                     {loading ? 'Saving...' : <><Save size={20} /> Save Location</>}

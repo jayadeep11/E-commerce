@@ -176,7 +176,6 @@ const ProductList = () => {
             exit={{ opacity: 0, y: 20 }}
             className="fixed inset-0 bg-white z-[150] overflow-hidden flex flex-col"
           >
-            {}
             <div className="px-8 lg:px-12 py-6 border-b border-slate-100 flex items-center justify-between bg-white z-20">
               <div className="flex items-center gap-6">
                 <button 
@@ -193,14 +192,16 @@ const ProductList = () => {
               <div className="flex items-center gap-4">
                 <button 
                   onClick={closeHandler}
+                  type="button"
                   className="px-6 py-3 text-slate-500 font-bold text-xs hover:text-slate-900 transition-colors"
                 >
                   Discard
                 </button>
                 <button 
-                  onClick={handleSubmit}
+                  type="submit"
+                  form="product-form"
                   disabled={createLoading}
-                  className="px-8 py-3.5 bg-slate-900 text-white rounded-xl font-black text-xs hover:bg-blue-600 transition-all shadow-xl shadow-slate-900/10 flex items-center gap-2 active:scale-95"
+                  className="px-8 py-3.5 bg-slate-900 text-white rounded-xl font-black text-xs hover:bg-blue-600 transition-all shadow-xl shadow-slate-900/10 flex items-center gap-2 active:scale-95 cursor-pointer"
                 >
                   {createLoading ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
                   {editMode ? 'Update Product' : 'Save Product'}
@@ -208,12 +209,10 @@ const ProductList = () => {
               </div>
             </div>
 
-            {}
             <div className="flex-1 overflow-hidden flex flex-col lg:flex-row">
               
-              {}
-              <div className="flex-1 overflow-y-auto p-8 lg:p-16 scrollbar-hide">
-                <div className="max-w-2xl mx-auto space-y-12">
+              <div className="flex-grow overflow-y-auto p-8 lg:p-16 scrollbar-hide">
+                <form id="product-form" onSubmit={handleSubmit} className="max-w-2xl mx-auto space-y-12">
                   <section className="space-y-6">
                     <h3 className="font-black text-slate-900 uppercase tracking-widest text-[10px] flex items-center gap-2">
                       <div className="w-1 h-3 bg-blue-600 rounded-full"></div> Core Information
@@ -345,7 +344,7 @@ const ProductList = () => {
                       />
                     </div>
                   </section>
-                </div>
+                </form>
               </div>
 
               {}

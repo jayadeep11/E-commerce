@@ -197,6 +197,7 @@ const Register = () => {
                         <input 
                           type="tel" 
                           value={phone}
+                          onInput={(e) => { e.target.value = e.target.value.replace(/[^0-9]/g, ''); }}
                           onChange={(e) => setPhone(e.target.value)}
                           placeholder="1234567890"
                           className="w-full pl-12 pr-4 py-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"

@@ -73,7 +73,10 @@ router.post('/', async (req, res) => {
           message: `Code: ${otp}`,
           html: `<div style="font-family:sans-serif;padding:20px;border:1px solid #eee;border-radius:10px;"><h2>Welcome!</h2><p>Your code is: <b>${otp}</b></p></div>`
         });
-      } catch (err) { console.error('Email failed'); }
+      } catch (err) { 
+        console.error('Email failed to send:', err); 
+        return res.status(500).json({ message: 'Failed to send OTP email. Your email provider might be blocking the login from the server.' });
+      }
     }
 
     res.status(200).json({ requiresVerification: true, email });

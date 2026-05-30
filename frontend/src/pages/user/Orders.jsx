@@ -2,13 +2,14 @@ import { useState, useEffect } from 'react';
 import api from '../../utils/api';
 import { useAuth } from '../../context/AuthContext';
 import { Package, ChevronRight, Clock, CheckCircle2, AlertCircle, Star, X, Send, Loader2, TrendingUp } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const { userInfo } = useAuth();
+  const navigate = useNavigate();
 
   
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
@@ -161,13 +162,15 @@ const Orders = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               key={order._id}
-              className="group bg-white border border-slate-100 p-8 rounded-[2.5rem] hover:border-blue-100 hover:shadow-2xl transition-all duration-300"
+              onClick={() => navigate(`/order/${order._id}`)}
+              className="group bg-white border border-slate-100 p-8 rounded-[2.5rem] hover:border-blue-100 hover:shadow-2xl transition-all duration-300 cursor-pointer"
             >
               <div className="flex flex-col lg:flex-row gap-8 items-start lg:items-center">
                 <div className="space-y-2 lg:w-40">
                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Order ID</p>
                   <Link 
                     to={`/order/${order._id}`}
+                    onClick={(e) => e.stopPropagation()}
                     className="font-mono text-sm text-blue-600 font-bold hover:text-blue-700 hover:underline transition-all"
                   >
                     #{order._id.slice(-8).toUpperCase()}
@@ -212,7 +215,7 @@ const Orders = () => {
                 <div className="flex items-center justify-end">
                   {order.isDelivered && (
                     <button 
-                      onClick={() => openReviewModal(order.orderItems[0])}
+                      onClick={(e) => { e.stopPropagation(); openReviewModal(order.orderItems[0]); }}
                       className="px-8 py-4 bg-amber-50 text-amber-600 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-amber-500 hover:text-white transition-all shadow-sm border border-amber-100 flex items-center gap-2 whitespace-nowrap"
                     >
                       <Star size={14} fill="currentColor" /> Review Items
