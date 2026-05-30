@@ -6,7 +6,6 @@ const { protect, admin } = require('../middleware/authMiddleware');
 
 
 
-
 router.post('/', protect, async (req, res) => {
   console.log('Order Creation Request Body:', JSON.stringify(req.body, null, 2));
   try {
@@ -58,6 +57,31 @@ router.get('/myorders', protect, async (req, res) => {
     res.json(orders);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching orders' });
+  }
+});
+
+// Get user order stats using MongoDB Aggregation
+router.get('/mystats', protect, async (req, res) => {
+  try {
+    const stats = await Order.aggregate([
+      { $match: { user: req.user._id } },
+      { 
+        $group: { 
+          _id: null, 
+          orderCount: { $sum: 1 }, 
+          totalSpent: { $sum: '$totalPrice' } 
+        } 
+      }
+    ]);
+
+    if (stats.length > 0) {
+      res.json({ orderCount: stats[0].orderCount, totalSpent: stats[0].totalSpent });
+    } else {
+      res.json({ orderCount: 0, totalSpent: 0 });
+    }
+  } catch (error) {
+    console.error('Error fetching order stats:', error);
+    res.status(500).json({ message: 'Error fetching order stats' });
   }
 });
 

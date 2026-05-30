@@ -32,9 +32,9 @@ const LayoutWrapper = ({ children }) => {
   const shouldShowFooter = showFooterOn.includes(location.pathname);
 
   return (
-    <div className="min-h-screen flex flex-col w-full">
+    <div className="min-h-screen flex flex-col w-full overflow-x-hidden">
       <Navbar />
-      <main className="flex-grow">
+      <main className="flex-grow w-full max-w-full">
         {children}
       </main>
       <SearchModal />

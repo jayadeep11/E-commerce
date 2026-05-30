@@ -16,7 +16,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="glass-nav px-2 xs:px-4 sm:px-6 py-2 sm:py-4 flex items-center justify-between">
+    <nav className="glass-nav px-2 xs:px-4 sm:px-6 py-2 sm:py-4 flex items-center justify-between w-full">
       <div className="flex items-center gap-2 sm:gap-8">
         <Link to="/" className="text-lg xs:text-xl sm:text-2xl font-black gradient-text tracking-tighter flex-shrink-0">
           KORE

@@ -97,52 +97,52 @@ const OrderDetails = () => {
   );
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-12 min-h-screen">
-      {}
-      <div className="mb-12">
-        <Link to="/orders" className="flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors mb-8 group font-bold text-sm">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12 min-h-screen">
+      {/* Header */}
+      <div className="mb-8 sm:mb-12">
+        <Link to="/orders" className="flex items-center gap-2 text-slate-500 hover:text-slate-900 transition-colors mb-6 sm:mb-8 group font-bold text-sm">
           <ChevronLeft size={18} className="group-hover:-translate-x-1 transition-transform" />
           Back to History
         </Link>
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 sm:gap-6">
           <div>
-            <div className="flex items-center gap-3 mb-2">
-              <Hash size={24} className="text-blue-600" />
-              <h1 className="text-4xl font-black text-slate-900 tracking-tight">Order Details</h1>
+            <div className="flex items-center gap-2 sm:gap-3 mb-2">
+              <Hash size={20} className="text-blue-600 sm:w-6 sm:h-6" />
+              <h1 className="text-xl sm:text-3xl font-black text-slate-900 tracking-tight">Order Details</h1>
             </div>
-            <p className="text-slate-500 font-mono font-bold text-sm">ID: {order?._id?.toUpperCase()}</p>
+            <p className="text-slate-500 font-mono font-bold text-[10px] sm:text-xs break-all">ID: {order?._id?.toUpperCase()}</p>
           </div>
-          <div className="flex items-center gap-3 bg-slate-50 px-6 py-3 rounded-2xl border border-slate-100">
-            <Calendar size={18} className="text-slate-400" />
-            <span className="text-sm font-bold text-slate-600">Placed on {new Date(order?.createdAt).toLocaleDateString()}</span>
+          <div className="flex items-center gap-2 sm:gap-3 bg-slate-50 px-4 py-2 sm:px-6 sm:py-3 rounded-xl sm:rounded-2xl border border-slate-100 w-full md:w-auto">
+            <Calendar size={14} className="text-slate-400 sm:w-4 sm:h-4" />
+            <span className="text-[10px] sm:text-xs font-bold text-slate-600">Placed on {new Date(order?.createdAt).toLocaleDateString()}</span>
           </div>
         </div>
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-8">
-        {}
-        <div className="lg:col-span-2 space-y-8">
-          {}
-          <div className="bg-white border border-slate-100 rounded-[2.5rem] p-8 shadow-sm">
-            <h2 className="text-xl font-black text-slate-900 mb-8 flex items-center gap-3">
-              <Package size={22} className="text-blue-600" /> Fulfillment Status
+      <div className="grid lg:grid-cols-3 gap-6 sm:gap-8">
+        {/* Left Column (Items & Status) */}
+        <div className="lg:col-span-2 space-y-6 sm:space-y-8 min-w-0">
+          {/* Fulfillment Status */}
+          <div className="bg-white border border-slate-100 rounded-2xl sm:rounded-[2.5rem] p-4 sm:p-8 shadow-sm">
+            <h2 className="text-base sm:text-lg font-black text-slate-900 mb-4 sm:mb-8 flex items-center gap-3">
+              <Package size={18} className="text-blue-600 sm:w-5 sm:h-5" /> Fulfillment Status
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className={`p-6 rounded-3xl border ${order?.isPaid ? 'bg-blue-50/50 border-blue-100' : 'bg-slate-50 border-slate-100'}`}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-6">
+              <div className={`p-4 sm:p-6 rounded-xl sm:rounded-3xl border ${order?.isPaid ? 'bg-blue-50/50 border-blue-100' : 'bg-slate-50 border-slate-100'}`}>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Payment</span>
-                  {order?.isPaid ? <CheckCircle2 size={16} className="text-blue-600" /> : <Clock size={16} className="text-slate-400" />}
+                  <span className="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest">Payment</span>
+                  {order?.isPaid ? <CheckCircle2 size={14} className="text-blue-600 sm:w-4 sm:h-4" /> : <Clock size={14} className="text-slate-400 sm:w-4 sm:h-4" />}
                 </div>
-                <p className={`font-black ${order?.isPaid ? 'text-blue-900' : 'text-slate-400'}`}>
+                <p className={`text-xs sm:text-sm font-black ${order?.isPaid ? 'text-blue-900' : 'text-slate-400'}`}>
                   {order?.isPaid ? `Paid on ${new Date(order?.paidAt).toLocaleDateString()}` : 'Pending Payment'}
                 </p>
               </div>
-              <div className={`p-6 rounded-3xl border ${order?.isDelivered ? 'bg-emerald-50/50 border-emerald-100' : 'bg-slate-50 border-slate-100'}`}>
+              <div className={`p-4 sm:p-6 rounded-xl sm:rounded-3xl border ${order?.isDelivered ? 'bg-emerald-50/50 border-emerald-100' : 'bg-slate-50 border-slate-100'}`}>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Delivery</span>
-                  {order?.isDelivered ? <Truck size={16} className="text-emerald-600" /> : <Clock size={16} className="text-slate-400" />}
+                  <span className="text-[9px] sm:text-[10px] font-black text-slate-400 uppercase tracking-widest">Delivery</span>
+                  {order?.isDelivered ? <Truck size={14} className="text-emerald-600 sm:w-4 sm:h-4" /> : <Clock size={14} className="text-slate-400 sm:w-4 sm:h-4" />}
                 </div>
-                <p className={`font-black ${order?.isDelivered ? 'text-emerald-900' : 'text-slate-400'}`}>
+                <p className={`text-xs sm:text-sm font-black ${order?.isDelivered ? 'text-emerald-900' : 'text-slate-400'}`}>
                   {order?.isDelivered ? `Delivered on ${new Date(order?.deliveredAt).toLocaleDateString()}` : 'In Processing'}
                 </p>
               </div>
@@ -150,37 +150,40 @@ const OrderDetails = () => {
             {userInfo?.isAdmin && !order?.isDelivered && order?.isPaid && (
               <button 
                 onClick={deliverHandler}
-                className="mt-8 w-full py-4 bg-slate-900 text-white rounded-2xl font-black text-sm hover:bg-blue-600 transition-all flex items-center justify-center gap-3 shadow-xl shadow-slate-900/10"
+                className="mt-6 sm:mt-8 w-full py-3 sm:py-4 bg-slate-900 text-white rounded-xl sm:rounded-2xl font-black text-xs sm:text-sm hover:bg-blue-600 transition-all flex items-center justify-center gap-3 shadow-xl shadow-slate-900/10"
               >
                 <Truck size={18} /> Mark as Delivered
               </button>
             )}
           </div>
 
-          {}
-          <div className="bg-white border border-slate-100 rounded-[2.5rem] p-8 shadow-sm overflow-hidden">
-            <h2 className="text-xl font-black text-slate-900 mb-8 flex items-center gap-3">
-              <ShoppingCart size={22} className="text-blue-600" /> Order Items
+          {/* Order Items */}
+          <div className="bg-white border border-slate-100 rounded-2xl sm:rounded-[2.5rem] p-4 sm:p-8 shadow-sm overflow-hidden min-w-0">
+            <h2 className="text-base sm:text-lg font-black text-slate-900 mb-4 sm:mb-6 flex items-center gap-3">
+              <ShoppingCart size={18} className="text-blue-600 sm:w-5 sm:h-5" /> Order Items
             </h2>
-            <div className="space-y-6">
+            <div className="space-y-3 sm:space-y-6">
               {order?.orderItems?.map((item, index) => (
-                <div key={index} className="flex flex-col sm:flex-row items-center gap-6 p-6 hover:bg-slate-50 rounded-3xl transition-colors group border border-transparent hover:border-slate-100">
-                  <img src={item?.image} className="w-20 h-20 rounded-2xl object-cover shadow-sm group-hover:scale-105 transition-transform" alt="" />
-                  <div className="flex-grow min-w-0">
-                    <p className="font-black text-slate-900 mb-1 truncate text-lg">{item?.name}</p>
-                    <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Qty: {item?.qty}</p>
+                <div key={index} className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-6 p-3 sm:p-6 hover:bg-slate-50 rounded-xl sm:rounded-3xl transition-colors group border border-slate-100 sm:border-transparent hover:border-slate-100 min-w-0">
+                  <div className="flex gap-3 sm:gap-4 items-center w-full sm:w-auto min-w-0">
+                    <img src={item?.image} className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl object-cover shadow-sm group-hover:scale-105 transition-transform shrink-0" alt="" />
+                    <div className="flex-grow min-w-0">
+                      <p className="font-black text-slate-900 mb-0.5 sm:mb-1 truncate text-sm sm:text-base">{item?.name}</p>
+                      <p className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-widest">Qty: {item?.qty}</p>
+                    </div>
                   </div>
-                  <div className="flex flex-col items-end gap-3 min-w-[120px]">
-                    <div className="text-right">
-                      <p className="font-black text-slate-900 text-lg">₹{(item?.qty * item?.price).toFixed(2)}</p>
-                      <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">₹{item?.price} each</p>
+                  
+                  <div className="flex flex-row sm:flex-col justify-between items-center sm:items-end w-full sm:w-auto gap-2 sm:gap-3 sm:min-w-[120px] pt-3 sm:pt-0 border-t border-slate-100 sm:border-0 mt-2 sm:mt-0">
+                    <div className="text-left sm:text-right">
+                      <p className="font-black text-slate-900 text-sm sm:text-base">₹{(item?.qty * item?.price).toFixed(2)}</p>
+                      <p className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-widest">₹{item?.price} each</p>
                     </div>
                     {order?.isDelivered && (
                       <button 
                         onClick={() => openReviewModal(item)}
-                        className="px-5 py-2 bg-amber-50 text-amber-600 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-amber-500 hover:text-white transition-all shadow-sm border border-amber-100 flex items-center gap-1.5"
+                        className="px-3 sm:px-4 py-1.5 sm:py-2 bg-amber-50 text-amber-600 rounded-lg text-[9px] sm:text-[10px] font-black uppercase tracking-widest hover:bg-amber-500 hover:text-white transition-all shadow-sm border border-amber-100 flex items-center gap-1.5"
                       >
-                        <Star size={12} fill="currentColor" /> Review Item
+                        <Star size={10} className="sm:w-3 sm:h-3" fill="currentColor" /> Review Item
                       </button>
                     )}
                   </div>
@@ -190,57 +193,57 @@ const OrderDetails = () => {
           </div>
         </div>
 
-        {}
-        <div className="space-y-8">
-          {}
-          <div className="bg-slate-900 text-white rounded-[2.5rem] p-8 shadow-xl shadow-slate-900/10">
-            <h2 className="text-xl font-black mb-6 flex items-center gap-3">
-              <Truck size={22} className="text-blue-400" /> Shipping
+        {/* Right Column (Shipping, Payment, Summary) */}
+        <div className="space-y-6 sm:space-y-8 min-w-0">
+          {/* Shipping */}
+          <div className="bg-slate-900 text-white rounded-2xl sm:rounded-[2.5rem] p-4 sm:p-8 shadow-xl shadow-slate-900/10">
+            <h2 className="text-base sm:text-lg font-black mb-4 sm:mb-6 flex items-center gap-3">
+              <Truck size={18} className="text-blue-400 sm:w-5 sm:h-5" /> Shipping
             </h2>
-            <div className="space-y-1 font-medium text-slate-400">
-              <p className="text-white font-bold text-lg mb-2">{order?.user?.name || 'Customer'}</p>
+            <div className="space-y-1 font-medium text-slate-400 text-xs sm:text-sm">
+              <p className="text-white font-bold text-sm sm:text-base mb-2">{order?.user?.name || 'Customer'}</p>
               <p>{order?.shippingAddress?.address}</p>
               <p>{order?.shippingAddress?.city}, {order?.shippingAddress?.postalCode}</p>
               <p>{order?.shippingAddress?.country}</p>
             </div>
           </div>
 
-          {}
-          <div className="bg-white border border-slate-100 rounded-[2.5rem] p-8 shadow-sm">
-            <h2 className="text-xl font-black text-slate-900 mb-6 flex items-center gap-3">
-              <CreditCard size={22} className="text-blue-600" /> Payment
+          {/* Payment */}
+          <div className="bg-white border border-slate-100 rounded-2xl sm:rounded-[2.5rem] p-5 sm:p-8 shadow-sm">
+            <h2 className="text-base sm:text-lg font-black text-slate-900 mb-4 sm:mb-6 flex items-center gap-3">
+              <CreditCard size={18} className="text-blue-600 sm:w-5 sm:h-5" /> Payment
             </h2>
             <div className="flex items-center gap-4">
-              <div className="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center text-blue-600">
-                <CreditCard size={24} />
+              <div className="w-10 h-10 bg-slate-50 rounded-xl flex items-center justify-center text-blue-600">
+                <CreditCard size={16} className="sm:w-5 sm:h-5" />
               </div>
               <div>
-                <p className="font-black text-slate-900">{order?.paymentMethod}</p>
-                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Default Gateway</p>
+                <p className="font-black text-slate-900 text-xs sm:text-sm">{order?.paymentMethod}</p>
+                <p className="text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase tracking-widest">Default Gateway</p>
               </div>
             </div>
           </div>
 
-          {}
-          <div className="bg-white border border-slate-100 rounded-[2.5rem] p-8 shadow-sm">
-            <h2 className="text-xl font-black text-slate-900 mb-8">Summary</h2>
-            <div className="space-y-4">
-              <div className="flex justify-between text-sm font-bold text-slate-500">
+          {/* Summary */}
+          <div className="bg-white border border-slate-100 rounded-2xl sm:rounded-[2.5rem] p-5 sm:p-8 shadow-sm">
+            <h2 className="text-base sm:text-lg font-black text-slate-900 mb-4 sm:mb-6">Summary</h2>
+            <div className="space-y-3">
+              <div className="flex justify-between text-[10px] sm:text-xs font-bold text-slate-500">
                 <span>Subtotal</span>
                 <span>₹{order?.itemsPrice?.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between text-sm font-bold text-slate-500">
+              <div className="flex justify-between text-[10px] sm:text-xs font-bold text-slate-500">
                 <span>Shipping</span>
                 <span>₹{order?.shippingPrice?.toFixed(2)}</span>
               </div>
-              <div className="flex justify-between text-sm font-bold text-slate-500">
+              <div className="flex justify-between text-[10px] sm:text-xs font-bold text-slate-500">
                 <span>Tax</span>
                 <span>₹{order?.taxPrice?.toFixed(2)}</span>
               </div>
               <div className="h-px bg-slate-100 my-4"></div>
               <div className="flex justify-between items-center">
-                <span className="text-lg font-black text-slate-900">Total</span>
-                <span className="text-3xl font-black text-blue-600">₹{order?.totalPrice?.toFixed(2)}</span>
+                <span className="text-sm sm:text-base font-black text-slate-900">Total</span>
+                <span className="text-xl sm:text-2xl font-black text-blue-600">₹{order?.totalPrice?.toFixed(2)}</span>
               </div>
             </div>
           </div>

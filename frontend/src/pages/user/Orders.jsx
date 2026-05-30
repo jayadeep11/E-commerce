@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { Package, ChevronRight, Clock, CheckCircle2, AlertCircle, Star, X, Send, Loader2, TrendingUp } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import AnimatedNumber from '../../components/ui/AnimatedNumber';
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
@@ -106,7 +107,7 @@ const Orders = () => {
             <p className="text-[10px] font-black uppercase tracking-widest">Lifestyle Investment</p>
             <TrendingUp size={18} />
           </div>
-          <p className="text-3xl font-black text-slate-900">₹{totalSpent.toFixed(2)}</p>
+          <p className="text-3xl font-black text-slate-900">₹<AnimatedNumber value={totalSpent} decimals={2} /></p>
           <p className="text-xs font-bold text-slate-400">Aggregated spend across all looks</p>
         </motion.div>
 
@@ -120,7 +121,7 @@ const Orders = () => {
             <p className="text-[10px] font-black uppercase tracking-widest">Total Acquisitions</p>
             <Package size={18} />
           </div>
-          <p className="text-3xl font-black text-slate-900">{orders.length}</p>
+          <p className="text-3xl font-black text-slate-900"><AnimatedNumber value={orders.length} /></p>
           <p className="text-xs font-bold text-slate-400">Total number of verified orders</p>
         </motion.div>
 
@@ -134,7 +135,7 @@ const Orders = () => {
             <p className="text-[10px] font-black uppercase tracking-widest">Avg Order Value</p>
             <Package size={18} />
           </div>
-          <p className="text-3xl font-black text-slate-900">₹{avgOrderValue}</p>
+          <p className="text-3xl font-black text-slate-900">₹<AnimatedNumber value={parseFloat(avgOrderValue)} decimals={2} /></p>
           <p className="text-xs font-bold text-slate-400">Mean expenditure per style set</p>
         </motion.div>
       </div>
@@ -163,65 +164,105 @@ const Orders = () => {
               animate={{ opacity: 1, y: 0 }}
               key={order._id}
               onClick={() => navigate(`/order/${order._id}`)}
-              className="group bg-white border border-slate-100 p-8 rounded-[2.5rem] hover:border-blue-100 hover:shadow-2xl transition-all duration-300 cursor-pointer"
+              className="group bg-white border border-slate-200 p-5 rounded-2xl hover:border-blue-300 hover:shadow-lg transition-all duration-300 cursor-pointer"
             >
-              <div className="flex flex-col lg:flex-row gap-8 items-start lg:items-center">
-                <div className="space-y-2 lg:w-40">
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Order ID</p>
-                  <Link 
-                    to={`/order/${order._id}`}
-                    onClick={(e) => e.stopPropagation()}
-                    className="font-mono text-sm text-blue-600 font-bold hover:text-blue-700 hover:underline transition-all"
-                  >
-                    #{order._id.slice(-8).toUpperCase()}
-                  </Link>
-                </div>
+              <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-start sm:items-center justify-between w-full">
+                
+                {/* Mobile Grid Layout (hidden on sm and up) */}
+                <div className="w-full grid grid-cols-2 gap-y-4 sm:hidden">
+                  <div>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Order ID</p>
+                    <Link 
+                      to={`/order/${order._id}`}
+                      onClick={(e) => e.stopPropagation()}
+                      className="font-mono text-sm text-blue-600 font-bold hover:underline"
+                    >
+                      #{order._id.slice(-8).toUpperCase()}
+                    </Link>
+                  </div>
+                  
+                  <div className="text-right">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Date</p>
+                    <p className="text-sm text-slate-900 font-bold">{new Date(order.createdAt).toLocaleDateString()}</p>
+                  </div>
 
-                <div className="space-y-2 lg:w-32">
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Date</p>
-                  <p className="text-sm text-slate-900 font-bold">{new Date(order.createdAt).toLocaleDateString()}</p>
-                </div>
-
-                <div className="lg:w-32">
-                  {getStatusBadge(order.isPaid, order.isDelivered)}
-                </div>
-
-                {}
-                <div className="flex -space-x-3 overflow-hidden">
-                  {order.orderItems.slice(0, 3).map((item, index) => (
-                    <img 
-                      key={index}
-                      src={item.image} 
-                      alt={item.name}
-                      className="w-12 h-12 rounded-full border-4 border-white object-cover shadow-sm bg-slate-100"
-                    />
-                  ))}
-                  {order.orderItems.length > 3 && (
-                    <div className="w-12 h-12 rounded-full border-4 border-white bg-slate-50 flex items-center justify-center text-[10px] font-black text-slate-400 shadow-sm">
-                      +{order.orderItems.length - 3}
+                  <div>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Status</p>
+                    {getStatusBadge(order.isPaid, order.isDelivered)}
+                  </div>
+                  
+                  <div className="flex justify-end items-end">
+                    <div className="flex -space-x-2 overflow-hidden">
+                      {order.orderItems.slice(0, 3).map((item, index) => (
+                        <img key={index} src={item.image} alt={item.name} className="w-8 h-8 rounded-full border-2 border-white object-cover bg-slate-100 shadow-sm" />
+                      ))}
+                      {order.orderItems.length > 3 && (
+                        <div className="w-8 h-8 rounded-full border-2 border-white bg-slate-50 flex items-center justify-center text-[10px] font-bold text-slate-400">
+                          +{order.orderItems.length - 3}
+                        </div>
+                      )}
                     </div>
-                  )}
+                  </div>
                 </div>
 
-                {}
-                <div className="flex-grow hidden lg:block"></div>
+                {/* Desktop Layout (hidden on mobile) */}
+                <div className="hidden sm:flex items-center gap-6 w-1/3">
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Order ID</p>
+                    <Link 
+                      to={`/order/${order._id}`}
+                      onClick={(e) => e.stopPropagation()}
+                      className="font-mono text-sm text-blue-600 font-bold hover:underline"
+                    >
+                      #{order._id.slice(-8).toUpperCase()}
+                    </Link>
+                  </div>
 
-                <div className="text-right space-y-1 pr-8 border-r border-slate-50 mr-8">
-                  <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total</p>
-                  <p className="text-xl font-black text-slate-900">₹{order.totalPrice.toFixed(2)}</p>
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Date</p>
+                    <p className="text-sm text-slate-900 font-bold">{new Date(order.createdAt).toLocaleDateString()}</p>
+                  </div>
                 </div>
 
-                {}
-                <div className="flex items-center justify-end">
+                <div className="hidden sm:flex items-center gap-6 w-1/3 justify-center">
+                  <div>
+                    {getStatusBadge(order.isPaid, order.isDelivered)}
+                  </div>
+                  
+                  <div className="flex -space-x-2 overflow-hidden">
+                    {order.orderItems.slice(0, 3).map((item, index) => (
+                      <img 
+                        key={index}
+                        src={item.image} 
+                        alt={item.name}
+                        className="w-10 h-10 rounded-full border-2 border-white object-cover bg-slate-100 shadow-sm"
+                      />
+                    ))}
+                    {order.orderItems.length > 3 && (
+                      <div className="w-10 h-10 rounded-full border-2 border-white bg-slate-50 flex items-center justify-center text-[10px] font-bold text-slate-400">
+                        +{order.orderItems.length - 3}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Total & Action (Visible on both, adapts styling) */}
+                <div className="flex items-center justify-between w-full sm:w-1/3 sm:justify-end mt-2 sm:mt-0 border-t border-slate-100 sm:border-0 pt-4 sm:pt-0">
+                  <div className="text-left sm:text-right">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total</p>
+                    <p className="text-lg font-black text-slate-900">₹{order.totalPrice.toFixed(2)}</p>
+                  </div>
+                  
                   {order.isDelivered && (
                     <button 
                       onClick={(e) => { e.stopPropagation(); openReviewModal(order.orderItems[0]); }}
-                      className="px-8 py-4 bg-amber-50 text-amber-600 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-amber-500 hover:text-white transition-all shadow-sm border border-amber-100 flex items-center gap-2 whitespace-nowrap"
+                      className="px-4 py-2 bg-amber-50 text-amber-600 rounded-xl text-[10px] font-black uppercase tracking-wider hover:bg-amber-500 hover:text-white transition-all items-center gap-2 flex shadow-sm"
                     >
-                      <Star size={14} fill="currentColor" /> Review Items
+                      <Star size={14} /> Review
                     </button>
                   )}
                 </div>
+
               </div>
             </motion.div>
           ))}

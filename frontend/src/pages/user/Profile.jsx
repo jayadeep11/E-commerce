@@ -58,12 +58,9 @@ const Profile = () => {
   const fetchOrderStats = async () => {
     if (!userInfo) return;
     try {
-      const { data } = await api.get('/api/orders/myorders');
-      if (Array.isArray(data)) {
-        setOrderCount(data.length);
-        const total = data.reduce((acc, order) => acc + (order.totalPrice || 0), 0);
-        setTotalSpent(total);
-      }
+      const { data } = await api.get('/api/orders/mystats');
+      setOrderCount(data.orderCount || 0);
+      setTotalSpent(data.totalSpent || 0);
     } catch (error) {
       console.error('Error fetching order stats:', error);
       setOrderCount(0);
@@ -136,7 +133,7 @@ const Profile = () => {
       setEditingAddress(null);
       setAddressData({ label: 'Home', address: '', city: '', postalCode: '', country: '' });
     } catch (err) {
-      showNotification('Address sync failed', 'error');
+      showNotification('Address sync failed', err);
     } finally {
       setLoading(false);
     }

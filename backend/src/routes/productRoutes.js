@@ -27,7 +27,7 @@ router.post('/', protect, admin, async (req, res) => {
     });
 
     const createdProduct = await product.save();
-    
+
     res.status(201).json(createdProduct);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -39,7 +39,7 @@ router.post('/', protect, admin, async (req, res) => {
 router.get('/', async (req, res) => {
   try {
     const products = await Product.find({});
-    
+
     res.json(products);
   } catch (error) {
     res.status(500).json({ message: error.message });
