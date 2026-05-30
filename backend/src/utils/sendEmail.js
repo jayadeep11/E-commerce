@@ -1,27 +1,19 @@
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 
 const sendEmail = async (options) => {
-  
-  
-  const transporter = nodemailer.createTransport({
-    service: 'Gmail',
-    auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
-    },
-  });
+  const resend = new Resend(process.env.RESEND_API_KEY);
 
-  
-  const mailOptions = {
-    from: `KORE <${process.env.EMAIL_USER}>`,
+  const { data, error } = await resend.emails.send({
+    from: 'KORE Registration <onboarding@resend.dev>',
     to: options.email,
     subject: options.subject,
-    text: options.message,
     html: options.html,
-  };
+    text: options.message,
+  });
 
-  
-  await transporter.sendMail(mailOptions);
+  if (error) {
+    throw new Error(error.message);
+  }
 };
 
 module.exports = sendEmail;

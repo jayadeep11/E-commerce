@@ -42,6 +42,7 @@ const Profile = () => {
   const [toast, setToast] = useState(null);
   const [orderCount, setOrderCount] = useState(0);
   const [totalSpent, setTotalSpent] = useState(0);
+  const [uploadingPic, setUploadingPic] = useState(false);
 
   useEffect(() => {
     if (!userInfo) {
@@ -162,6 +163,28 @@ const Profile = () => {
     }
   };
 
+  const handleProfilePicChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const uploadData = new FormData();
+    uploadData.append('image', file);
+
+    setUploadingPic(true);
+    try {
+      const { data } = await api.post('/api/upload', uploadData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      await updateProfile({ profilePic: data.imageUrl });
+      showNotification('Profile picture updated successfully!');
+      refreshProfile();
+    } catch (err) {
+      showNotification(err.response?.data?.message || 'Failed to upload image', 'error');
+    } finally {
+      setUploadingPic(false);
+    }
+  };
+
   if (!userInfo) return null;
 
   return (
@@ -189,8 +212,33 @@ const Profile = () => {
         
         {/* Simple Header */}
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 text-center sm:text-left bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-slate-100">
-          <div className="w-16 h-16 sm:w-24 sm:h-24 bg-blue-600 rounded-full flex items-center justify-center text-white text-3xl sm:text-4xl font-black shadow-lg">
-            {userInfo.name.charAt(0)}
+          <div className="relative group">
+            {userInfo.profilePic ? (
+              <img 
+                src={userInfo.profilePic} 
+                alt={userInfo.name} 
+                className="w-16 h-16 sm:w-24 sm:h-24 rounded-full object-cover shadow-lg border-4 border-white"
+              />
+            ) : (
+              <div className="w-16 h-16 sm:w-24 sm:h-24 bg-blue-600 rounded-full flex items-center justify-center text-white text-3xl sm:text-4xl font-black shadow-lg">
+                {userInfo.name.charAt(0)}
+              </div>
+            )}
+            <label className="absolute inset-0 sm:flex items-center justify-center bg-black/50 text-white rounded-full opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity hidden">
+              <span className="text-[10px] font-bold">Upload</span>
+              <input type="file" className="hidden" accept="image/*" onChange={handleProfilePicChange} disabled={uploadingPic} />
+            </label>
+
+            {/* Mobile visible upload button */}
+            <label className="absolute bottom-0 right-0 sm:hidden bg-blue-600 text-white p-2 rounded-full shadow-lg border-2 border-white cursor-pointer hover:bg-blue-700 transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              <input type="file" className="hidden" accept="image/*" onChange={handleProfilePicChange} disabled={uploadingPic} />
+            </label>
+            {uploadingPic && (
+              <div className="absolute inset-0 flex items-center justify-center bg-white/80 rounded-full">
+                <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+              </div>
+            )}
           </div>
           <div className="flex-1 space-y-4">
             <div>

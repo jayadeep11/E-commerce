@@ -83,7 +83,11 @@ const Navbar = () => {
           to={userInfo ? "/profile" : "/login"} 
           className="p-1.5 sm:p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-600 flex items-center gap-2"
         >
-          <User size={18} className="sm:w-5 sm:h-5" />
+          {userInfo?.profilePic ? (
+            <img src={userInfo.profilePic} alt={userInfo.name} className="w-6 h-6 rounded-full object-cover border border-slate-200" />
+          ) : (
+            <User size={18} className="sm:w-5 sm:h-5" />
+          )}
           {userInfo && <span className="text-sm font-semibold hidden lg:block">{userInfo.name.split(' ')[0]}</span>}
         </Link>
         <button 
@@ -160,9 +164,13 @@ const Navbar = () => {
                 {userInfo ? (
                   <div className="space-y-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm">
-                        {userInfo.name.charAt(0)}
-                      </div>
+                      {userInfo.profilePic ? (
+                        <img src={userInfo.profilePic} alt={userInfo.name} className="w-8 h-8 rounded-full object-cover shadow-sm" />
+                      ) : (
+                        <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm">
+                          {userInfo.name.charAt(0)}
+                        </div>
+                      )}
                       <span className="text-sm font-bold text-slate-800">{userInfo.name}</span>
                     </div>
                     <Link

@@ -22,11 +22,14 @@ app.use(cors({
 app.use(express.json());
 
 
+const uploadRoutes = require('./routes/uploadRoutes');
+
 app.use('/api/products', productRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/razorpay', razorpayRoutes);
+app.use('/api/upload', uploadRoutes);
 
 
 app.get('/api/test', (req, res) => {

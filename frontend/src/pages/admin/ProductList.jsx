@@ -10,6 +10,7 @@ const ProductList = () => {
   const [createLoading, setCreateLoading] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [editProductId, setEditProductId] = useState(null);
+  const [uploading, setUploading] = useState(false);
 
   
   const [formData, setFormData] = useState({
@@ -101,6 +102,26 @@ const ProductList = () => {
       alert(error.response?.data?.message || 'Error saving product');
     } finally {
       setCreateLoading(false);
+    }
+  };
+
+  const uploadImageHandler = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const bodyFormData = new FormData();
+    bodyFormData.append('image', file);
+    
+    setUploading(true);
+    try {
+      const { data } = await api.post('/api/upload', bodyFormData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      setFormData({ ...formData, image: data.imageUrl });
+    } catch (error) {
+      alert(error.response?.data?.message || 'Error uploading image');
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -315,15 +336,20 @@ const ProductList = () => {
                       </div>
 
                       <div className="space-y-2">
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Thumbnail URL</label>
+                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Product Image</label>
                         <div className="relative">
                           <input 
                             type="text" 
-                            className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all font-bold text-slate-900"
-                            placeholder="Paste image URL..."
+                            className="w-full pl-6 pr-24 py-4 bg-slate-50 border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all font-bold text-slate-900"
+                            placeholder="Image URL or upload file..."
                             value={formData.image}
                             onChange={(e) => setFormData({...formData, image: e.target.value})}
                           />
+                          <label className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer bg-white border border-slate-200 px-3 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50 hover:text-blue-600 transition-colors shadow-sm flex items-center gap-1">
+                            {uploading ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
+                            Upload
+                            <input type="file" className="hidden" accept="image/*" onChange={uploadImageHandler} disabled={uploading} />
+                          </label>
                         </div>
                       </div>
                     </div>

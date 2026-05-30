@@ -35,6 +35,7 @@ router.post('/login', async (req, res) => {
       name: user.name,
       email: user.email,
       phone: user.phone,
+      profilePic: user.profilePic,
       addresses: user.addresses || [],
       isAdmin: user.isAdmin,
       token: generateToken(user._id),
@@ -65,7 +66,7 @@ router.post('/', async (req, res) => {
     console.log(`Email: ${email} | Code: ${otp}`);
     console.log('---------------------------------------\n');
 
-    if (process.env.EMAIL_USER && process.env.EMAIL_PASS) {
+    if (process.env.RESEND_API_KEY) {
       try {
         await sendEmail({
           email,
@@ -75,7 +76,7 @@ router.post('/', async (req, res) => {
         });
       } catch (err) { 
         console.error('Email failed to send:', err); 
-        return res.status(500).json({ message: 'Failed to send OTP email. Your email provider might be blocking the login from the server.' });
+        return res.status(500).json({ message: 'Failed to send OTP email via Resend.' });
       }
     }
 
@@ -112,6 +113,7 @@ router.post('/verify-otp', async (req, res) => {
       name: user.name,
       email: user.email,
       phone: user.phone,
+      profilePic: user.profilePic,
       addresses: [],
       isAdmin: user.isAdmin,
       token: generateToken(user._id),
@@ -126,7 +128,7 @@ router.post('/verify-otp', async (req, res) => {
 router.get('/profile', protect, async (req, res) => {
   const user = await User.findById(req.user._id);
   if (user) {
-    res.json({ _id: user._id, name: user.name, email: user.email, phone: user.phone, addresses: user.addresses || [], isAdmin: user.isAdmin });
+    res.json({ _id: user._id, name: user.name, email: user.email, phone: user.phone, profilePic: user.profilePic, addresses: user.addresses || [], isAdmin: user.isAdmin });
   } else {
     res.status(404).json({ message: 'User not found' });
   }
@@ -139,9 +141,10 @@ router.put('/profile', protect, async (req, res) => {
     const user = await User.findById(req.user._id);
     if (!user) return res.status(404).json({ message: 'User not found' });
 
-    const { name, phone, password } = req.body;
+    const { name, phone, profilePic, password } = req.body;
     user.name = name || user.name;
     user.phone = phone || user.phone;
+    if (profilePic !== undefined) user.profilePic = profilePic;
     if (password) user.password = password;
 
     const updatedUser = await user.save();
@@ -150,6 +153,7 @@ router.put('/profile', protect, async (req, res) => {
       name: updatedUser.name,
       email: updatedUser.email,
       phone: updatedUser.phone,
+      profilePic: updatedUser.profilePic,
       addresses: updatedUser.addresses || [],
       isAdmin: updatedUser.isAdmin,
       token: generateToken(updatedUser._id),

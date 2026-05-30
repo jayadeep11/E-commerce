@@ -1,15 +1,27 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { ShoppingCart, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useCart } from '../../context/CartContext';
 
 const ProductCard = ({ product }) => {
   const { addToCart } = useCart();
+  const navigate = useNavigate();
+
+  const handleCardClick = () => {
+    navigate(`/product/${product._id}`);
+  };
+
+  const handleAddToCart = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    addToCart(product, 1);
+  };
 
   return (
     <motion.div 
+      onClick={handleCardClick}
       whileHover={{ y: -10 }}
-      className="glass-card overflow-hidden group flex flex-col w-full h-[380px] sm:h-[420px]"
+      className="glass-card overflow-hidden group flex flex-col w-full h-[380px] sm:h-[420px] cursor-pointer"
     >
       <div className="relative h-[55%] overflow-hidden shrink-0">
         <img 
@@ -62,9 +74,9 @@ const ProductCard = ({ product }) => {
         <div className="flex items-center justify-between mt-auto pt-1">
           <span className="text-base sm:text-lg font-bold text-slate-900">₹{product.price}</span>
           <button 
-            onClick={() => addToCart(product, 1)}
+            onClick={handleAddToCart}
             disabled={product.countInStock === 0}
-            className="p-2 sm:p-2.5 bg-blue-600 text-white rounded-lg sm:rounded-xl hover:bg-blue-700 transition-all disabled:bg-slate-300 disabled:cursor-not-allowed shadow-lg shadow-blue-500/20 active:scale-90"
+            className="p-2 sm:p-2.5 bg-blue-600 text-white rounded-lg sm:rounded-xl hover:bg-blue-700 transition-all disabled:bg-slate-300 disabled:cursor-not-allowed shadow-lg shadow-blue-500/20 active:scale-90 relative z-20"
           >
             <ShoppingCart size={16} className="sm:w-[18px] sm:h-[18px]" />
           </button>

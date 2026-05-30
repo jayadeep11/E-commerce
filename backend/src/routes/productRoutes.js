@@ -9,14 +9,21 @@ const { redisClient } = require('../config/redis');
 
 router.post('/', protect, admin, async (req, res) => {
   try {
-    const { name, price, description, image, category, countInStock } = req.body;
+    const { name, brand, price, mrp, description, image, category, gender, countInStock } = req.body;
+
+    // Generate a simple slug from the name
+    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-') + '-' + Date.now();
 
     const product = new Product({
       name,
+      slug,
+      brand,
       price,
+      mrp: mrp || price,
       user: req.user._id,
       image,
       category,
+      gender: gender || 'Unisex',
       countInStock,
       description,
     });
@@ -119,16 +126,19 @@ router.delete('/:id', protect, admin, async (req, res) => {
 
 router.put('/:id', protect, admin, async (req, res) => {
   try {
-    const { name, price, description, image, category, countInStock } = req.body;
+    const { name, brand, price, mrp, description, image, category, gender, countInStock } = req.body;
     const product = await Product.findById(req.params.id);
 
     if (product) {
       product.name = name || product.name;
-      product.price = price || product.price;
+      product.brand = brand || product.brand;
+      product.price = price !== undefined ? price : product.price;
+      product.mrp = mrp !== undefined ? mrp : product.mrp;
       product.description = description || product.description;
       product.image = image || product.image;
       product.category = category || product.category;
-      product.countInStock = countInStock || product.countInStock;
+      product.gender = gender || product.gender;
+      product.countInStock = countInStock !== undefined ? countInStock : product.countInStock;
 
       const updatedProduct = await product.save();
       try {

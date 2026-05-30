@@ -8,8 +8,7 @@ const Shop = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
-  const productsPerPage = 8;
+  const [visibleCount, setVisibleCount] = useState(30);
   
   // Mobile filter toggle
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState(false);
@@ -85,22 +84,27 @@ const Shop = () => {
     }
 
     setFilteredProducts(result);
-    setCurrentPage(1);
+    setVisibleCount(30);
   }, [searchQuery, selectedCategory, selectedGender, sortBy, products]);
 
   const resetFilters = () => {
     setSelectedCategory('All');
     setSelectedGender('All');
     setSortBy('default');
-    setCurrentPage(1);
+    setVisibleCount(30);
   };
 
-  const indexOfLastProduct = currentPage * productsPerPage;
-  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-  const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
-  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+  const currentProducts = filteredProducts.slice(0, visibleCount);
 
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const handleScroll = (e) => {
+    const { scrollTop, clientHeight, scrollHeight } = e.target;
+    // Add more products when scrolled within 150px of the bottom
+    if (scrollHeight - scrollTop <= clientHeight + 150) {
+      if (visibleCount < filteredProducts.length) {
+        setVisibleCount(prev => prev + 30);
+      }
+    }
+  };
 
   const SidebarContent = () => (
     <div className="flex flex-col h-full border-r border-gray-100 bg-white">
@@ -195,7 +199,7 @@ const Shop = () => {
       </div>
 
       {/* Main Product Area */}
-      <div className="flex-1 h-full overflow-y-auto bg-gray-50">
+      <div className="flex-1 h-full overflow-y-auto bg-gray-50" onScroll={handleScroll}>
         <div className="p-6 lg:p-10 w-full max-w-full mx-auto">
           
           {/* Header & Sort */}
@@ -234,41 +238,6 @@ const Shop = () => {
               </div>
             )}
           </div>
-          
-          {/* Pagination Controls */}
-          {!loading && filteredProducts.length > productsPerPage && (
-            <div className="flex justify-center items-center mt-12 mb-8 gap-2">
-              <button 
-                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1}
-                className="p-2 rounded-lg border border-gray-200 text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
-              >
-                <ChevronLeft size={20} />
-              </button>
-              
-              {[...Array(totalPages)].map((_, index) => (
-                <button
-                  key={index + 1}
-                  onClick={() => paginate(index + 1)}
-                  className={`w-10 h-10 rounded-lg text-sm font-medium transition-colors ${
-                    currentPage === index + 1 
-                      ? 'bg-black text-white border-black' 
-                      : 'border border-gray-200 text-gray-600 hover:bg-gray-50'
-                  }`}
-                >
-                  {index + 1}
-                </button>
-              ))}
-
-              <button 
-                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                disabled={currentPage === totalPages}
-                className="p-2 rounded-lg border border-gray-200 text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50 transition-colors"
-              >
-                <ChevronRight size={20} />
-              </button>
-            </div>
-          )}
           
           {/* Bottom Padding for scroll area */}
           <div className="h-20"></div>
