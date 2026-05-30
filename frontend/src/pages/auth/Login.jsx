@@ -3,12 +3,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, ArrowRight, Loader2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
+import { useToast } from '../../context/ToastContext';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const { showToast } = useToast();
 
   const navigate = useNavigate();
   const { login } = useAuth();
@@ -20,9 +22,11 @@ const Login = () => {
     try {
       setLoading(true);
       await login(email, password);
+      showToast('success', 'Login Successful');
       navigate('/');
     } catch (err) {
       setError(err.response?.data?.message || 'Invalid email or password');
+      // showToast('error',err.response?.data?.message || 'Invalid email or password');
     } finally {
       setLoading(false);
     }

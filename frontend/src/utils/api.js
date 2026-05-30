@@ -16,4 +16,32 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (
+      error.response?.status === 401 &&
+      error.response?.data?.expired
+    ) {
+      localStorage.removeItem('userInfo');
+
+      window.dispatchEvent(
+        new CustomEvent('showToast', {
+          detail: {
+            type: 'error',
+            message: 'Session expired. Please login again.'
+          }
+        })
+      );
+
+      setTimeout(() => {
+        window.location.href = '/login';
+      }, 2000);
+    }
+
+    return Promise.reject(error);
+  }
+);
+
 export default api;

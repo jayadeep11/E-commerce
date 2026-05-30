@@ -6,6 +6,7 @@ import { LogOut, Settings, ShoppingBag, ShieldCheck, CheckCircle2, AlertCircle, 
 import { useNavigate } from 'react-router-dom';
 import { optimizeImage } from '../../utils/cloudinary';
 import AnimatedNumber from '../../components/ui/AnimatedNumber';
+import { useToast } from '../../context/ToastContext';
 
 const Profile = () => {
   const { 
@@ -13,6 +14,8 @@ const Profile = () => {
     addAddress, updateAddress, deleteAddress, setDefaultAddress 
   } = useAuth();
   const navigate = useNavigate();
+
+  const { showToast } = useToast();
 
   // Drawer States
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -93,11 +96,13 @@ const Profile = () => {
         setPendingEmail(data.pendingEmail);
         setShowOtpScreen(true);
       } else {
-        showNotification('Profile updated successfully!');
+        // showNotification('Profile updated successfully!');
+        showToast('success', 'Profile updated successfully!')
         setIsDrawerOpen(false);
       }
     } catch (err) {
-      showNotification(err.response?.data?.message || 'Update failed', 'error');
+      // showNotification(err.response?.data?.message || 'Update failed', 'error');
+      showToast('error', err.response?.data?.message || 'Update failed');
     } finally {
       setLoading(false);
     }
@@ -108,11 +113,13 @@ const Profile = () => {
     setLoading(true);
     try {
       await verifyOTP(otp);
-      showNotification('Email verified and updated successfully!');
+      // showNotification('Email verified and updated successfully!');
+      showToast('Email verified and updated successfully!')
       setShowOtpScreen(false);
       setOtp('');
     } catch (err) {
-      showNotification(err.response?.data?.message || 'Verification failed', 'error');
+      // showNotification(err.response?.data?.message || 'Verification failed', 'error');
+      showToast('error', err.response?.data?.message || 'Verification failed', 'error');
     } finally {
       setLoading(false);
     }
@@ -124,16 +131,20 @@ const Profile = () => {
     try {
       if (editingAddress) {
         await updateAddress(editingAddress._id, addressData);
-        showNotification('Address updated!');
+        // showNotification('Address updated!');
+        showToast('success', 'Address updated!')
+
       } else {
         await addAddress(addressData);
-        showNotification('New address added!');
+        // showNotification('New address added!');
+        showToast('success', 'New address added!')
       }
       setIsAddressDrawerOpen(false);
       setEditingAddress(null);
       setAddressData({ label: 'Home', address: '', city: '', postalCode: '', country: '' });
     } catch (err) {
-      showNotification('Address sync failed', err);
+      // showNotification('Address sync failed', err);
+      showToast('error', 'Address sync failed', 'error');
     } finally {
       setLoading(false);
     }
@@ -155,9 +166,11 @@ const Profile = () => {
     if (window.confirm('Delete this location?')) {
       try {
         await deleteAddress(id);
-        showNotification('Address removed', 'success');
+        // showNotification('Address removed', 'success');
+        showToast('success', 'Address removed!')
       } catch (err) {
-        showNotification('Deletion failed', 'error');
+        // showNotification('Deletion failed', 'error');
+        showToast('error', 'Deletion failed', 'error');
       }
     }
   };
@@ -175,10 +188,11 @@ const Profile = () => {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       await updateProfile({ profilePic: data.imageUrl });
-      showNotification('Profile picture updated successfully!');
+      showToast('success', 'Profile picture updated successfully!');
       refreshProfile();
     } catch (err) {
-      showNotification(err.response?.data?.message || 'Failed to upload image', 'error');
+      // showNotification(err.response?.data?.message || 'Failed to upload image', 'error');
+      showToast('error', 'Failed to upload image', 'error');
     } finally {
       setUploadingPic(false);
     }
@@ -188,25 +202,7 @@ const Profile = () => {
 
   return (
     <div className="max-w-4xl mx-auto px-6 py-12 relative min-h-screen">
-      {/* Toast Notification */}
-      <AnimatePresence>
-        {toast && (
-          <motion.div 
-            initial={{ opacity: 0, x: 50, y: -20 }}
-            animate={{ opacity: 1, x: 0, y: 0 }}
-            exit={{ opacity: 0, x: 50 }}
-            className={`fixed top-24 right-8 z-[100] px-6 py-4 rounded-2xl shadow-2xl flex items-center gap-3 border ${
-              toast.type === 'success' 
-                ? 'bg-white text-emerald-600 border-emerald-100' 
-                : 'bg-white text-red-600 border-red-100'
-            }`}
-          >
-            {toast.type === 'success' ? <CheckCircle2 size={20} /> : <AlertCircle size={20} />}
-            <span className="font-bold text-sm">{toast.message}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
+      
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-8">
         
         {/* Simple Header */}

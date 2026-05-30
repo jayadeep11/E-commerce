@@ -2,9 +2,6 @@ const express = require('express');
 const router = express.Router();
 const { protect, admin } = require('../middleware/authMiddleware');
 const {
-  loginUser,
-  registerUser,
-  verifyOtp,
   getUserProfile,
   updateUserProfile,
   addAddress,
@@ -14,12 +11,7 @@ const {
   getUsers,
 } = require('../controllers/userController');
 
-router.route('/')
-  .post(registerUser)
-  .get(protect, admin, getUsers);
-
-router.post('/login', loginUser);
-router.post('/verify-otp', verifyOtp);
+router.get('/', protect, admin, getUsers);
 
 router.route('/profile')
   .get(protect, getUserProfile)

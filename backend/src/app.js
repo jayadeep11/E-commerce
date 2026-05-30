@@ -3,11 +3,11 @@ const cors = require('cors');
 const path = require('path');
 const productRoutes = require('./routes/productRoutes');
 const userRoutes = require('./routes/userRoutes');
+const authRoutes = require('./routes/authRoutes');
 const cartRoutes = require('./routes/cartRoutes');
 const orderRoutes = require('./routes/orderRoutes');
 const razorpayRoutes = require('./routes/razorpayRoutes');
-const Order = require('./models/Order');
-const Product = require('./models/Product');
+const uploadRoutes = require('./routes/uploadRoutes');
 
 const app = express();
 
@@ -22,10 +22,10 @@ app.use(cors({
 app.use(express.json());
 
 
-const uploadRoutes = require('./routes/uploadRoutes');
-
-app.use('/api/products', productRoutes);
+app.use('/api/auth', authRoutes);
+app.use('/api/users', authRoutes); // Backward compatibility: login/register still work on /api/users
 app.use('/api/users', userRoutes);
+app.use('/api/products', productRoutes);
 app.use('/api/cart', cartRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/razorpay', razorpayRoutes);
