@@ -56,31 +56,25 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ message: 'User already exists' });
     }
 
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const otpExpire = Date.now() + 10 * 60 * 1000;
+    const user = await User.create({
+      name,
+      email,
+      password,
+      phone,
+      isAdmin: isAdmin === true,
+      isVerified: true
+    });
 
-    pendingUsers.set(email, { name, email, password, phone, isAdmin: isAdmin === true, otp, otpExpire });
-
-    console.log('\n---------------------------------------');
-    console.log('🚀 [SIGNUP OTP - MEMORY ONLY] 🚀');
-    console.log(`Email: ${email} | Code: ${otp}`);
-    console.log('---------------------------------------\n');
-
-    if (process.env.RESEND_API_KEY) {
-      try {
-        await sendEmail({
-          email,
-          subject: 'KORE - Verification Code',
-          message: `Code: ${otp}`,
-          html: `<div style="font-family:sans-serif;padding:20px;border:1px solid #eee;border-radius:10px;"><h2>Welcome!</h2><p>Your code is: <b>${otp}</b></p></div>`
-        });
-      } catch (err) { 
-        console.error('Email failed to send:', err); 
-        return res.status(500).json({ message: 'Failed to send OTP email via Resend.' });
-      }
-    }
-
-    res.status(200).json({ requiresVerification: true, email });
+    res.status(201).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      profilePic: user.profilePic,
+      addresses: user.addresses || [],
+      isAdmin: user.isAdmin,
+      token: generateToken(user._id),
+    });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

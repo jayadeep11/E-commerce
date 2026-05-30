@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LogOut, Settings, ShoppingBag, ShieldCheck, CheckCircle2, AlertCircle, X, Save, Lock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { optimizeImage } from '../../utils/cloudinary';
 
 const Profile = () => {
   const { 
@@ -215,7 +216,7 @@ const Profile = () => {
           <div className="relative group">
             {userInfo.profilePic ? (
               <img 
-                src={userInfo.profilePic} 
+                src={optimizeImage(userInfo.profilePic, 200)} 
                 alt={userInfo.name} 
                 className="w-16 h-16 sm:w-24 sm:h-24 rounded-full object-cover shadow-lg border-4 border-white"
               />

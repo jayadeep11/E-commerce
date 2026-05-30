@@ -2,8 +2,6 @@ const express = require('express');
 const router = express.Router();
 const Product = require('../models/Product');
 const { protect, admin } = require('../middleware/authMiddleware');
-const { redisClient } = require('../config/redis');
-
 
 
 
@@ -30,12 +28,6 @@ router.post('/', protect, admin, async (req, res) => {
 
     const createdProduct = await product.save();
     
-    try {
-      await redisClient.del('products');
-    } catch (err) {
-      console.error('Redis error on product creation:', err);
-    }
-    
     res.status(201).json(createdProduct);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -46,22 +38,7 @@ router.post('/', protect, admin, async (req, res) => {
 
 router.get('/', async (req, res) => {
   try {
-    try {
-      const cachedProducts = await redisClient.get('products');
-      if (cachedProducts) {
-        return res.json(cachedProducts);
-      }
-    } catch (err) {
-      console.error('Redis GET error:', err);
-    }
-
     const products = await Product.find({});
-    
-    try {
-      await redisClient.set('products', products, { ex: 3600 });
-    } catch (err) {
-      console.error('Redis SET error:', err);
-    }
     
     res.json(products);
   } catch (error) {
@@ -73,22 +50,8 @@ router.get('/', async (req, res) => {
 
 router.get('/:id', async (req, res) => {
   try {
-    try {
-      const cachedProduct = await redisClient.get(`product:${req.params.id}`);
-      if (cachedProduct) {
-        return res.json(cachedProduct);
-      }
-    } catch (err) {
-      console.error('Redis GET product error:', err);
-    }
-
     const product = await Product.findById(req.params.id);
     if (product) {
-      try {
-        await redisClient.set(`product:${req.params.id}`, product, { ex: 3600 });
-      } catch (err) {
-        console.error('Redis SET product error:', err);
-      }
       res.json(product);
     } else {
       res.status(404).json({ message: 'Product not found' });
@@ -106,12 +69,6 @@ router.delete('/:id', protect, admin, async (req, res) => {
     const product = await Product.findById(req.params.id);
     if (product) {
       await product.deleteOne();
-      try {
-        await redisClient.del('products');
-        await redisClient.del(`product:${req.params.id}`);
-      } catch (err) {
-        console.error('Redis DEL error:', err);
-      }
       res.json({ message: 'Product removed' });
     } else {
       res.status(404).json({ message: 'Product not found' });
@@ -141,12 +98,6 @@ router.put('/:id', protect, admin, async (req, res) => {
       product.countInStock = countInStock !== undefined ? countInStock : product.countInStock;
 
       const updatedProduct = await product.save();
-      try {
-        await redisClient.del('products');
-        await redisClient.del(`product:${req.params.id}`);
-      } catch (err) {
-        console.error('Redis DEL error:', err);
-      }
       res.json(updatedProduct);
     } else {
       res.status(404).json({ message: 'Product not found' });
@@ -187,12 +138,6 @@ router.post('/:id/reviews', protect, async (req, res) => {
         product.reviews.length;
 
       await product.save();
-      try {
-        await redisClient.del('products');
-        await redisClient.del(`product:${req.params.id}`);
-      } catch (err) {
-        console.error('Redis DEL error:', err);
-      }
       res.status(201).json({ message: 'Review added' });
     } else {
       res.status(404).json({ message: 'Product not found' });

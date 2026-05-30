@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ShoppingCart, Star } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { useCart } from '../../context/CartContext';
+import { optimizeImage } from '../../utils/cloudinary';
 
 const ProductCard = ({ product }) => {
   const { addToCart } = useCart();
@@ -25,7 +26,7 @@ const ProductCard = ({ product }) => {
     >
       <div className="relative h-[55%] overflow-hidden shrink-0">
         <img 
-          src={product.image} 
+          src={optimizeImage(product.image, 500)} 
           alt={product.name} 
           onError={(e) => {
             e.target.onerror = null;
