@@ -44,6 +44,7 @@ const loginUser = async (req, res) => {
 // @route   POST /api/auth/register
 // @access  Public
 const registerUser = async (req, res) => {
+  console.log(req.body); 
   try {
     const { name, email, password, phone, isAdmin } = req.body;
     const userExists = await User.findOne({ email });
