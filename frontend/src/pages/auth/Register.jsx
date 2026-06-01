@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, User, ArrowRight, Loader2, CheckCircle2, ShieldCheck, Zap, Key } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
+import authService from '../../api/authService';
 
 const Register = () => {
   const [name, setName] = useState('');
@@ -45,8 +46,9 @@ const Register = () => {
 
     try {
       setLoading(true);
-      const data = await register(name, email, password, phone, isAdmin);
-      
+      const data = await authService.register(name, email, password, phone, isAdmin);
+
+      /*
       if (data && data.requiresVerification) {
         setShowOtp(true);
         setTimer(60);
@@ -54,6 +56,8 @@ const Register = () => {
       } else {
         navigate('/');
       }
+      */
+      navigate('/')
     } catch (err) {
       setError(err.response?.data?.message || 'Something went wrong. Please try again.');
     } finally {
