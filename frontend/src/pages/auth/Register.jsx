@@ -46,7 +46,7 @@ const Register = () => {
 
     try {
       setLoading(true);
-      const data = await authService.register(name, email, password, phone, isAdmin);
+      const data = await authService.register({name, email, password, phone, isAdmin});
 
       /*
       if (data && data.requiresVerification) {
