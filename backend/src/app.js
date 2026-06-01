@@ -23,7 +23,7 @@ app.use(express.json());
 
 
 app.use('/api/auth', authRoutes);
-app.use('/api/users', authRoutes); // Backward compatibility: login/register still work on /api/users
+//app.use('/api/users', authRoutes); // Backward compatibility: login/register still work on /api/users
 app.use('/api/users', userRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/cart', cartRoutes);
