@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import api from '../../utils/api';
 import { useAuth } from '../../context/AuthContext';
-import { ChevronLeft, Package, Truck, CreditCard, Calendar, Hash, CheckCircle2, Clock, AlertCircle, ShoppingCart, Star, X, Send, Loader2 } from 'lucide-react';
+import { ChevronLeft, Package, Truck, CreditCard, Calendar, Hash, CheckCircle2, Clock, AlertCircle, ShoppingCart, Star, X, Send, Loader2, Shirt, ShoppingBag, Tag } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useToast } from '../../context/ToastContext';
 
 const OrderDetails = () => {
   const { id } = useParams();
@@ -11,6 +12,7 @@ const OrderDetails = () => {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { showToast } = useToast();
 
   
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
@@ -52,12 +54,12 @@ const OrderDetails = () => {
     setReviewLoading(true);
     try {
       await api.post(`/api/products/${selectedProduct.product}/reviews`, { rating, comment });
-      alert('Review submitted successfully!');
+      showToast('success', 'Review submitted successfully!');
       setIsReviewModalOpen(false);
       setComment('');
       setRating(5);
     } catch (error) {
-      alert(error.response?.data?.message || 'Error submitting review');
+      showToast('error', error.response?.data?.message || 'Error submitting review');
     } finally {
       setReviewLoading(false);
     }
@@ -69,15 +71,86 @@ const OrderDetails = () => {
       
       const { data } = await api.get(`/api/orders/${order._id}`);
       setOrder(data);
+      showToast('success', 'Order marked as delivered successfully');
     } catch (error) {
-      alert('Error updating delivery status');
+      showToast('error', 'Error updating delivery status');
     }
   };
 
   if (loading) return (
-    <div className="h-[80vh] flex flex-col items-center justify-center gap-4">
-      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
-      <p className="font-black text-slate-400 animate-pulse uppercase tracking-widest text-xs">Opening Order Vault...</p>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12 animate-pulse">
+      {/* Header Skeleton */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 sm:mb-12">
+        <div className="flex items-center gap-4">
+          <div className="h-10 w-10 bg-slate-200 rounded-xl"></div>
+          <div>
+            <div className="h-8 w-48 bg-slate-200 rounded-lg mb-2"></div>
+            <div className="h-4 w-32 bg-slate-100 rounded-md"></div>
+          </div>
+        </div>
+        <div className="h-10 w-32 bg-slate-200 rounded-xl"></div>
+      </div>
+
+      <div className="grid lg:grid-cols-3 gap-6 sm:gap-8">
+        {/* Left Column Skeleton */}
+        <div className="lg:col-span-2 space-y-6 sm:space-y-8">
+          {/* Fulfillment Status Skeleton */}
+          <div className="bg-white border-2 border-slate-100 rounded-[2rem] p-6 sm:p-8">
+            <div className="h-6 w-40 bg-slate-200 rounded-md mb-6"></div>
+            <div className="grid sm:grid-cols-2 gap-4">
+              <div className="h-24 bg-slate-100 rounded-2xl"></div>
+              <div className="h-24 bg-slate-100 rounded-2xl"></div>
+            </div>
+          </div>
+          
+          {/* Order Items Skeleton */}
+          <div className="bg-white border-2 border-slate-100 rounded-[2rem] p-6 sm:p-8">
+            <div className="h-6 w-40 bg-slate-200 rounded-md mb-6"></div>
+            <div className="space-y-4">
+              {[1, 2].map((i) => (
+                <div key={i} className="flex gap-4 items-center">
+                  <div className="w-16 h-16 bg-slate-200 rounded-xl shrink-0"></div>
+                  <div className="flex-grow space-y-2">
+                    <div className="h-4 w-3/4 bg-slate-200 rounded-md"></div>
+                    <div className="h-3 w-1/4 bg-slate-100 rounded-md"></div>
+                  </div>
+                  <div className="h-6 w-16 bg-slate-200 rounded-md"></div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column Skeleton */}
+        <div className="space-y-6 sm:space-y-8">
+          <div className="bg-slate-900 rounded-[2rem] p-6 sm:p-8 space-y-4">
+            <div className="h-6 w-32 bg-slate-800 rounded-md mb-2"></div>
+            <div className="h-4 w-full bg-slate-800 rounded-md"></div>
+            <div className="h-4 w-3/4 bg-slate-800 rounded-md"></div>
+            <div className="h-4 w-1/2 bg-slate-800 rounded-md"></div>
+          </div>
+          <div className="bg-white border-2 border-slate-100 rounded-[2rem] p-6 sm:p-8 space-y-4">
+            <div className="h-6 w-32 bg-slate-200 rounded-md mb-2"></div>
+            <div className="h-16 bg-slate-100 rounded-xl"></div>
+            <div className="h-16 bg-slate-100 rounded-xl"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  if (!userInfo) return (
+    <div className="h-[80vh] flex flex-col items-center justify-center gap-6 px-6 text-center">
+      <div className="w-20 h-20 bg-amber-50 rounded-full flex items-center justify-center text-amber-500 shadow-sm">
+        <AlertCircle size={40} />
+      </div>
+      <div>
+        <h2 className="text-2xl font-black text-slate-900 mb-2">Please log in to view order details</h2>
+        <p className="text-slate-500 font-medium max-w-sm mx-auto">You must be logged in to track and manage this order.</p>
+      </div>
+      <Link to="/shop" className="px-8 py-4 bg-slate-900 text-white rounded-2xl font-black text-sm hover:bg-blue-600 transition-all shadow-lg hover:shadow-xl hover:-translate-y-1">
+        Return to Shop
+      </Link>
     </div>
   );
 
@@ -88,9 +161,9 @@ const OrderDetails = () => {
       </div>
       <div>
         <h2 className="text-2xl font-black text-slate-900 mb-2">Something went wrong</h2>
-        <p className="text-slate-500 font-medium max-w-sm">{error}</p>
+        <p className="text-slate-500 font-medium max-w-sm mx-auto">{error}</p>
       </div>
-      <Link to="/orders" className="px-8 py-4 bg-slate-900 text-white rounded-2xl font-black text-sm hover:bg-blue-600 transition-all">
+      <Link to="/orders" className="px-8 py-4 bg-slate-900 text-white rounded-2xl font-black text-sm hover:bg-blue-600 transition-all shadow-lg hover:shadow-xl hover:-translate-y-1">
         Return to History
       </Link>
     </div>
@@ -164,7 +237,7 @@ const OrderDetails = () => {
             </h2>
             <div className="space-y-3 sm:space-y-6">
               {order?.orderItems?.map((item, index) => (
-                <div key={index} className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-6 p-3 sm:p-6 hover:bg-slate-50 rounded-xl sm:rounded-3xl transition-colors group border border-slate-100 sm:border-transparent hover:border-slate-100 min-w-0">
+                <div key={index} className="flex flex-col sm:flex-row items-start sm:items-center sm:justify-between gap-3 sm:gap-6 p-3 sm:p-6 hover:bg-slate-50 rounded-xl sm:rounded-3xl transition-colors group border border-slate-100 sm:border-transparent hover:border-slate-100 min-w-0">
                   <div className="flex gap-3 sm:gap-4 items-center w-full sm:w-auto min-w-0">
                     <img src={item?.image} className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl object-cover shadow-sm group-hover:scale-105 transition-transform shrink-0" alt="" />
                     <div className="flex-grow min-w-0">

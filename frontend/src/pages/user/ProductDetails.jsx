@@ -4,6 +4,7 @@ import api from '../../utils/api';
 import { ChevronLeft, Star, ShoppingCart, ShieldCheck, Truck, RefreshCcw } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '../../context/CartContext';
+import { useToast } from '../../context/ToastContext';
 
 const ProductDetails = () => {
   const { id } = useParams();
@@ -13,6 +14,7 @@ const ProductDetails = () => {
   const [loading, setLoading] = useState(true);
   const [qty, setQty] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
+  const { showToast } = useToast();
   const [activeTab, setActiveTab] = useState('description');
 
   // Sync with Cart State
@@ -178,7 +180,7 @@ const ProductDetails = () => {
                       <button 
                         onClick={() => {
                           if (qty >= product.countInStock) {
-                            alert(`Sorry, only ${product.countInStock} units available in stock.`);
+                            showToast('error', `Sorry, only ${product.countInStock} units available in stock.`);
                             return;
                           }
                           addToCart(product, 1);

@@ -5,12 +5,14 @@ import { Package, ChevronRight, Clock, CheckCircle2, AlertCircle, Star, X, Send,
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import AnimatedNumber from '../../components/ui/AnimatedNumber';
+import { useToast } from '../../context/ToastContext';
 
 const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const { userInfo } = useAuth();
   const navigate = useNavigate();
+  const { showToast } = useToast();
 
   
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
@@ -50,12 +52,12 @@ const Orders = () => {
     setReviewLoading(true);
     try {
       await api.post(`/api/products/${selectedProduct.product}/reviews`, { rating, comment });
-      alert('Review submitted successfully!');
+      showToast('success', 'Review submitted successfully!');
       setIsReviewModalOpen(false);
       setComment('');
       setRating(5);
     } catch (error) {
-      alert(error.response?.data?.message || 'Error submitting review');
+      showToast('error', error.response?.data?.message || 'Error submitting review');
     } finally {
       setReviewLoading(false);
     }
@@ -88,8 +90,9 @@ const Orders = () => {
 
   if (loading) {
     return (
-      <div className="max-w-7xl mx-auto px-6 py-24 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
+      <div className="h-[80vh] flex flex-col items-center justify-center gap-4">
+        <Loader2 size={40} className="animate-spin text-blue-600" />
+        <p className="font-black text-slate-400 animate-pulse uppercase tracking-widest text-xs">Loading Orders...</p>
       </div>
     );
   }
@@ -147,7 +150,16 @@ const Orders = () => {
         </div>
       </div>
 
-      {!Array.isArray(orders) || orders.length === 0 ? (
+      {!userInfo ? (
+        <div className="text-center py-20 bg-slate-50 rounded-[2.5rem]">
+          <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
+            <AlertCircle size={32} className="text-amber-500" />
+          </div>
+          <h2 className="text-2xl font-bold text-slate-900 mb-2">Please log in to view orders</h2>
+          <p className="text-slate-500 mb-8 max-w-md mx-auto">You must be logged in to track your recent purchases.</p>
+          <Link to="/shop" className="btn-primary">Return to Shop</Link>
+        </div>
+      ) : !Array.isArray(orders) || orders.length === 0 ? (
         <div className="text-center py-20 bg-slate-50 rounded-[2.5rem]">
           <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
             <Package size={32} className="text-slate-300" />
@@ -247,7 +259,7 @@ const Orders = () => {
                 </div>
 
                 {/* Total & Action (Visible on both, adapts styling) */}
-                <div className="flex items-center justify-between w-full sm:w-1/3 sm:justify-end mt-2 sm:mt-0 border-t border-slate-100 sm:border-0 pt-4 sm:pt-0">
+                <div className="flex items-center justify-between w-full sm:w-1/3 sm:justify-end sm:gap-6 mt-2 sm:mt-0 border-t border-slate-100 sm:border-0 pt-4 sm:pt-0">
                   <div className="text-left sm:text-right">
                     <p className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total</p>
                     <p className="text-lg font-black text-slate-900">₹{order.totalPrice.toFixed(2)}</p>

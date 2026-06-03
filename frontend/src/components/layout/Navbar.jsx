@@ -8,7 +8,7 @@ import { createPortal } from 'react-dom';
 
 const Navbar = () => {
   const { cartCount } = useCart();
-  const { userInfo } = useAuth();
+  const { userInfo, logout } = useAuth();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleSearchTrigger = () => {
@@ -42,6 +42,18 @@ const Navbar = () => {
           >
             Shop
           </NavLink>
+          {userInfo && (
+            <NavLink 
+              to="/orders" 
+              className={({ isActive }) => 
+                `transition-all duration-300 relative py-1 hover:text-blue-600 ${
+                  isActive ? 'text-blue-600 font-bold border-b-2 border-blue-600' : 'text-slate-600 font-medium'
+                }`
+              }
+            >
+              Orders
+            </NavLink>
+          )}
           {userInfo && userInfo.isAdmin && (
             <NavLink 
               to="/admin" 
@@ -82,7 +94,7 @@ const Navbar = () => {
         </Link>
         <Link 
           to={userInfo ? "/profile" : "/login"} 
-          className="p-1.5 sm:p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-600 flex items-center gap-2"
+          className="hidden md:flex p-1.5 sm:p-2 hover:bg-slate-100 rounded-full transition-colors text-slate-600 items-center gap-2"
         >
           {userInfo?.profilePic ? (
             <img src={userInfo.profilePic} alt={userInfo.name} className="w-6 h-6 rounded-full object-cover border border-slate-200" />
@@ -149,6 +161,17 @@ const Navbar = () => {
                 >
                   Shop
                 </NavLink>
+                {userInfo && (
+                  <NavLink 
+                    to="/orders" 
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className={({ isActive }) => 
+                      `transition-colors duration-150 py-1 ${isActive ? 'text-blue-600 font-extrabold' : 'hover:text-blue-600'}`
+                    }
+                  >
+                    Orders
+                  </NavLink>
+                )}
                 {userInfo && userInfo.isAdmin && (
                   <NavLink 
                     to="/admin" 
@@ -164,8 +187,8 @@ const Navbar = () => {
               
               <div className="pt-6 border-t border-slate-100">
                 {userInfo ? (
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-3">
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-3 mb-1">
                       {userInfo.profilePic ? (
                         <img src={userInfo.profilePic} alt={userInfo.name} className="w-8 h-8 rounded-full object-cover shadow-sm" />
                       ) : (
@@ -182,6 +205,15 @@ const Navbar = () => {
                     >
                       View Profile
                     </Link>
+                    <button
+                      onClick={() => {
+                        logout();
+                        setIsMobileMenuOpen(false);
+                      }}
+                      className="w-full text-center py-2.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl text-xs font-bold transition-all"
+                    >
+                      Logout
+                    </button>
                   </div>
                 ) : (
                   <Link
