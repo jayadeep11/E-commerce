@@ -8,10 +8,6 @@ export const authService = {
   register: async (userData) => {
     const { data } = await api.post('/api/auth/register', userData);
     return data;
-  },
-  verifyOtp: async (otpData) => {
-    const { data } = await api.post('/api/auth/verify-otp', otpData);
-    return data;
   }
 };
 

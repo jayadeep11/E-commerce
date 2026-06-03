@@ -326,55 +326,51 @@ const OrderDetails = () => {
       {}
       <AnimatePresence>
         {isReviewModalOpen && selectedProduct && (
-          <div className="fixed inset-0 z-[300] flex items-center justify-center p-6">
+          <div className="fixed inset-0 z-[300] flex items-center justify-center p-4 sm:p-6">
             <motion.div 
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
               onClick={() => setIsReviewModalOpen(false)}
-              className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             />
             <motion.div 
-              initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }}
-              className="relative w-full max-w-md bg-white rounded-[2.5rem] shadow-2xl overflow-hidden"
+              initial={{ scale: 0.95, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.95, opacity: 0 }}
+              className="relative w-full max-w-lg bg-white rounded-sm shadow-2xl overflow-hidden"
             >
-              <div className="p-8 border-b border-slate-50 flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="w-10 h-10 bg-amber-50 text-amber-600 rounded-xl flex items-center justify-center">
-                    <Star size={20} fill="currentColor" />
-                  </div>
-                  <h2 className="text-xl font-black text-slate-900">Review Item</h2>
-                </div>
-                <button onClick={() => setIsReviewModalOpen(false)} className="p-2 hover:bg-slate-50 rounded-xl text-slate-400">
+              <div className="p-6 border-b border-gray-100 flex items-center justify-between">
+                <h2 className="text-lg font-black text-gray-900 uppercase tracking-widest">Write a Review</h2>
+                <button onClick={() => setIsReviewModalOpen(false)} className="p-2 hover:bg-gray-50 rounded-full text-gray-400 transition-colors">
                   <X size={20} />
                 </button>
               </div>
 
-              <form onSubmit={submitReviewHandler} className="p-8 space-y-8">
-                <div className="flex items-center gap-8 bg-slate-50 p-6 rounded-[2rem] border border-slate-100">
-                  <img src={selectedProduct.image} className="w-24 h-24 rounded-2xl object-cover shadow-lg" alt="" />
-                  <div className="flex-grow space-y-4">
-                    <p className="font-black text-slate-900 text-lg leading-tight truncate max-w-[200px]">{selectedProduct.name}</p>
-                    <div className="flex gap-1.5">
+              <form onSubmit={submitReviewHandler} className="p-6 space-y-6">
+                <div className="flex items-center gap-6">
+                  <img src={selectedProduct.image} className="w-20 h-24 rounded-sm object-cover bg-gray-50 border border-gray-100" alt="" />
+                  <div className="flex-grow space-y-3">
+                    <p className="font-bold text-gray-900 text-sm line-clamp-2">{selectedProduct.name}</p>
+                    
+                    <div className="flex gap-2 items-center">
                       {[1, 2, 3, 4, 5].map((num) => (
                         <button 
                           key={num}
                           type="button"
                           onClick={() => setRating(num)}
-                          className={`p-1 transition-all transform hover:scale-110 ${rating >= num ? 'text-amber-400' : 'text-slate-200'}`}
+                          className={`transition-colors ${rating >= num ? 'text-teal-600' : 'text-gray-200'} hover:text-teal-500`}
                         >
-                          <Star size={24} fill={rating >= num ? "currentColor" : "none"} />
+                          <Star size={24} fill={rating >= num ? "currentColor" : "none"} strokeWidth={rating >= num ? 0 : 1.5} />
                         </button>
                       ))}
                     </div>
                   </div>
                 </div>
 
-                <div className="space-y-3">
-                  <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest ml-1">Detailed Experience</label>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">Your Review</label>
                   <textarea 
                     required
                     rows="4"
-                    className="w-full px-6 py-4 bg-white border border-slate-100 rounded-2xl focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all font-medium text-slate-900 resize-none shadow-sm"
-                    placeholder="Describe the materials, fit, and feel..."
+                    className="w-full p-4 bg-white border border-gray-200 rounded-sm focus:ring-1 focus:ring-black focus:border-black outline-none transition-all text-sm text-gray-900 resize-none"
+                    placeholder="What did you like or dislike about this product?"
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
                   />
@@ -383,10 +379,9 @@ const OrderDetails = () => {
                 <button 
                   disabled={reviewLoading}
                   type="submit" 
-                  className="w-full py-5 bg-slate-900 text-white rounded-2xl font-black text-sm hover:bg-blue-600 transition-all shadow-xl shadow-slate-900/10 flex items-center justify-center gap-3"
+                  className="w-full py-4 bg-black text-white rounded-sm font-bold text-xs uppercase tracking-widest hover:bg-gray-900 transition-colors flex items-center justify-center gap-3 disabled:bg-gray-300 disabled:cursor-not-allowed"
                 >
-                  {reviewLoading ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
-                  Publish Review
+                  {reviewLoading ? <Loader2 size={16} className="animate-spin" /> : 'Publish Review'}
                 </button>
               </form>
             </motion.div>

@@ -1,10 +1,10 @@
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import Navbar from './components/layout/Navbar';
 import SearchModal from './components/layout/SearchModal';
 import Footer from './components/layout/Footer';
-import PublicRoute from './components/auth/PublicRoute';
-import AdminRoute from './components/auth/AdminRoute';
+import MobileBottomNav from './components/layout/MobileBottomNav';
+import AuthRoute from './components/auth/AuthRoute';
 
 const Home = lazy(() => import('./pages/user/Home'));
 const Shop = lazy(() => import('./pages/user/Shop'));
@@ -31,13 +31,18 @@ const LayoutWrapper = ({ children }) => {
   const showFooterOn = ['/home', '/categories'];
   const shouldShowFooter = showFooterOn.includes(location.pathname);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
   return (
-    <div className="min-h-screen flex flex-col w-full overflow-x-hidden">
+    <div className="min-h-screen flex flex-col w-full overflow-x-hidden relative">
       <Navbar />
-      <main className="flex-grow w-full max-w-full">
+      <main className="flex-grow w-full max-w-full pb-16 md:pb-0">
         {children}
       </main>
       <SearchModal />
+      <MobileBottomNav />
       {shouldShowFooter && <Footer />}
     </div>
   );
@@ -55,19 +60,23 @@ function App() {
             <Route path="/categories" element={<Categories />} />
             <Route path="/product/:id" element={<ProductDetails />} />
             <Route path="/cart" element={<Cart />} />
-            <Route path="/checkout" element={<Checkout />} />
-            {}
-            <Route element={<PublicRoute />}>
+            {/* Public Routes */}
+            <Route element={<AuthRoute publicOnly={true} />}>
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
             </Route>
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/orders" element={<Orders />} />
-            <Route path="/order/:id" element={<OrderDetails />} />
-            <Route path="/order-success" element={<OrderSuccess />} />
+            
+            {/* Private User Routes */}
+            <Route element={<AuthRoute />}>
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/orders" element={<Orders />} />
+              <Route path="/order/:id" element={<OrderDetails />} />
+              <Route path="/order-success" element={<OrderSuccess />} />
+              <Route path="/checkout" element={<Checkout />} />
+            </Route>
 
-            {}
-            <Route path="/admin" element={<AdminRoute />}>
+            {/* Admin Routes */}
+            <Route path="/admin" element={<AuthRoute adminOnly={true} />}>
               <Route index element={<AdminDashboard />} />
               <Route path="users" element={<UserList />} />
               <Route path="products" element={<ProductList />} />

@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Mail, Lock, User, ArrowRight, Loader2, CheckCircle2, ShieldCheck, Zap, Key } from 'lucide-react';
+import { Mail, Lock, User, ArrowRight, Loader2, CheckCircle2, ShieldCheck, Zap, Camera } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
-import authService from '../../api/authService';
+import api from '../../utils/api';
+import { optimizeImage } from '../../utils/cloudinary';
 
 const Register = () => {
   const [name, setName] = useState('');
@@ -12,28 +13,34 @@ const Register = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isAdmin, setIsAdmin] = useState(false);
-  const [otp, setOtp] = useState('');
-  const [showOtp, setShowOtp] = useState(false);
+  const [profilePic, setProfilePic] = useState('');
+  const [uploadingPic, setUploadingPic] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const [timer, setTimer] = useState(60);
-  const [canResend, setCanResend] = useState(false);
 
   const navigate = useNavigate();
-  const { register, verifyOTP } = useAuth();
+  const { register } = useAuth();
 
-  useEffect(() => {
-    let interval;
-    if (showOtp && timer > 0) {
-      interval = setInterval(() => {
-        setTimer((prev) => prev - 1);
-      }, 1000);
-    } else if (timer === 0) {
-      setCanResend(true);
-      clearInterval(interval);
+  const handleProfilePicChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const uploadData = new FormData();
+    uploadData.append('image', file);
+
+    setUploadingPic(true);
+    setError('');
+    try {
+      const { data } = await api.post('/api/upload', uploadData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      setProfilePic(data.imageUrl);
+    } catch (err) {
+      setError(err.response?.data?.message || 'Failed to upload image');
+    } finally {
+      setUploadingPic(false);
     }
-    return () => clearInterval(interval);
-  }, [showOtp, timer]);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -46,49 +53,10 @@ const Register = () => {
 
     try {
       setLoading(true);
-      const data = await authService.register({name, email, password, phone, isAdmin});
-
-      /*
-      if (data && data.requiresVerification) {
-        setShowOtp(true);
-        setTimer(60);
-        setCanResend(false);
-      } else {
-        navigate('/');
-      }
-      */
-      navigate('/')
-    } catch (err) {
-      setError(err.response?.data?.message || 'Something went wrong. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleResendOtp = async () => {
-    if (!canResend) return;
-    try {
-      setLoading(true);
-      await register(name, email, password, phone, isAdmin);
-      setTimer(60);
-      setCanResend(false);
-    } catch (err) {
-      setError('Failed to resend code.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleVerifyOtp = async (e) => {
-    e.preventDefault();
-    setError('');
-
-    try {
-      setLoading(true);
-      await verifyOTP(email, otp);
+      await register(name, email, password, phone, profilePic, isAdmin);
       navigate('/');
     } catch (err) {
-      setError(err.response?.data?.message || 'Invalid or expired OTP');
+      setError(err.response?.data?.message || 'Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -153,14 +121,12 @@ const Register = () => {
 
         {}
         <div className="p-8 md:p-12 flex flex-col justify-center">
-          <AnimatePresence mode="wait">
-            {!showOtp ? (
-              <motion.div
-                key="register-form"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-              >
+          <motion.div
+            key="register-form"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+          >
                 <div className="mb-10">
                   <h1 className="text-3xl font-bold text-slate-900 mb-2">Create Account</h1>
                   <p className="text-slate-500">Enter your details to get started with LookBetter</p>
@@ -176,6 +142,36 @@ const Register = () => {
                      {error}
                   </motion.div>
                 )}
+
+                <div className="flex flex-col items-center justify-center mb-8 relative group">
+                  <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-full border-4 border-slate-100 bg-slate-50 flex items-center justify-center overflow-hidden relative shadow-sm">
+                    {profilePic ? (
+                      <img src={optimizeImage(profilePic, 150)} alt="Profile Preview" className="w-full h-full object-cover" />
+                    ) : (
+                      <User className="text-slate-300" size={40} />
+                    )}
+                    
+                    {/* Hover Overlay */}
+                    <label className="absolute inset-0 sm:flex items-center justify-center bg-black/50 text-white flex-col opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity hidden">
+                      <Camera size={20} className="mb-1" />
+                      <span className="text-[10px] font-bold">Upload</span>
+                      <input type="file" className="hidden" accept="image/*" onChange={handleProfilePicChange} disabled={uploadingPic} />
+                    </label>
+
+                    {/* Mobile visible upload button */}
+                    <label className="absolute bottom-0 right-0 sm:hidden bg-blue-600 text-white p-2 rounded-full shadow-lg border-2 border-white cursor-pointer hover:bg-blue-700 transition-colors">
+                      <Camera size={14} />
+                      <input type="file" className="hidden" accept="image/*" onChange={handleProfilePicChange} disabled={uploadingPic} />
+                    </label>
+
+                    {uploadingPic && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-white/80 rounded-full">
+                        <Loader2 className="animate-spin text-blue-600" size={24} />
+                      </div>
+                    )}
+                  </div>
+                  <p className="text-xs text-slate-500 font-medium mt-3">Upload a profile picture (optional)</p>
+                </div>
 
                 <form onSubmit={handleSubmit} className="space-y-5">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
@@ -288,95 +284,10 @@ const Register = () => {
                   </button>
                 </form>
               </motion.div>
-            ) : (
-              <motion.div
-                key="otp-form"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-              >
-                <div className="mb-10 text-center md:text-left">
-                  <h1 className="text-3xl font-bold text-slate-900 mb-2">Verify Email</h1>
-                  <p className="text-slate-500 leading-relaxed">
-                    We've sent a 6-digit code to <span className="font-bold text-slate-900">{email}</span>. 
-                    Please enter it below.
-                  </p>
-                </div>
 
-                {error && (
-                  <div className="bg-red-50 text-red-600 p-4 rounded-2xl text-sm mb-6 flex items-center gap-3 border border-red-100">
-                     <div className="w-1.5 h-1.5 bg-red-600 rounded-full" />
-                     {error}
-                  </div>
-                )}
-
-                <form onSubmit={handleVerifyOtp} className="space-y-6">
-                  <div className="space-y-2">
-                    <label className="text-sm font-semibold text-slate-700 ml-1">OTP Code</label>
-                    <div className="relative">
-                      <Key className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" size={18} />
-                      <input 
-                        type="text" 
-                        required
-                        maxLength={6}
-                        value={otp}
-                        onChange={(e) => setOtp(e.target.value)}
-                        placeholder="123456"
-                        className="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all text-2xl tracking-[0.5em] font-bold"
-                      />
-                    </div>
-                  </div>
-
-                  <button 
-                    type="submit" 
-                    disabled={loading}
-                    className="btn-primary w-full py-4 flex items-center justify-center gap-2 shadow-xl shadow-blue-500/20"
-                  >
-                    {loading ? (
-                      <>
-                        <Loader2 size={18} className="animate-spin" />
-                        Verifying...
-                      </>
-                    ) : (
-                      <>
-                        Verify & Sign Up <ArrowRight size={18} />
-                      </>
-                    )}
-                  </button>
-
-                  <div className="text-center space-y-4">
-                    {canResend ? (
-                      <button 
-                        type="button"
-                        onClick={handleResendOtp}
-                        className="text-sm font-black text-blue-600 hover:text-blue-700 transition-colors uppercase tracking-widest"
-                      >
-                        Resend Code
-                      </button>
-                    ) : (
-                      <p className="text-sm font-bold text-slate-400">
-                        Resend code in <span className="text-slate-900 font-black">{timer}s</span>
-                      </p>
-                    )}
-
-                    <button 
-                      type="button"
-                      onClick={() => setShowOtp(false)}
-                      className="block w-full text-xs font-bold text-slate-400 hover:text-slate-600 transition-colors uppercase tracking-widest"
-                    >
-                      Back to registration
-                    </button>
-                  </div>
-                </form>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {!showOtp && (
-            <p className="text-center text-sm text-slate-500 mt-10">
-              Already have an account? <Link to="/login" className="text-blue-600 font-semibold hover:underline">Sign in</Link>
-            </p>
-          )}
+          <p className="text-center text-sm text-slate-500 mt-10">
+            Already have an account? <Link to="/login" className="text-blue-600 font-semibold hover:underline">Sign in</Link>
+          </p>
         </div>
       </div>
     </div>

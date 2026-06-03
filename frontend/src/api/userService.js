@@ -8,11 +8,6 @@ export const userService = {
   register: async (userData) => {
     const { data } = await api.post('/api/users', userData);
     return data;
-  },
-  verifyOtp: async (otpData) => {
-    const { data } = await api.post('/api/users/verify-otp', otpData);
-    return data;
-  },
   getProfile: async () => {
     const { data } = await api.get('/api/users/profile');
     return data;

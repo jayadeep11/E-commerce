@@ -108,7 +108,7 @@ const Cart = () => {
                 {/* Mobile specific controls wrapper */}
                 <div className="flex items-center justify-between sm:hidden mt-3">
                   <div className="flex items-center bg-slate-100 rounded-lg overflow-hidden shrink-0">
-                    <button onClick={() => addToCart(item, -1)} disabled={item.qty <= 1} className="px-2 py-1 hover:bg-slate-200 transition-colors disabled:opacity-30"><Minus size={12} /></button>
+                    <button onClick={() => addToCart(item, -1)} className="px-2 py-1 hover:bg-slate-200 transition-colors"><Minus size={12} /></button>
                     <span className="px-2 font-bold text-xs">{item.qty}</span>
                     <button onClick={() => addToCart(item, 1)} disabled={item.qty >= item.countInStock} className="px-2 py-1 hover:bg-slate-200 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"><Plus size={12} /></button>
                   </div>
@@ -121,7 +121,7 @@ const Cart = () => {
 
               {/* Desktop specific controls */}
               <div className="hidden sm:flex items-center bg-slate-100 rounded-lg overflow-hidden shrink-0 ml-auto">
-                <button onClick={() => addToCart(item, -1)} disabled={item.qty <= 1} className="px-3 py-1.5 hover:bg-slate-200 transition-colors disabled:opacity-30"><Minus size={14} /></button>
+                <button onClick={() => addToCart(item, -1)} className="px-3 py-1.5 hover:bg-slate-200 transition-colors"><Minus size={14} /></button>
                 <span className="px-4 font-bold text-sm">{item.qty}</span>
                 <button onClick={() => addToCart(item, 1)} disabled={item.qty >= item.countInStock} className="px-3 py-1.5 hover:bg-slate-200 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"><Plus size={14} /></button>
               </div>

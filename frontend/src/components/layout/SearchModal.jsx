@@ -1,52 +1,50 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Home, ShoppingBag, Layers, User, ClipboardList } from 'lucide-react';
+import { Search, Loader2, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-
-const PAGES = [
-  { name: 'Home Page', path: '/', icon: Home, desc: 'Go to the store front' },
-  { name: 'Shop All Products', path: '/shop', icon: ShoppingBag, desc: 'Browse our entire catalog' },
-  { name: 'Browse Categories', path: '/categories', icon: Layers, desc: 'Find products by departments' },
-  { name: 'View Shopping Cart', path: '/cart', icon: ShoppingBag, desc: 'Check your items in cart' },
-  { name: 'My Profile Settings', path: '/profile', icon: User, desc: 'Manage your account details' },
-  { name: 'My Order History', path: '/orders', icon: ClipboardList, desc: 'View your past receipts' }
-];
+import { productService } from '../../api/productService';
+import { optimizeImage } from '../../utils/cloudinary';
 
 const SearchModal = () => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [modalSearch, setModalSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const modalInputRef = useRef(null);
 
-  // Filter pages that match query
-  const filteredPages = PAGES.filter(p => 
-    p.name.toLowerCase().includes(modalSearch.toLowerCase()) ||
-    p.desc.toLowerCase().includes(modalSearch.toLowerCase())
-  );
+  // Debounce search input
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(modalSearch.trim());
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [modalSearch]);
 
-  // Dynamic suggestions list
-  const items = modalSearch.trim()
-    ? [
-        {
-          name: `Search for "${modalSearch}"`,
-          desc: 'Find items in our shop catalog',
-          icon: Search,
-          action: () => handleModalSearch()
-        },
-        ...filteredPages.map(p => ({
-          name: p.name,
-          desc: p.desc,
-          icon: p.icon,
-          action: () => handlePageNavigation(p.path)
-        }))
-      ]
-    : PAGES.map(p => ({
-        name: p.name,
-        desc: p.desc,
-        icon: p.icon,
-        action: () => handlePageNavigation(p.path)
-      }));
+  // Fetch products when debounced search changes
+  useEffect(() => {
+    const fetchProducts = async () => {
+      if (!debouncedSearch) {
+        setProducts([]);
+        setLoading(false);
+        return;
+      }
+      
+      setLoading(true);
+      try {
+        const data = await productService.getProducts({ search: debouncedSearch, limit: 5 });
+        setProducts(data);
+      } catch (error) {
+        console.error('Failed to search products:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, [debouncedSearch]);
 
   useEffect(() => {
     const handleOpen = () => setIsOpen(true);
@@ -72,22 +70,30 @@ const SearchModal = () => {
       if (e.key === 'Escape') {
         setIsOpen(false);
       }
-      if (isOpen && items.length > 0) {
+      
+      const totalItems = products.length + (debouncedSearch ? 1 : 0); // +1 for the "View all results" button
+      
+      if (isOpen && totalItems > 0) {
         if (e.key === 'ArrowDown') {
           e.preventDefault();
-          setSelectedIndex((prev) => (prev + 1) % items.length);
+          setSelectedIndex((prev) => (prev + 1) % totalItems);
         } else if (e.key === 'ArrowUp') {
           e.preventDefault();
-          setSelectedIndex((prev) => (prev - 1 + items.length) % items.length);
+          setSelectedIndex((prev) => (prev - 1 + totalItems) % totalItems);
         } else if (e.key === 'Enter') {
           e.preventDefault();
-          items[selectedIndex]?.action();
+          
+          if (selectedIndex < products.length) {
+            handleProductClick(products[selectedIndex]._id);
+          } else {
+            handleViewAll();
+          }
         }
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isOpen, items, selectedIndex]);
+  }, [isOpen, products, selectedIndex, debouncedSearch]);
 
   // Reset selected item on query change
   useEffect(() => {
@@ -101,18 +107,18 @@ const SearchModal = () => {
     }
   }, [isOpen]);
 
-  const handleModalSearch = () => {
+  const handleProductClick = (id) => {
+    setIsOpen(false);
+    setModalSearch('');
+    navigate(`/product/${id}`);
+  };
+
+  const handleViewAll = () => {
     if (modalSearch.trim()) {
       setIsOpen(false);
       navigate(`/shop?search=${encodeURIComponent(modalSearch.trim())}`);
       setModalSearch('');
     }
-  };
-
-  const handlePageNavigation = (path) => {
-    setIsOpen(false);
-    setModalSearch('');
-    navigate(path);
   };
 
   return (
@@ -132,78 +138,128 @@ const SearchModal = () => {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.97, y: -8 }}
             transition={{ duration: 0.2, ease: 'easeOut' }}
-            className="relative w-full max-w-3xl bg-white rounded-2xl shadow-2xl border border-slate-200/80 overflow-hidden"
+            className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[85vh]"
           >
+            {/* Search Input Area */}
             <form 
               onSubmit={(e) => {
                 e.preventDefault();
-                items[selectedIndex]?.action();
+                if (selectedIndex < products.length) {
+                  handleProductClick(products[selectedIndex]._id);
+                } else {
+                  handleViewAll();
+                }
               }} 
-              className="flex items-center gap-3 p-5 border-b border-slate-100"
+              className="flex items-center gap-3 p-5 sm:p-6 border-b border-slate-100 shrink-0"
             >
-              <Search className="text-slate-500 shrink-0" size={20} />
+              <Search className="text-blue-600 shrink-0" size={24} />
               <input 
                 ref={modalInputRef}
                 type="text" 
-                placeholder="Search products, pages, collections..." 
+                placeholder="Search for products, brands, categories..." 
                 value={modalSearch}
                 onChange={(e) => setModalSearch(e.target.value)}
-                className="flex-grow bg-transparent border-none outline-none text-slate-800 text-base md:text-lg placeholder:text-slate-400"
+                className="flex-grow bg-transparent border-none outline-none text-slate-900 text-lg sm:text-xl font-medium placeholder:text-slate-400 placeholder:font-normal"
               />
               <button 
                 type="button" 
                 onClick={() => setIsOpen(false)}
-                className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-500 rounded text-xs font-black shadow-sm"
+                className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-500 rounded-lg text-xs font-bold transition-colors"
               >
                 ESC
               </button>
             </form>
             
-            {/* Pages & Command List */}
-            <div className="p-3 bg-slate-50/50 flex flex-col gap-1 max-h-[360px] overflow-y-auto hide-scrollbar">
-              <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 block px-3 py-1.5 mb-1 select-none">
-                {modalSearch.trim() ? 'Search Results & Suggestions' : 'Quick Jump to Pages'}
-              </span>
+            {/* Results Area */}
+            <div className="flex-1 overflow-y-auto hide-scrollbar bg-slate-50/50">
               
-              {items.length === 0 ? (
-                <div className="text-center py-8 text-sm text-slate-400 font-bold select-none">
-                  No pages or results found for "{modalSearch}"
+              {!modalSearch.trim() ? (
+                <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
+                  <div className="w-16 h-16 bg-blue-50 text-blue-200 rounded-full flex items-center justify-center mb-4">
+                    <Search size={32} />
+                  </div>
+                  <h3 className="text-slate-900 font-bold text-lg mb-1">Start typing to search</h3>
+                  <p className="text-slate-500 text-sm">Find your favorite products instantly.</p>
+                </div>
+              ) : loading ? (
+                <div className="flex flex-col items-center justify-center py-16 text-center">
+                  <Loader2 className="animate-spin text-blue-600 mb-4" size={32} />
+                  <p className="text-slate-500 text-sm font-medium animate-pulse">Searching catalog...</p>
+                </div>
+              ) : products.length > 0 ? (
+                <div className="p-3">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 block px-4 py-2 mb-1 select-none">
+                    Products found ({products.length})
+                  </span>
+                  
+                  <div className="space-y-1">
+                    {products.map((product, idx) => {
+                      const isSelected = idx === selectedIndex;
+                      
+                      return (
+                        <div
+                          key={product._id}
+                          onClick={() => handleProductClick(product._id)}
+                          onMouseEnter={() => setSelectedIndex(idx)}
+                          className={`w-full flex items-center gap-4 p-3 rounded-2xl cursor-pointer select-none text-left transition-colors duration-150 ${
+                            isSelected
+                              ? 'bg-white shadow-sm border border-slate-100'
+                              : 'border border-transparent hover:bg-white/60'
+                          }`}
+                        >
+                          <div className="w-14 h-14 rounded-xl bg-slate-100 overflow-hidden shrink-0 border border-slate-100">
+                            <img 
+                              src={optimizeImage(product.image, 100)} 
+                              alt={product.name} 
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                          <div className="flex-grow min-w-0 flex flex-col justify-center">
+                            <h4 className="text-sm sm:text-base font-bold text-slate-900 truncate">
+                              {product.name}
+                            </h4>
+                            <span className="text-xs font-semibold text-slate-500 mt-0.5 truncate">
+                              {product.category} &bull; {product.gender}
+                            </span>
+                          </div>
+                          <div className="shrink-0 text-right pl-4">
+                            <span className="text-sm sm:text-base font-black text-slate-900">
+                              ₹{product.price.toLocaleString('en-IN')}
+                            </span>
+                            {product.mrp > product.price && (
+                              <span className="text-xs text-slate-400 line-through block font-medium">
+                                ₹{product.mrp.toLocaleString('en-IN')}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                  
+                  {/* View All Button */}
+                  <div 
+                    onClick={handleViewAll}
+                    onMouseEnter={() => setSelectedIndex(products.length)}
+                    className={`mt-4 w-full flex items-center justify-center gap-2 p-4 rounded-2xl cursor-pointer select-none font-bold text-sm transition-all duration-150 ${
+                      selectedIndex === products.length
+                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20'
+                        : 'bg-white text-blue-600 border border-slate-200'
+                    }`}
+                  >
+                    View all results for "{debouncedSearch}" <ArrowRight size={16} />
+                  </div>
                 </div>
               ) : (
-                items.map((item, idx) => {
-                  const Icon = item.icon;
-                  const isSelected = idx === selectedIndex;
-                  
-                  return (
-                    <div
-                      key={item.name}
-                      onClick={item.action}
-                      onMouseEnter={() => setSelectedIndex(idx)}
-                      className={`w-full flex items-center gap-4 px-4 py-3 rounded-xl cursor-pointer select-none text-left transition-colors duration-150 ${
-                        isSelected
-                          ? 'bg-slate-100 text-slate-900 font-bold'
-                          : 'text-slate-700 hover:bg-black/[0.03]'
-                      }`}
-                    >
-                      <Icon 
-                        size={18} 
-                        className={`shrink-0 transition-colors duration-150 ${
-                          isSelected ? 'text-slate-800' : 'text-slate-400'
-                        }`} 
-                      />
-                      <div className="flex-grow flex items-center justify-between min-w-0">
-                        <span className="text-sm font-bold truncate leading-none">
-                          {item.name}
-                        </span>
-                        <span className={`text-[11px] truncate ml-3 font-semibold hidden sm:inline transition-colors duration-150 ${
-                          isSelected ? 'text-slate-500' : 'text-slate-400'
-                        }`}>
-                          {item.desc}
-                        </span>
-                      </div>
-                    </div>
-                  );
-                })
+                <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
+                  <div className="w-16 h-16 bg-slate-100 text-slate-300 rounded-full flex items-center justify-center mb-4">
+                    <Search size={32} />
+                  </div>
+                  <h3 className="text-slate-900 font-bold text-lg mb-1">No products found</h3>
+                  <p className="text-slate-500 text-sm max-w-[250px]">
+                    We couldn't find anything matching "{debouncedSearch}". Try adjusting your search.
+                  </p>
+                </div>
               )}
             </div>
           </motion.div>

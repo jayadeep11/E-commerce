@@ -76,8 +76,8 @@ const ProductDetails = () => {
     : 0;
 
   return (
-    <div className="max-w-[1400px] mx-auto px-6 lg:px-12 py-12">
-      <Link to="/shop" className="flex items-center gap-2 text-slate-400 hover:text-black transition-all mb-8 group font-bold text-xs uppercase tracking-widest">
+    <div className="max-w-[1400px] mx-auto px-6 lg:px-12 pt-4 pb-12 md:py-12">
+      <Link to="/shop" className="flex items-center gap-2 text-slate-400 hover:text-black transition-all mb-4 md:mb-8 group font-bold text-xs uppercase tracking-widest">
         <ChevronLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
         Back to Collection
       </Link>
@@ -87,7 +87,7 @@ const ProductDetails = () => {
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="rounded-[2.5rem] overflow-hidden shadow-2xl shadow-slate-200/50 max-h-[520px] flex items-center justify-center bg-slate-50"
+          className="rounded-3xl md:rounded-[2.5rem] overflow-hidden shadow-2xl shadow-slate-200/50 h-[320px] md:h-auto md:max-h-[520px] w-[80%] mx-auto md:w-full flex items-center justify-center bg-slate-50"
         >
           <img 
             src={product.image} 
@@ -145,9 +145,16 @@ const ProductDetails = () => {
             )}
           </div>
           
-          <p className="text-slate-500 leading-relaxed mb-8 text-base font-medium">
+          <p className="text-slate-500 leading-relaxed mb-6 text-base font-medium">
             {product.description}
           </p>
+
+          <div className="mb-6">
+            <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">Availability: </span>
+            <span className={`text-xs font-bold ${product.countInStock > 0 ? 'text-emerald-600' : 'text-red-500'}`}>
+              {product.countInStock > 0 ? `${product.countInStock} In Stock` : 'Out of Stock'}
+            </span>
+          </div>
 
           <div className="space-y-6 max-w-sm">
             {!isAdded ? (
@@ -171,7 +178,6 @@ const ProductDetails = () => {
                     <div className="flex items-center bg-white border border-slate-200 rounded-xl p-0.5 shadow-sm">
                       <button 
                         onClick={() => {
-                          if (qty <= 1) return;
                           addToCart(product, -1);
                         }}
                         className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-slate-100 transition-all text-slate-800 font-bold"
@@ -215,13 +221,13 @@ const ProductDetails = () => {
       </div>
 
       {}
-      <div className="mt-24 pt-12 border-t border-slate-100">
-        <div className="flex items-center gap-12 mb-16 border-b border-slate-100">
+      <div className="mt-12 sm:mt-24 pt-8 sm:pt-12 border-t border-slate-100">
+        <div className="flex items-center gap-6 sm:gap-12 mb-10 sm:mb-16 border-b border-slate-100 overflow-x-auto no-scrollbar">
           {['description', 'reviews'].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`pb-4 text-xs font-black uppercase tracking-[0.3em] transition-all relative ${
+              className={`pb-4 text-xs font-black uppercase tracking-[0.2em] sm:tracking-[0.3em] transition-all relative whitespace-nowrap ${
                 activeTab === tab ? 'text-slate-900' : 'text-slate-400 hover:text-slate-600'
               }`}
             >
@@ -283,19 +289,23 @@ const ProductDetails = () => {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.1 }}
                       key={review._id} 
-                      className="bg-white border border-slate-100 p-8 rounded-[2rem] hover:border-slate-300 transition-all"
+                      className="bg-white border border-slate-100 p-5 sm:p-8 rounded-2xl sm:rounded-[2rem] hover:border-slate-300 transition-all"
                     >
-                      <div className="flex justify-between items-start mb-6">
-                        <div className="flex items-center gap-4">
-                          <div className="w-12 h-12 bg-slate-900 text-white rounded-full flex items-center justify-center font-black text-sm">
-                            {review.name.charAt(0)}
-                          </div>
-                          <div>
-                            <p className="font-black text-slate-900">{review.name}</p>
-                            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{new Date(review.createdAt).toLocaleDateString()}</p>
+                      <div className="flex flex-col sm:flex-row justify-between items-start gap-4 mb-4 sm:mb-6">
+                        <div className="flex items-center gap-3 sm:gap-4 w-full sm:w-auto overflow-hidden">
+                          {review.user?.profilePic ? (
+                            <img src={review.user.profilePic} alt={review.name} className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover shadow-sm shrink-0" />
+                          ) : (
+                            <div className="w-10 h-10 sm:w-12 sm:h-12 shrink-0 bg-slate-900 text-white rounded-full flex items-center justify-center font-black text-xs sm:text-sm">
+                              {review.name.charAt(0)}
+                            </div>
+                          )}
+                          <div className="min-w-0 flex-grow">
+                            <p className="font-black text-slate-900 truncate">{review.name}</p>
+                            <p className="text-[9px] sm:text-[10px] text-slate-400 font-bold uppercase tracking-wider">{new Date(review.createdAt).toLocaleDateString()}</p>
                           </div>
                         </div>
-                        <div className="flex items-center gap-1">
+                        <div className="flex items-center gap-1 shrink-0">
                           {[...Array(5)].map((_, i) => (
                             <Star 
                               key={i} 
@@ -305,7 +315,7 @@ const ProductDetails = () => {
                           ))}
                         </div>
                       </div>
-                      <p className="text-slate-600 leading-relaxed font-medium italic">"{review.comment}"</p>
+                      <p className="text-gray-700 text-sm leading-relaxed mb-4">{review.comment}</p>
                     </motion.div>
                   ))}
                 </div>

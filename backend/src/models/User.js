@@ -18,9 +18,6 @@ const userSchema = new mongoose.Schema({
   profilePic: { type: String, default: '' },
   addresses: [addressSchema],
   isAdmin: { type: Boolean, required: true, default: false },
-  otp: { type: String },
-  otpExpire: { type: Date },
-  isVerified: { type: Boolean, default: false },
 }, {
   timestamps: true
 });

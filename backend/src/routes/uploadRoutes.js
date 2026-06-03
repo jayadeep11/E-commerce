@@ -22,6 +22,6 @@ const storage = new CloudinaryStorage({
 
 const upload = multer({ storage: storage });
 
-router.post('/', protect, upload.single('image'), uploadImage);
+router.post('/', upload.single('image'), uploadImage);
 
 module.exports = router;

@@ -16,20 +16,8 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('userInfo', JSON.stringify(data));
   };
 
-  const register = async (name, email, password, phone, isAdmin = false) => {
-    const { data } = await api.post('/api/users', { name, email, password, phone, isAdmin });
-    
-    if (data.requiresVerification) {
-      return data;
-    }
-
-    setUserInfo(data);
-    localStorage.setItem('userInfo', JSON.stringify(data));
-    return data;
-  };
-
-  const verifyOTP = async (email, otp, newEmail = null) => {
-    const { data } = await api.post('/api/users/verify-otp', { email, otp, newEmail });
+  const register = async (name, email, password, phone, profilePic = '', isAdmin = false) => {
+    const { data } = await api.post('/api/users', { name, email, password, phone, profilePic, isAdmin });
     setUserInfo(data);
     localStorage.setItem('userInfo', JSON.stringify(data));
     return data;
@@ -37,11 +25,8 @@ export const AuthProvider = ({ children }) => {
 
   const updateProfile = async (userData) => {
     const { data } = await api.put('/api/users/profile', userData);
-    
-    if (!data.requiresVerification) {
-      setUserInfo(data);
-      localStorage.setItem('userInfo', JSON.stringify(data));
-    }
+    setUserInfo(data);
+    localStorage.setItem('userInfo', JSON.stringify(data));
     return data;
   };
 
@@ -97,7 +82,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={{ 
-      userInfo, login, register, logout, refreshProfile, verifyOTP, updateProfile,
+      userInfo, login, register, logout, refreshProfile, updateProfile,
       addAddress, updateAddress, deleteAddress, setDefaultAddress 
     }}>
       {children}

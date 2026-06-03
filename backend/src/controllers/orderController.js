@@ -28,13 +28,11 @@ const addOrderItems = async (req, res) => {
 
     const createdOrder = await order.save();
 
-    if (createdOrder.isPaid) {
-      for (const item of createdOrder.orderItems) {
-        const product = await Product.findById(item.product);
-        if (product) {
-          product.countInStock = Math.max(0, product.countInStock - item.qty);
-          await product.save();
-        }
+    for (const item of createdOrder.orderItems) {
+      const product = await Product.findById(item.product);
+      if (product) {
+        product.countInStock = Math.max(0, product.countInStock - item.qty);
+        await product.save();
       }
     }
 

@@ -8,7 +8,7 @@ const Home = () => {
       <section className="min-h-[calc(100vh-73px)] flex flex-col lg:flex-row items-stretch">
         
         {/* Left Side: Typography and CTA */}
-        <div className="flex-1 flex flex-col justify-center px-8 sm:px-16 lg:px-24 py-16 lg:py-0 relative z-10 bg-white">
+        <div className="flex-1 flex flex-col justify-center px-8 sm:px-16 lg:px-24 pt-8 pb-16 lg:py-0 relative z-10 bg-white">
           <motion.div 
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}

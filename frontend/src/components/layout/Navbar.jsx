@@ -16,7 +16,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="glass-nav px-2 xs:px-4 sm:px-6 py-2 sm:py-4 flex items-center justify-between w-full">
+    <nav className="glass-nav hidden md:flex px-2 xs:px-4 sm:px-6 py-2 sm:py-4 items-center justify-between w-full">
       <div className="flex items-center gap-2 sm:gap-8">
         <Link to="/" className="text-lg xs:text-xl sm:text-2xl font-black gradient-text tracking-tighter flex-shrink-0">
           KORE
@@ -187,43 +187,16 @@ const Navbar = () => {
               
               <div className="pt-6 border-t border-slate-100">
                 {userInfo ? (
-                  <div className="space-y-3">
-                    <div className="flex items-center gap-3 mb-1">
-                      {userInfo.profilePic ? (
-                        <img src={userInfo.profilePic} alt={userInfo.name} className="w-8 h-8 rounded-full object-cover shadow-sm" />
-                      ) : (
-                        <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-sm">
-                          {userInfo.name.charAt(0)}
-                        </div>
-                      )}
-                      <span className="text-sm font-bold text-slate-800">{userInfo.name}</span>
-                    </div>
-                    <Link
-                      to="/profile"
-                      onClick={() => setIsMobileMenuOpen(false)}
-                      className="block text-center py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-bold transition-all"
-                    >
-                      View Profile
-                    </Link>
-                    <button
-                      onClick={() => {
-                        logout();
-                        setIsMobileMenuOpen(false);
-                      }}
-                      className="w-full text-center py-2.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-xl text-xs font-bold transition-all"
-                    >
-                      Logout
-                    </button>
-                  </div>
-                ) : (
-                  <Link
-                    to="/login"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="block text-center py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-blue-500/10"
+                  <button
+                    onClick={() => {
+                      logout();
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="w-full text-center py-3 bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-xl text-sm font-bold transition-all"
                   >
-                    Login / Register
-                  </Link>
-                )}
+                    Log Out
+                  </button>
+                ) : null}
               </div>
             </motion.div>
           </>

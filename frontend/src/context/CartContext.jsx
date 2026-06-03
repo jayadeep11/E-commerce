@@ -76,7 +76,11 @@ export const CartProvider = ({ children }) => {
         alert(`Sorry, only ${product.countInStock} units available in stock.`);
         return;
       }
-      if (newQty < 1) return;
+      
+      if (newQty < 1) {
+        setCartItems(cartItems.filter((x) => x._id !== product._id));
+        return;
+      }
 
       setCartItems(
         cartItems.map((x) =>

@@ -206,7 +206,7 @@ const Shop = () => {
   );
 
   return (
-    <div className="h-[calc(100vh-80px)] bg-white flex overflow-hidden w-full">
+    <div className="h-[calc(100vh-64px)] md:h-[calc(100vh-80px)] bg-white flex overflow-hidden w-full">
 
       {/* Desktop Sidebar */}
       <div className="hidden lg:block w-64 shrink-0 h-full z-10 shadow-[1px_0_10px_rgba(0,0,0,0.02)] relative">

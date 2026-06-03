@@ -10,7 +10,7 @@ import { useToast } from '../../context/ToastContext';
 
 const Profile = () => {
   const { 
-    userInfo, logout, refreshProfile, updateProfile, verifyOTP,
+    userInfo, logout, refreshProfile, updateProfile,
     addAddress, updateAddress, deleteAddress, setDefaultAddress 
   } = useAuth();
   const navigate = useNavigate();
@@ -37,10 +37,6 @@ const Profile = () => {
     country: ''
   });
 
-  // OTP Verification
-  const [showOtpScreen, setShowOtpScreen] = useState(false);
-  const [pendingEmail, setPendingEmail] = useState('');
-  const [otp, setOtp] = useState('');
 
   // Loader & Toast
   const [loading, setLoading] = useState(false);
@@ -91,39 +87,17 @@ const Profile = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      const data = await updateProfile(formData);
-      if (data.requiresVerification) {
-        setPendingEmail(data.pendingEmail);
-        setShowOtpScreen(true);
-      } else {
-        // showNotification('Profile updated successfully!');
-        showToast('success', 'Profile updated successfully!')
-        setIsDrawerOpen(false);
-      }
+      await updateProfile(formData);
+      showToast('success', 'Profile updated successfully!');
+      setIsDrawerOpen(false);
+      refreshProfile();
     } catch (err) {
-      // showNotification(err.response?.data?.message || 'Update failed', 'error');
       showToast('error', err.response?.data?.message || 'Update failed');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleVerifyNewEmail = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      await verifyOTP(otp);
-      // showNotification('Email verified and updated successfully!');
-      showToast('Email verified and updated successfully!')
-      setShowOtpScreen(false);
-      setOtp('');
-    } catch (err) {
-      // showNotification(err.response?.data?.message || 'Verification failed', 'error');
-      showToast('error', err.response?.data?.message || 'Verification failed', 'error');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleAddressSubmit = async (e) => {
     e.preventDefault();
@@ -212,10 +186,10 @@ const Profile = () => {
               <img 
                 src={optimizeImage(userInfo.profilePic, 200)} 
                 alt={userInfo.name} 
-                className="w-16 h-16 sm:w-24 sm:h-24 rounded-full object-cover shadow-lg border-4 border-white"
+                className="w-20 h-20 sm:w-28 sm:h-28 rounded-full object-cover shadow-lg border-4 border-white"
               />
             ) : (
-              <div className="w-16 h-16 sm:w-24 sm:h-24 bg-blue-600 rounded-full flex items-center justify-center text-white text-3xl sm:text-4xl font-black shadow-lg">
+              <div className="w-20 h-20 sm:w-28 sm:h-28 bg-blue-600 rounded-full flex items-center justify-center text-white text-4xl font-black shadow-lg">
                 {userInfo.name.charAt(0)}
               </div>
             )}
@@ -410,24 +384,7 @@ const Profile = () => {
         )}
       </AnimatePresence>
 
-      {/* OTP Modal */}
-      <AnimatePresence>
-        {showOtpScreen && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 z-[150] flex items-center justify-center p-6 bg-slate-900/70 backdrop-blur-sm">
-            <motion.div initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} className="bg-white rounded-[2rem] p-10 max-w-sm w-full shadow-2xl text-center space-y-6">
-              <div className="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mx-auto"><Lock size={32} /></div>
-              <div>
-                <h3 className="text-2xl font-black text-slate-900">Verify Email</h3>
-                <p className="text-slate-500 text-sm mt-2 leading-relaxed">Code sent to:<br/><b className="text-slate-900">{pendingEmail}</b></p>
-              </div>
-              <form onSubmit={handleVerifyNewEmail} className="space-y-6">
-                <input type="text" maxLength={6} value={otp} onChange={(e) => setOtp(e.target.value)} className="w-full text-center text-3xl font-black tracking-[0.4em] py-4 bg-slate-50 border-2 border-slate-100 focus:border-blue-500 rounded-2xl outline-none text-blue-600 transition-colors" placeholder="000000" />
-                <button disabled={loading || otp.length < 6} className="w-full py-4 bg-blue-600 text-white rounded-xl font-black hover:bg-blue-700 transition-all shadow-lg shadow-blue-500/20 disabled:opacity-50 disabled:shadow-none">Verify Email</button>
-              </form>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+
     </div>
   );
 };

@@ -35,7 +35,18 @@ const getProducts = async (req, res) => {
   try {
     const limit = req.query.limit ? Number(req.query.limit) : 0;
     const skip = req.query.skip ? Number(req.query.skip) : 0;
-    const products = await Product.find({}).skip(skip).limit(limit);
+    
+    // Add search functionality
+    const keyword = req.query.search
+      ? {
+          name: {
+            $regex: req.query.search,
+            $options: 'i',
+          },
+        }
+      : {};
+
+    const products = await Product.find({ ...keyword }).skip(skip).limit(limit);
     res.json(products);
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -47,7 +58,7 @@ const getProducts = async (req, res) => {
 // @access  Public
 const getProductById = async (req, res) => {
   try {
-    const product = await Product.findById(req.params.id);
+    const product = await Product.findById(req.params.id).populate('reviews.user', 'profilePic');
     if (product) {
       res.json(product);
     } else {
@@ -118,18 +129,21 @@ const createProductReview = async (req, res) => {
       );
 
       if (alreadyReviewed) {
-        return res.status(400).json({ message: 'Product already reviewed' });
+        // Update existing review instead of throwing 400
+        alreadyReviewed.rating = Number(rating);
+        alreadyReviewed.comment = comment;
+        alreadyReviewed.name = req.user.name;
+      } else {
+        const review = {
+          name: req.user.name,
+          rating: Number(rating),
+          comment,
+          user: req.user._id,
+        };
+        product.reviews.push(review);
+        product.numReviews = product.reviews.length;
       }
 
-      const review = {
-        name: req.user.name,
-        rating: Number(rating),
-        comment,
-        user: req.user._id,
-      };
-
-      product.reviews.push(review);
-      product.numReviews = product.reviews.length;
       product.rating =
         product.reviews.reduce((acc, item) => item.rating + acc, 0) /
         product.reviews.length;
