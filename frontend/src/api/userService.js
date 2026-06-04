@@ -2,13 +2,15 @@ import api from '../utils/api';
 
 export const userService = {
   login: async (credentials) => {
-    const { data } = await api.post('/api/users/login', credentials);
+    const { data } = await api.post('/api/auth/login', credentials);
     return data;
   },
   register: async (userData) => {
-    const { data } = await api.post('/api/users', userData);
+    const { data } = await api.post('/api/auth/register', userData);
     return data;
-  getProfile: async () => {
+  
+  } ,
+    getProfile: async () => {
     const { data } = await api.get('/api/users/profile');
     return data;
   },

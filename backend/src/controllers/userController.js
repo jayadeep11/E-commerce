@@ -21,8 +21,9 @@ const updateUserProfile = async (req, res) => {
     const user = await User.findById(req.user._id);
     if (!user) return res.status(404).json({ message: 'User not found' });
 
-    const { name, phone, profilePic, password } = req.body;
+    const { name, email, phone, profilePic, password } = req.body;
     user.name = name || user.name;
+    user.email = email || user.email;
     user.phone = phone || user.phone;
     if (profilePic !== undefined) user.profilePic = profilePic;
     if (password) user.password = password;

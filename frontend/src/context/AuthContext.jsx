@@ -11,13 +11,13 @@ export const AuthProvider = ({ children }) => {
   );
 
   const login = async (email, password) => {
-    const { data } = await api.post('/api/users/login', { email, password });
+    const { data } = await api.post('/api/auth/login', { email, password });
     setUserInfo(data);
     localStorage.setItem('userInfo', JSON.stringify(data));
   };
 
   const register = async (name, email, password, phone, profilePic = '', isAdmin = false) => {
-    const { data } = await api.post('/api/users', { name, email, password, phone, profilePic, isAdmin });
+    const { data } = await api.post('/api/auth/register', { name, email, password, phone, profilePic, isAdmin });
     setUserInfo(data);
     localStorage.setItem('userInfo', JSON.stringify(data));
     return data;
